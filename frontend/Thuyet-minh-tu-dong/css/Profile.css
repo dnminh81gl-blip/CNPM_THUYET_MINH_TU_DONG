@@ -1,0 +1,14 @@
+.profile-main { max-width: 560px; }
+.profile-head { display: flex; align-items: center; gap: 16px; padding: 26px 26px 20px; background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; border-radius: 16px 16px 0 0; }
+.avatar { width: 64px; height: 64px; border-radius: 50%; background: rgba(255,255,255,.25); display: grid; place-items: center; font-size: 28px; font-weight: 700; }
+.profile-head h3 { font-size: 20px; }
+.profile-tabs { display: flex; border-bottom: 1px solid #eee; }
+.profile-tabs button { flex: 1; padding: 12px; font-weight: 700; color: #888; border-bottom: 3px solid transparent; }
+.profile-tabs button.isActive { color: #222; border-color: var(--primary-color); }
+.profile-pane { display: none; padding: 20px 26px 26px; }
+.profile-pane.isActive { display: block; }
+.pf-card { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+.pf-card span { color: var(--muted); }
+.hist-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+.hist-item i { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; color: #fff; background: var(--primary-dark); }
+.hist-item small { display: block; color: var(--muted); }

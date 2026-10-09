@@ -1,0 +1,51 @@
+* { padding: 0; margin: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+:root {
+  --text-color: #222;
+  --primary-color: #ffb339;
+  --primary-dark: #f59e0b;
+  --heade-height: 68px;
+  --blue: #2563eb;
+  --blue-soft: #eaf0ff;
+  --muted: #737373;
+  --line-color: #e8e8e8;
+  --ok: #16a34a;
+  --red: #ff5b4d;
+  --land: #e9eef2;
+  --road: #ffffff;
+  --river: #bfdcf5;
+}
+body { font-family: "Quicksand", sans-serif; font-size: 15px; line-height: 1.55; color: var(--text-color); background: #fafafa; }
+button { font: inherit; color: inherit; cursor: pointer; border: none; background: none; }
+input, select, textarea { font: inherit; color: inherit; }
+a { color: inherit; }
+.main_body { min-height: 100vh; }
+.container { padding-top: var(--heade-height); min-height: 70vh; }
+.js-Container { display: none; }
+.js-Container.headerActive { display: block; }
+[hidden] { display: none !important; }
+
+/* ===== Nút dùng chung ===== */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 42px; padding: 0 20px; border-radius: 8px; font-weight: 700; font-size: 14px; transition: all .2s; }
+.btn--primary { background: var(--primary-color); color: #222; }
+.btn--primary:hover { background: var(--primary-dark); }
+.btn--ghost { background: #fff; border: 1px solid var(--primary-color); color: #b45309; }
+.btn--ghost:hover { background: #fff7e6; }
+.btn--block { width: 100%; margin-top: 12px; }
+.btn[disabled] { opacity: .5; cursor: not-allowed; }
+.tag { display: inline-block; background: #fff4de; color: #b45309; border-radius: 99px; padding: 3px 12px; font-size: 12px; font-weight: 700; }
+.input-field { width: 100%; height: 42px; padding: 0 12px; border: 1px solid #d9d9d9; border-radius: 8px; background: #fff; outline: none; margin-bottom: 12px; transition: border-color .2s; }
+.input-field:focus { border-color: var(--primary-color); }
+.form-error { color: #d93025; font-size: 13px; min-height: 18px; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; margin: 12px 0; }
+.chip { padding: 7px 14px; border-radius: 99px; border: 1px solid #ddd; background: #fff; font-size: 13px; font-weight: 600; }
+.chip:hover { border-color: var(--primary-color); }
+.chip.on { background: var(--primary-color); border-color: var(--primary-color); }
+.page-title { font-size: 26px; padding: 28px 0 16px; }
+.page-title i { color: var(--primary-color); margin-right: 8px; }
+.switch { width: 46px; height: 26px; border-radius: 99px; background: #d4d4d4; position: relative; flex: none; transition: .2s; }
+.switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: .2s; }
+.switch.on { background: var(--primary-color); }
+.switch.on::after { left: 23px; }
+a.btn { text-decoration: none; }
+a.tag { text-decoration: none; }

@@ -1,0 +1,24 @@
+.Introduce-slider { height: 62vh; min-height: 380px; position: relative; background:
+  linear-gradient(135deg, rgba(15,23,42,.92), rgba(30,58,138,.88)),
+  repeating-linear-gradient(35deg, transparent 0 46px, rgba(255,255,255,.08) 46px 48px),
+  repeating-linear-gradient(125deg, transparent 0 46px, rgba(255,255,255,.08) 46px 48px); background-color: #1e3a8a; }
+.Introduce-slider::after { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 14%; background: linear-gradient(90deg, transparent, rgba(96,165,250,.35)); }
+.introduce-content { position: absolute; display: flex; flex-direction: column; align-items: center; text-align: center; left: 0; right: 0; top: calc(var(--heade-height) + 62vh / 2 - 130px); padding: 28px 20px; background: rgba(247,247,247,.12); }
+.introduce-title1, .introduce-title2 { color: #fff; font-weight: 700; text-shadow: 0 4px 20px var(--primary-color); padding: 10px 0; }
+.introduce-title1 { font-size: 40px; }
+.introduce-title2 { font-size: 20px; }
+.introduce-cta { margin-top: 14px; height: 48px; font-size: 16px; }
+.product-introduces { padding: 32px 20px; }
+.product-introduces--title { text-align: center; padding: 36px 0 28px; font-size: 30px; font-weight: 700; text-decoration: underline; text-decoration-color: var(--primary-color); text-underline-offset: 8px; }
+.product-introduce { display: flex; justify-content: space-between; align-items: center; padding: 28px 40px; background: #7b7b7b22; border-radius: 36px; margin-bottom: 36px; gap: 24px; }
+.pi-visual { flex: none; width: 340px; height: 230px; border-radius: 20px; display: grid; place-items: center; color: #fff; font-size: 80px; transition: all .3s; box-shadow: 0 8px 24px rgba(0,0,0,.15); }
+.pi-visual:hover { opacity: .85; transform: scale(1.04); }
+.product-introduce-content { padding: 8px 24px; flex: 1; }
+.product-introduce--content-title { font-size: 28px; font-weight: 700; text-align: center; padding: 10px 0; color: orange; }
+.product-introduce--content-contents { font-size: 16px; text-align: justify; padding: 8px; line-height: 1.8; }
+.pi-actions { display: flex; gap: 10px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
+.how { padding-bottom: 20px; }
+.how-item { background: #fff; border-radius: 20px; padding: 24px 20px; text-align: center; box-shadow: 0 2px 12px rgba(0,0,0,.06); height: 100%; margin-bottom: 8px; }
+.how-icon { display: inline-grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: #fff4de; color: var(--primary-dark); font-size: 28px; margin-bottom: 12px; }
+.how-item h4 { font-size: 18px; margin-bottom: 8px; }
+.how-item p { color: var(--muted); font-size: 14px; }

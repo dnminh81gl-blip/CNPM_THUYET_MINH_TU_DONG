@@ -1,0 +1,29 @@
+/* Trình phát nằm DƯỚI bản đồ, không đè lên nội dung */
+.player { display: flex; align-items: center; gap: 14px; background: #fff; border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; box-shadow: 0 1px 6px rgba(0,0,0,.1); }
+.player-btn { width: 46px; height: 46px; border-radius: 50%; background: var(--primary-color); font-size: 16px; flex: none; }
+.player-btn:hover { background: var(--primary-dark); }
+.player-btn--sm { width: 36px; height: 36px; background: #fff4de; font-size: 13px; }
+.player-info { flex: 1; min-width: 0; }
+.player-info b { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.player-info small { color: var(--muted); font-size: 12px; }
+.player-bar { height: 6px; border-radius: 9px; background: #eee; margin: 6px 0 3px; overflow: hidden; }
+.player-bar i { display: block; height: 100%; width: 0; background: var(--primary-color); transition: width .25s linear; }
+.wave { display: flex; gap: 3px; align-items: center; height: 30px; }
+.wave span { width: 3px; height: 100%; border-radius: 4px; background: var(--primary-color); transform: scaleY(.25); }
+.player.playing .wave span { animation: wv .7s ease-in-out infinite alternate; }
+.player.playing .wave span:nth-child(2n) { animation-delay: .2s; }
+.player.playing .wave span:nth-child(3n) { animation-delay: .4s; }
+@keyframes wv { to { transform: scaleY(1); } }
+
+/* Cài đặt thuyết minh */
+.settings .set-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 10px 0; border-top: 1px solid #eee; }
+.settings .set-row:first-of-type { border-top: none; }
+.settings small { display: block; color: var(--muted); font-size: 12px; }
+.settings input[type=range] { width: 170px; accent-color: var(--primary-dark); }
+
+/* Trình phát nổi: hiện ở mọi tab khi đang phát */
+.now-playing { position: fixed; right: 20px; bottom: 20px; z-index: 900; display: flex; align-items: center; gap: 10px; background: #222; color: #fff; padding: 8px 10px 8px 16px; border-radius: 99px; box-shadow: 0 6px 20px rgba(0,0,0,.3); max-width: calc(100vw - 40px); }
+.now-playing > i { color: var(--primary-color); }
+.now-playing b { max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 14px; }
+.now-playing button { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,.15); color: #fff; font-size: 12px; }
+.now-playing button:hover { background: var(--primary-color); color: #222; }

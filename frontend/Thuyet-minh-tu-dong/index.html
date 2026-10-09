@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thuyết minh tự động</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./font/css/all.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="./css/Base.css" />
+    <link rel="stylesheet" href="./css/Grid.css" />
+    <link rel="stylesheet" href="./css/Header.css" />
+    <link rel="stylesheet" href="./css/Introduce.css" />
+    <link rel="stylesheet" href="./css/POI.css" />
+    <link rel="stylesheet" href="./css/Map.css" />
+    <link rel="stylesheet" href="./css/Audio.css" />
+    <link rel="stylesheet" href="./css/Route.css" />
+    <link rel="stylesheet" href="./css/Tour.css" />
+    <link rel="stylesheet" href="./css/LoginRegister.css" />
+    <link rel="stylesheet" href="./css/Profile.css" />
+    <link rel="stylesheet" href="./css/Footer.css" />
+    <link rel="stylesheet" href="./css/Toast.css" />
+    <link rel="stylesheet" href="./css/Responsive.css" />
+  </head>
+  <body>
+    <div class="main_body">
+      <!-- toast message -->
+      <div id="toast"></div>
+
+      <!-- ================= HEADER ================= -->
+      <div class="header js-OpenHeaderForMobile">
+        <div class="grid wide">
+          <div class="header-content">
+            <div class="header-logo">
+              <a href="#" class="header-logo--link"><i class="fas fa-map-marker-alt"></i> TMTĐ</a>
+            </div>
+            <div class="header-navbar--list">
+              <div class="header-navbar--item js-TabHeader headerActive" data-tab="home">Trang chủ</div>
+              <div class="header-navbar--item js-TabHeader" data-tab="places">Địa điểm</div>
+              <div class="header-navbar--item js-TabHeader" data-tab="tour">Tour <span class="header-badge" id="tourBadge">0</span></div>
+              <div class="header-navbar--item header-lang">
+                <i class="fas fa-globe"></i>
+                <select id="langSelect" aria-label="Ngôn ngữ thuyết minh">
+                  <option value="vi">Tiếng Việt</option>
+                  <option value="en">English</option>
+                  <option value="zh">中文</option>
+                </select>
+              </div>
+              <div id="accountArea" class="header-account"></div>
+              <div class="line"></div>
+            </div>
+            <div class="header-mobile--btn js-mobile-bars"><i class="fas fa-bars"></i></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= CONTAINER ================= -->
+      <div class="container">
+        <!-- ===== TRANG CHỦ ===== -->
+        <div class="container-Introduce js-Container headerActive" data-pane="home">
+          <div class="Introduce-slider"></div>
+          <div class="introduce-content">
+            <h2 class="introduce-title1">Thuyết minh tự động đa ngôn ngữ</h2>
+            <h5 class="introduce-title2">Đi đến đâu - Nghe đến đó - Hiểu thêm về thành phố</h5>
+            <button class="btn btn--primary introduce-cta" data-go="places"><i class="fas fa-headphones"></i> Bắt đầu khám phá</button>
+          </div>
+
+          <div class="product-introduces">
+            <div class="grid wide">
+              <div class="product-introduces--title">Điểm nổi bật</div>
+              <div id="featured"></div>
+
+              <div class="product-introduces--title">Cách hoạt động</div>
+              <div class="row sm-gutter how">
+                <div class="col l-4 m-4 c-12"><div class="how-item"><span class="how-icon"><i class="fas fa-qrcode"></i></span><h4>1. Quét mã QR</h4><p>Mở web ngay trên điện thoại, không cần cài ứng dụng. Chọn ngôn ngữ bạn muốn nghe.</p></div></div>
+                <div class="col l-4 m-4 c-12"><div class="how-item"><span class="how-icon"><i class="fas fa-walking"></i></span><h4>2. Đi bộ tham quan</h4><p>Hệ thống theo dõi vị trí GPS và phát hiện khi bạn đi vào vùng của một điểm tham quan.</p></div></div>
+                <div class="col l-4 m-4 c-12"><div class="how-item"><span class="how-icon"><i class="fas fa-volume-up"></i></span><h4>3. Nghe tự động</h4><p>Thuyết minh tự phát bằng ngôn ngữ của bạn, có chống phát lặp (cooldown) và ưu tiên điểm quan trọng.</p></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== ĐỊA ĐIỂM ===== -->
+        <div class="container-Product js-Container" data-pane="places">
+          <div class="grid wide">
+            <div class="row sm-gutter">
+              <div class="col l-2 m-0 c-0">
+                <div class="category">
+                  <h3 class="category-header">Tìm kiếm</h3>
+                  <form class="category-search" onsubmit="return false">
+                    <input type="text" class="category-search--input js-q" placeholder="Tìm địa điểm" />
+                    <button type="button" class="category-search--btn js-q-btn"><i class="fas fa-search"></i></button>
+                  </form>
+                </div>
+                <div class="category">
+                  <h3 class="category-header">Danh mục</h3>
+                  <ul class="category-list" id="categoryList"></ul>
+                </div>
+              </div>
+
+              <div class="col l-10 m-12 c-12">
+                <form class="mobile-search" onsubmit="return false">
+                  <input type="text" class="mobile-search--input js-q" placeholder="Tìm địa điểm" />
+                  <button type="button" class="mobile-search--btn js-q-btn"><i class="fas fa-search"></i></button>
+                </form>
+                <div class="mobile-category"><ul class="mobile-category-list" id="mobileCategoryList"></ul></div>
+
+                <div class="category">
+                  <h3 class="category-header">Tìm nâng cao</h3>
+                  <form class="category-search" onsubmit="return false">
+                    <input type="text" id="advName" class="category-search--input" placeholder="Tên hoặc địa chỉ..." />
+                    <select id="advCat" class="category-search--input"><option value="">Tất cả danh mục</option></select>
+                    <select id="advRad" class="category-search--input">
+                      <option value="0">Mọi bán kính kích hoạt</option>
+                      <option value="80">Tối đa 80 m</option>
+                      <option value="90">Tối đa 90 m</option>
+                      <option value="100">Tối đa 100 m</option>
+                    </select>
+                    <button type="button" id="advBtn" class="category-search--btn"><i class="fas fa-search"></i> Tìm nâng cao</button>
+                  </form>
+                </div>
+
+                <!-- Bản đồ + trình phát -->
+                <div class="map-search" id="mapSearch">
+                  <i class="fas fa-search ms-ic0"></i>
+                  <input id="msInput" type="text" placeholder="Tìm địa điểm hoặc địa chỉ (ví dụ: Đại học Sài Gòn)" autocomplete="off" aria-label="Tìm địa điểm hoặc địa chỉ" />
+                  <button type="button" id="msClear" aria-label="Xoá" hidden><i class="fas fa-times"></i></button>
+                  <div class="ms-drop" id="msDrop" hidden></div>
+                </div>
+
+                <div class="map-card">
+                  <div id="map" role="application" aria-label="Bản đồ"></div>
+                  <div class="mode-seg" role="group" aria-label="Nguồn vị trí">
+                    <button id="modeGps" title="Dùng GPS thật của thiết bị"><i class="fas fa-satellite-dish"></i> GPS thật</button>
+                    <button id="modeSim" class="on" title="Giả lập vị trí để demo"><i class="fas fa-gamepad"></i> Giả lập</button>
+                  </div>
+                  <button class="mwalk" id="walkBtn"><i class="fas fa-walking"></i> <span id="walkTxt">Đi dạo thử</span></button>
+                  <div class="map-tools">
+                    <button id="zin" aria-label="Phóng to"><i class="fas fa-plus"></i></button>
+                    <button id="zout" aria-label="Thu nhỏ"><i class="fas fa-minus"></i></button>
+                    <button id="zfit" aria-label="Xem tất cả địa điểm" title="Xem tất cả địa điểm"><i class="fas fa-expand"></i></button>
+                    <button id="zme" aria-label="Vị trí của tôi" title="Vị trí của tôi"><i class="fas fa-crosshairs"></i></button>
+                  </div>
+                  <div class="map-legend" id="gpsChip"></div>
+
+                  <div class="dest-card" id="destCard" hidden>
+                    <button class="dc-x" id="dcClose" aria-label="Đóng"><i class="fas fa-times"></i></button>
+                    <b id="dcName"></b><small id="dcSub"></small>
+                    <div class="dc-info" id="dcInfo"></div>
+                    <div class="dc-acts">
+                      <button class="btn btn--primary" id="dcRoute"><i class="fas fa-route"></i> Chỉ đường</button>
+                      <button class="btn btn--primary" id="dcStart" hidden><i class="fas fa-location-arrow"></i> Bắt đầu</button>
+                      <button class="btn btn--ghost" id="dcListen" hidden><i class="fas fa-headphones"></i> Nghe thuyết minh</button>
+                      <a class="btn btn--ghost" id="dcGmaps" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> Google Maps</a>
+                    </div>
+                  </div>
+
+                  <div class="nav-top" id="navTop" hidden>
+                    <div class="nt-ic" id="ntIc"></div>
+                    <div class="nt-body"><b id="ntText"></b><small id="ntSub"></small></div>
+                  </div>
+                  <div class="nav-bottom" id="navBottom" hidden>
+                    <div class="nb-info"><b id="nbRem"></b><small id="nbTime"></small></div>
+                    <button id="nbVoice" title="Bật/tắt giọng chỉ đường"><i class="fas fa-volume-up"></i></button>
+                    <button id="nbSim" title="Chạy thử dọc theo đường (chế độ giả lập)" hidden><i class="fas fa-play"></i><span class="tx">Chạy thử</span></button>
+                    <button id="nbStop" class="nb-stop"><i class="fas fa-times"></i> Thoát</button>
+                  </div>
+                </div>
+
+                <div class="route-steps" id="routeSteps" hidden></div>
+
+                <div class="player" id="player">
+                  <button class="player-btn" id="pPlay" aria-label="Phát/Tạm dừng"><i class="fas fa-play"></i></button>
+                  <div class="player-info">
+                    <b id="pName">Chưa chọn điểm nào</b>
+                    <div class="player-bar"><i id="pBar"></i></div>
+                    <small id="pStat">Sẵn sàng</small> · <small id="pTime">00:00</small>
+                  </div>
+                  <div class="wave"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+                  <button class="player-btn player-btn--sm" id="pReplay" aria-label="Nghe lại"><i class="fas fa-redo"></i></button>
+                  <button class="player-btn player-btn--sm" id="pStop" aria-label="Dừng"><i class="fas fa-stop"></i></button>
+                </div>
+
+                <div class="category settings">
+                  <h3 class="category-header">Cài đặt thuyết minh</h3>
+                  <div class="set-row"><div><b>Tự động phát khi vào vùng</b><small>Tắt nếu bạn muốn tự bấm nghe</small></div><button class="switch" id="setAuto" aria-label="Tự động phát"></button></div>
+                  <div class="set-row"><div><b>Cooldown</b><small id="coolVal"></small></div><input type="range" id="setCool" min="10" max="120" step="5" /></div>
+                  <div class="set-row"><div><b>Tốc độ đọc</b><small id="rateVal"></small></div><input type="range" id="setRate" min="0.7" max="1.3" step="0.1" /></div>
+                </div>
+
+                <h3 class="list-title">Danh sách địa điểm <span id="placeCount"></span></h3>
+                <div id="placeList" class="row sm-gutter"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== TOUR ===== -->
+        <div class="container-Cart js-Container" data-pane="tour">
+          <div class="grid wide">
+            <h2 class="page-title"><i class="fas fa-route"></i> Tour của tôi</h2>
+            <div class="row sm-gutter">
+              <div class="col l-8 m-12 c-12"><div id="presetBox"></div><div id="tourList"></div></div>
+              <div class="col l-4 m-12 c-12">
+                <div class="tour-summary">
+                  <h3>Tóm tắt tour</h3>
+                  <div class="sum-row"><span>Số điểm dừng</span><b id="sumCount">0</b></div>
+                  <div class="sum-row"><span>Đã nghe</span><b id="sumDone">0</b></div>
+                  <div class="sum-row"><span>Thời lượng nghe ước tính</span><b id="sumTime">00:00</b></div>
+                  <button class="btn btn--primary btn--block" id="tourStart"><i class="fas fa-play"></i> Bắt đầu tour</button>
+                  <button class="btn btn--ghost btn--block" id="tourClear"><i class="fas fa-trash"></i> Xoá tất cả</button>
+                  <p class="sum-note">Bấm "Bắt đầu tour" để chấm xanh tự đi qua các điểm theo thứ tự (GPS giả lập).</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= FOOTER ================= -->
+      <div class="footer">
+        <div class="grid wide">
+          <div class="row sm-gutter">
+            <div class="col l-6 m-8 c-12">
+              <h3 class="footer__heading">Thuyết minh tự động</h3>
+              <p class="footer__content">Hệ thống thuyết minh tự động đa ngôn ngữ dựa trên GPS và geofence: bạn đến gần điểm tham quan, nội dung được tự động phát bằng ngôn ngữ bạn chọn.</p>
+            </div>
+            <div class="col l-2 m-6 c-6">
+              <h3 class="footer__heading">Giới thiệu</h3>
+              <ul class="footer-list">
+                <li><a href="#" class="footer-item_link" data-go="home">Trang chủ</a></li>
+                <li><a href="#" class="footer-item_link" data-go="places">Địa điểm</a></li>
+                <li><a href="#" class="footer-item_link" data-go="tour">Tour</a></li>
+                <li><a href="./Admin/dashboard.html" class="footer-item_link">Trang quản trị</a></li>
+              </ul>
+            </div>
+            <div class="col l-2 m-4 c-6">
+              <h3 class="footer__heading">Trợ giúp</h3>
+              <ul class="footer-list">
+                <li><a href="#" class="footer-item_link">Hướng dẫn sử dụng</a></li>
+                <li><a href="#" class="footer-item_link">Quyền riêng tư vị trí</a></li>
+                <li><a href="#" class="footer-item_link">Liên hệ</a></li>
+              </ul>
+            </div>
+            <div class="col l-2 m-6 c-12">
+              <h3 class="footer__heading">Theo dõi</h3>
+              <ul class="footer-list-icon">
+                <li><a href="#" class="footer-item_link"><i class="footer-item_icon fab fa-facebook"></i> Facebook</a></li>
+                <li><a href="#" class="footer-item_link"><i class="footer-item_icon fab fa-github"></i> GitHub</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="footer__bottom"><p class="footer__text">© Đồ án môn Công nghệ phần mềm - Thuyết minh tự động đa ngôn ngữ</p></div>
+      </div>
+    </div>
+
+    <!-- ================= TRÌNH PHÁT NỔI (hiện ở mọi tab) ================= -->
+    <div class="now-playing" id="nowPlaying" hidden>
+      <i class="fas fa-headphones"></i>
+      <b id="npName">—</b>
+      <button id="npToggle" aria-label="Phát/Tạm dừng"><i class="fas fa-pause"></i></button>
+      <button id="npStop" aria-label="Dừng"><i class="fas fa-times"></i></button>
+    </div>
+
+    <!-- ================= POPUP ĐĂNG NHẬP / ĐĂNG KÝ ================= -->
+    <div class="modal-wrap LR-wrap" id="lrModal">
+      <div class="modal-main LR-main">
+        <button class="modal-close" data-close><i class="fas fa-times"></i></button>
+        <div class="LR-header">
+          <div class="LR-header--item isActive" data-lr="login">Đăng nhập</div>
+          <div class="LR-header--item" data-lr="register">Đăng ký</div>
+        </div>
+        <form class="LR-form isActive" id="loginForm" data-form="login" autocomplete="on">
+          <label>Email</label><input type="email" name="email" class="input-field" autocomplete="username" required />
+          <label>Mật khẩu</label><input type="password" name="pass" class="input-field" autocomplete="current-password" required />
+          <label class="remember"><input type="checkbox" name="remember" checked /> Ghi nhớ đăng nhập</label>
+          <div class="form-error" id="loginErr"></div>
+          <button class="btn btn--primary btn--block" type="submit">Đăng nhập</button>
+        </form>
+        <form class="LR-form" id="registerForm" data-form="register" autocomplete="on">
+          <label>Họ và tên</label><input type="text" name="name" class="input-field" required />
+          <label>Email</label><input type="email" name="email" class="input-field" autocomplete="username" required />
+          <label>Mật khẩu (tối thiểu 6 ký tự)</label><input type="password" name="pass" class="input-field" minlength="6" autocomplete="new-password" required />
+          <label>Nhập lại mật khẩu</label><input type="password" name="pass2" class="input-field" minlength="6" autocomplete="new-password" required />
+          <div class="form-error" id="registerErr"></div>
+          <button class="btn btn--primary btn--block" type="submit">Tạo tài khoản</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ================= POPUP CHI TIẾT ĐỊA ĐIỂM ================= -->
+    <div class="modal-wrap" id="detailModal">
+      <div class="modal-main detail-main">
+        <button class="modal-close" data-close><i class="fas fa-times"></i></button>
+        <div class="detail-grid">
+          <div class="detail-visual" id="dVisual"></div>
+          <div class="detail-info">
+            <span class="tag" id="dCat"></span>
+            <h3 id="dName"></h3>
+            <p class="detail-desc" id="dDesc"></p>
+            <div class="info-row"><i class="fas fa-map-marker-alt"></i><div><small>Địa chỉ</small><span id="dAddr"></span></div></div>
+            <div class="info-row"><i class="fas fa-ruler"></i><div><small>Khoảng cách từ bạn</small><span id="dDist"></span></div></div>
+            <div class="info-row"><i class="fas fa-bullseye"></i><div><small>Bán kính kích hoạt · Ưu tiên</small><span id="dRad"></span></div></div>
+            <div class="chips" id="dLangs"></div>
+            <div class="detail-actions">
+              <button class="btn btn--primary" id="dListen"><i class="fas fa-headphones"></i> Nghe thuyết minh</button>
+              <button class="btn btn--ghost" id="dRoute"><i class="fas fa-route"></i> Chỉ đường</button>
+              <button class="btn btn--ghost" id="dTour"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= POPUP HỒ SƠ ================= -->
+    <div class="modal-wrap" id="profileModal">
+      <div class="modal-main profile-main">
+        <button class="modal-close" data-close><i class="fas fa-times"></i></button>
+        <div class="profile-head">
+          <div class="avatar" id="pfAvatar">?</div>
+          <div><h3 id="pfName"></h3><small id="pfMail"></small></div>
+        </div>
+        <div class="profile-tabs">
+          <button class="isActive" data-pf="info">Thông tin</button>
+          <button data-pf="edit">Chỉnh sửa</button>
+          <button data-pf="history">Lịch sử nghe</button>
+          <button data-pf="pass">Mật khẩu</button>
+        </div>
+        <div class="profile-pane isActive" data-pfpane="info" id="pfInfo"></div>
+        <form class="profile-pane" data-pfpane="edit" id="pfForm">
+          <label>Họ và tên</label><input class="input-field" name="name" required />
+          <label>Số điện thoại</label><input class="input-field" name="phone" />
+          <label>Thành phố</label><input class="input-field" name="city" />
+          <label>Ngôn ngữ ưa thích</label>
+          <select class="input-field" name="lang"><option value="vi">Tiếng Việt</option><option value="en">English</option><option value="zh">中文</option></select>
+          <button class="btn btn--primary btn--block" type="submit">Lưu thay đổi</button>
+        </form>
+        <div class="profile-pane" data-pfpane="history" id="pfHistory"></div>
+        <form class="profile-pane" data-pfpane="pass" id="pwForm" autocomplete="on">
+          <label>Mật khẩu hiện tại</label><input class="input-field" type="password" name="old" autocomplete="current-password" required />
+          <label>Mật khẩu mới (tối thiểu 6 ký tự)</label><input class="input-field" type="password" name="new1" minlength="6" autocomplete="new-password" required />
+          <label>Nhập lại mật khẩu mới</label><input class="input-field" type="password" name="new2" minlength="6" autocomplete="new-password" required />
+          <div class="form-error" id="pwErr"></div>
+          <button class="btn btn--primary btn--block" type="submit">Đổi mật khẩu</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Bản đồ thật (Leaflet + OpenStreetMap), cần Internet -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Tiện ích -->
+    <script src="./js/utils/Helper.js"></script>
+    <script src="./js/utils/Storage.js"></script>
+    <!-- Cấu hình + khoá API: DÁN KHOÁ Ở js/config.js -->
+    <script src="./js/config.js"></script>
+    <!-- Services (logic, không đụng vào giao diện) -->
+    <script src="./service/POIService.js"></script>
+    <script src="./service/LocationService.js"></script>
+    <script src="./service/GeofenceService.js"></script>
+    <script src="./service/AudioService.js"></script>
+    <script src="./service/NarrationService.js"></script>
+    <script src="./service/HistoryService.js"></script>
+    <script src="./service/TourService.js"></script>
+    <script src="./service/GeocodeService.js"></script>
+    <script src="./service/RouteService.js"></script>
+    <script src="./service/NavigationService.js"></script>
+    <script src="./service/AuthService.js"></script>
+    <!-- Components (giao diện) -->
+    <script src="./js/components/Header.js"></script>
+    <script src="./js/components/Map.js"></script>
+    <script src="./js/components/POI.js"></script>
+    <script src="./js/components/AudioPlayer.js"></script>
+    <script src="./js/components/Tour.js"></script>
+    <script src="./js/components/Search.js"></script>
+    <script src="./js/components/Route.js"></script>
+    <script src="./js/components/Auth.js"></script>
+    <script src="./js/main.js"></script>
+  </body>
+</html>

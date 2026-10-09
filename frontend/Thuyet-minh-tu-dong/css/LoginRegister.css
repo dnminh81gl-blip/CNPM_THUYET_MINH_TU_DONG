@@ -1,0 +1,22 @@
+.modal-wrap { position: fixed; inset: 0; z-index: 2000; display: none; align-items: center; justify-content: center; padding: 16px; background: rgba(0,0,0,.5); }
+.modal-wrap.isOpen { display: flex; }
+.modal-main { position: relative; background: #fff; border-radius: 16px; width: 100%; max-height: 92vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,.35); animation: pop .2s ease; }
+@keyframes pop { from { transform: scale(.94); opacity: 0; } to { transform: none; opacity: 1; } }
+.modal-close { position: absolute; right: 12px; top: 12px; width: 36px; height: 36px; border-radius: 50%; background: rgba(0,0,0,.08); z-index: 2; }
+.modal-close:hover { background: var(--primary-color); }
+.LR-main { max-width: 420px; padding: 26px 26px 18px; }
+.LR-header { display: flex; margin: 8px 0 18px; border-bottom: 1px solid #eee; }
+.LR-header--item { flex: 1; text-align: center; padding: 10px; font-weight: 700; cursor: pointer; color: #888; border-bottom: 3px solid transparent; margin-bottom: -1px; }
+.LR-header--item.isActive { color: #222; border-color: var(--primary-color); }
+.LR-form { display: none; }
+.LR-form.isActive { display: block; }
+.LR-form label, .profile-pane label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+.LR-note { font-size: 12px; color: var(--muted); margin-top: 14px; text-align: center; }
+
+.pw-wrap { position: relative; }
+.pw-wrap .input-field { padding-right: 44px; }
+.pw-eye { position: absolute; right: 4px; top: 0; width: 40px; height: 42px; color: #888; font-size: 16px; border-radius: 8px; }
+.pw-eye:hover { color: var(--primary-dark); }
+
+.LR-form label.remember { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px; margin: 2px 0 6px; cursor: pointer; }
+.LR-form label.remember input { width: 16px; height: 16px; accent-color: var(--primary-dark); }

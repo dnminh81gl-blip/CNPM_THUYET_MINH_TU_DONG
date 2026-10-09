@@ -22,6 +22,7 @@ public class RabbitConfig {
 
     public static final String EXCHANGE = "tourguide.events";
     public static final String RK_CONTENT_PUBLISHED = "content.published";
+    public static final String RK_NARRATION_CREATED = "narration.created";
     public static final String QUEUE_CONTENT_PUBLISHED = "narration-service.content.published";
 
     @Bean

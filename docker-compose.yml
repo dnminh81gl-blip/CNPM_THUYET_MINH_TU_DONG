@@ -1,0 +1,34 @@
+# Chay toan bo backend: docker compose up --build
+# RabbitMQ UI: http://localhost:15672 (guest / guest)
+services:
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: rabbit-compose
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  content-service:
+    build: ./backend/tourguide/content-service/content-service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_RABBITMQ_HOST: rabbitmq
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  narration-service:
+    build: ./backend/tourguide/narration-service/narration-service
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_RABBITMQ_HOST: rabbitmq
+    depends_on:
+      rabbitmq:
+        condition: service_healthy

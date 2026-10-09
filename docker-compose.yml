@@ -32,3 +32,13 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+
+  translation-service:
+    build: ./backend/tourguide/translation-service/translation-service
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_RABBITMQ_HOST: rabbitmq
+    depends_on:
+      rabbitmq:
+        condition: service_healthy

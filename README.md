@@ -7,14 +7,17 @@ Do an mon Cong nghe phan mem. Nhom phu trach: **Backend microservices + CI/CD**.
 frontend/Thuyet-minh-tu-dong/        Giao dien web (HTML/CSS/JS, Leaflet, GPS, geofence)
 backend/tourguide/
   content-service/                   Quan ly noi dung, phat su kien content.published (cong 8081)
-  narration-service/                 Nhan content.published, tao ban thuyet minh (cong 8082)
+  narration-service/                 Nhan content.published, tao ban thuyet minh, phat narration.created (cong 8082)
+  translation-service/               Nhan narration.created, dich, phat translation.completed (cong 8083)
 docker-compose.yml                   Chay RabbitMQ + cac service
 .github/workflows/ci.yml             CI: build + test + build Docker moi lan push
 EVENTS.md                            Hop dong su kien giua cac service
 ```
 
 ## Kien truc (ban dau)
-`content-service --(content.published)--> RabbitMQ --> narration-service --> ...` (them translation, TTS, notification, gateway).
+`content-service --content.published--> narration-service --narration.created--> translation-service --translation.completed--> (tts-service, notification-service...)`, tat ca qua RabbitMQ.
+
+Phan cong va quy tac lam viec: xem `docs/PHAN-CONG.md`.
 
 ## Chay bang Docker (khuyen dung)
 ```

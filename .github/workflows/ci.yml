@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        service: [content-service, narration-service]
+        service: [content-service, narration-service, translation-service]
     defaults:
       run:
         working-directory: backend/tourguide/${{ matrix.service }}/${{ matrix.service }}
@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [content-service, narration-service]
+        service: [content-service, narration-service, translation-service]
     steps:
       - uses: actions/checkout@v4
       - name: Build image

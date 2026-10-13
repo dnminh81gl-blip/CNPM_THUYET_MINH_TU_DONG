@@ -7,3 +7,12 @@
 .footer__bottom { padding: 10px 0; background: #f5f5f5; margin-top: 30px; }
 .footer__text { margin: 0; text-align: center; font-size: 13px; color: #737373; }
 .footer__content { font-size: 14px; color: #555; padding-right: 20px; }
+/* Nguồn ảnh (ghi công tác giả theo giấy phép Creative Commons) */
+.footer-credits { margin-top: 18px; font-size: 12px; color: #8a8a8a; }
+.footer-credits summary { cursor: pointer; font-weight: 600; width: max-content; max-width: 100%; }
+.footer-credits summary:hover { color: #b45309; }
+.footer-credits summary i { margin-right: 6px; }
+.footer-credits ul { list-style: none; columns: 2 280px; column-gap: 28px; margin-top: 8px; }
+.footer-credits li { padding: 2px 0; break-inside: avoid; }
+.footer-credits a { color: #b45309; text-decoration: none; }
+.footer-credits a:hover { text-decoration: underline; }

@@ -40,7 +40,7 @@ const TourUI = {
       const p = POIService.get(id), ok = done.includes(id), lang = Settings.get().lang;
       return `<div class="tour-row ${ok ? "done" : ""}">
         <div class="tour-no">${ok ? '<i class="fas fa-check"></i>' : i + 1}</div>
-        <div class="tour-ico" style="background:${POIService.grad(p)}"><i class="fas ${p.icon}"></i></div>
+        <div class="tour-ico" style="background:${POIService.grad(p)}">${POIService.media(p, 240)}</div>
         <div class="tour-body"><b>${Helper.esc(p.name[lang])}<span class="tour-badge">${ok ? "Đã nghe" : "Chưa nghe"}</span></b><small>${Helper.esc(p.cat)} · bán kính ${p.r} m</small></div>
         <div class="tour-acts">
           <button data-act="up" data-id="${id}" aria-label="Lên"><i class="fas fa-arrow-up"></i></button>

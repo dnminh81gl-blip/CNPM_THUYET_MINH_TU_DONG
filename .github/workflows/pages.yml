@@ -1,0 +1,45 @@
+# CD: tự động đưa giao diện web (frontend/Thuyet-minh-tu-dong) lên GitHub Pages
+# mỗi khi có code mới trên nhánh main. Có thể chạy tay ở tab Actions > Deploy web > Run workflow.
+name: Deploy web
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "frontend/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# chỉ chạy 1 lần deploy tại một thời điểm
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Đưa web lên GitHub Pages
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Kiểm tra cú pháp JavaScript
+        run: |
+          cd frontend/Thuyet-minh-tu-dong
+          find . -name "*.js" -not -path "./font/*" -print0 | xargs -0 -n1 node --check
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend/Thuyet-minh-tu-dong
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

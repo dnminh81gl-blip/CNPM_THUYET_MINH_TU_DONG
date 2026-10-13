@@ -1,7 +1,8 @@
 @media (max-width: 1023px) {
-  .introduce-title1 { font-size: 32px; }
-  .product-introduce { flex-direction: column !important; padding: 22px; }
-  .pi-visual { width: 100%; max-width: 380px; }
+  .introduce-title1 { font-size: 36px; }
+  .product-introduce { flex-direction: column !important; padding: 18px; }
+  .pi-visual { width: 100%; max-width: none; height: 260px; }
+  .gallery { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 180px; }
   .mobile-search { display: flex; }
   .mobile-category { display: block; }
   .map-card { height: 400px; }
@@ -18,18 +19,27 @@
   .header-username, .header-navbar-profile, .header-navbar-logout { line-height: 44px; }
   .header-navbar--list .line { display: none; }
   .header-mobile--btn { display: block; }
-  .introduce-title1 { font-size: 26px; }
+  .Introduce-slider { height: auto; min-height: 560px; padding: 40px 0 64px; }
+  .introduce-title1 { font-size: 28px; }
   .introduce-title2 { font-size: 16px; }
-  .introduce-content { top: calc(var(--heade-height) + 62vh / 2 - 150px); }
+  .introduce-cta { height: 44px; font-size: 15px; }
+  .introduce-stats li { min-width: 92px; padding: 8px 10px; }
+  .hero-credit { left: 12px; right: 12px; bottom: 40px; max-width: none; text-align: center; }
+  .product-introduces { padding: 20px 4px; }
   .product-introduces--title { font-size: 24px; }
+  .product-introduce--content-title { font-size: 22px; }
+  .pi-visual { height: 210px; }
+  .gallery { grid-template-columns: 1fr 1fr; grid-auto-rows: 140px; gap: 10px; }
+  .gallery-item--big { grid-column: span 2; grid-row: span 2; }
+  .gallery-cap { font-size: 13px; }
   .map-card { height: 380px; }
   .player { flex-wrap: wrap; }
   .wave { display: none; }
   .settings input[type=range] { width: 120px; }
   .detail-grid { grid-template-columns: 1fr; }
-  .detail-visual { min-height: 160px; font-size: 64px; }
+  .detail-visual { min-height: 220px; font-size: 64px; }
   .tour-row { flex-wrap: wrap; }
-  .tour-ico { width: 52px; height: 52px; }
+  .tour-ico { width: 72px; height: 56px; }
   .now-playing { right: 10px; bottom: 10px; }
   .toast { max-width: 90vw; }
   #toast { right: 10px; top: 66px; }

@@ -6,6 +6,8 @@
     <title>Thuyết minh tự động</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://commons.wikimedia.org" />
+    <link rel="preconnect" href="https://upload.wikimedia.org" />
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./font/css/all.min.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -60,17 +62,34 @@
       <div class="container">
         <!-- ===== TRANG CHỦ ===== -->
         <div class="container-Introduce js-Container headerActive" data-pane="home">
-          <div class="Introduce-slider"></div>
-          <div class="introduce-content">
-            <h2 class="introduce-title1">Thuyết minh tự động đa ngôn ngữ</h2>
-            <h5 class="introduce-title2">Đi đến đâu - Nghe đến đó - Hiểu thêm về thành phố</h5>
-            <button class="btn btn--primary introduce-cta" data-go="places"><i class="fas fa-headphones"></i> Bắt đầu khám phá</button>
+          <!-- Banner: ảnh thật của thành phố, tự chuyển (ảnh khai báo ở POIService.HERO) -->
+          <div class="Introduce-slider" id="heroSlider">
+            <div class="hero-slides" id="heroSlides"></div>
+            <div class="introduce-content">
+              <span class="introduce-kicker"><i class="fas fa-map-marker-alt"></i> Quận 1 · TP. Hồ Chí Minh</span>
+              <h2 class="introduce-title1">Thuyết minh tự động đa ngôn ngữ</h2>
+              <h5 class="introduce-title2">Đi đến đâu - Nghe đến đó - Hiểu thêm về thành phố</h5>
+              <div class="introduce-actions">
+                <button class="btn btn--primary introduce-cta" data-go="places"><i class="fas fa-headphones"></i> Bắt đầu khám phá</button>
+                <button class="btn introduce-cta introduce-cta--ghost" data-go="tour"><i class="fas fa-route"></i> Xem tour gợi ý</button>
+              </div>
+              <ul class="introduce-stats">
+                <li><b><i class="fas fa-language"></i> 3</b><small>ngôn ngữ</small></li>
+                <li><b><i class="fas fa-satellite-dish"></i> GPS</b><small>tự kích hoạt</small></li>
+                <li><b><i class="fas fa-mobile-alt"></i> 0</b><small>cần cài app</small></li>
+              </ul>
+            </div>
+            <div class="hero-dots" id="heroDots"></div>
+            <small class="hero-credit" id="heroCredit"></small>
           </div>
 
           <div class="product-introduces">
             <div class="grid wide">
               <div class="product-introduces--title">Điểm nổi bật</div>
               <div id="featured"></div>
+
+              <div class="product-introduces--title">Hình ảnh các điểm tham quan</div>
+              <div class="gallery" id="gallery"></div>
 
               <div class="product-introduces--title">Cách hoạt động</div>
               <div class="row sm-gutter how">
@@ -252,6 +271,10 @@
               </ul>
             </div>
           </div>
+          <details class="footer-credits">
+            <summary><i class="fas fa-camera"></i> Nguồn ảnh (Wikimedia Commons)</summary>
+            <ul id="photoCredits"></ul>
+          </details>
         </div>
         <div class="footer__bottom"><p class="footer__text">© Đồ án môn Công nghệ phần mềm - Thuyết minh tự động đa ngôn ngữ</p></div>
       </div>

@@ -2,7 +2,7 @@
 .tour-row { display: flex; align-items: center; gap: 14px; background: #fff; border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
 .tour-no { width: 34px; height: 34px; border-radius: 50%; background: #fff4de; color: #b45309; font-weight: 700; display: grid; place-items: center; flex: none; }
 .tour-row.done .tour-no { background: var(--ok); color: #fff; }
-.tour-ico { width: 64px; height: 64px; border-radius: 12px; display: grid; place-items: center; color: #fff; font-size: 26px; flex: none; }
+.tour-ico { width: 96px; height: 72px; border-radius: 12px; display: grid; place-items: center; color: #fff; font-size: 26px; flex: none; position: relative; overflow: hidden; }
 .tour-body { flex: 1; min-width: 0; }
 .tour-body b { display: block; font-size: 16px; }
 .tour-body small { color: var(--muted); }

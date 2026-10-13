@@ -45,7 +45,7 @@ const PoiUI = {
     $("#placeCount").textContent = `(${list.length})`;
     $("#placeList").innerHTML = list.length ? list.map(p => `
       <div class="col l-2-4 m-4 c-6"><div class="product-item" data-id="${p.id}">
-        <div class="product-item--img" style="background:${POIService.grad(p)}"><span class="product-item--badge">Ưu tiên ${p.pri}</span><i class="fas ${p.icon}"></i></div>
+        <div class="product-item--img" style="background:${POIService.grad(p)}">${POIService.media(p, 480)}<span class="product-item--badge">Ưu tiên ${p.pri}</span></div>
         <div class="product-item-main">
           <div class="product-item--name">${Helper.esc(p.name.vi)}</div>
           <div class="product-item--price_type"><span class="product-item--type">${Helper.esc(p.cat)}</span><span class="js-dist" data-id="${p.id}"></span></div>
@@ -77,7 +77,8 @@ const PoiUI = {
   },
   openDetail(id) {
     const p = POIService.get(id), lang = Settings.get().lang; this.openId = id;
-    $("#dVisual").style.background = POIService.grad(p); $("#dVisual").innerHTML = `<i class="fas ${p.icon}"></i>`;
+    $("#dVisual").style.background = POIService.grad(p);
+    $("#dVisual").innerHTML = POIService.media(p, 1024) + (p.img && p.credit ? `<small class="photo-credit">Ảnh: ${Helper.esc(p.credit)}</small>` : "");
     $("#dCat").textContent = p.cat; $("#dName").textContent = p.name[lang] + (lang !== "vi" ? ` (${p.name.vi})` : "");
     $("#dDesc").textContent = p.text[lang]; $("#dAddr").textContent = p.addr;
     $("#dRad").textContent = `${p.r} m · Ưu tiên ${p.pri}`;

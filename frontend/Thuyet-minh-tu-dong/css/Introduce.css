@@ -1,24 +1,70 @@
-.Introduce-slider { height: 62vh; min-height: 380px; position: relative; background:
-  linear-gradient(135deg, rgba(15,23,42,.92), rgba(30,58,138,.88)),
-  repeating-linear-gradient(35deg, transparent 0 46px, rgba(255,255,255,.08) 46px 48px),
-  repeating-linear-gradient(125deg, transparent 0 46px, rgba(255,255,255,.08) 46px 48px); background-color: #1e3a8a; }
-.Introduce-slider::after { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 14%; background: linear-gradient(90deg, transparent, rgba(96,165,250,.35)); }
-.introduce-content { position: absolute; display: flex; flex-direction: column; align-items: center; text-align: center; left: 0; right: 0; top: calc(var(--heade-height) + 62vh / 2 - 130px); padding: 28px 20px; background: rgba(247,247,247,.12); }
-.introduce-title1, .introduce-title2 { color: #fff; font-weight: 700; text-shadow: 0 4px 20px var(--primary-color); padding: 10px 0; }
-.introduce-title1 { font-size: 40px; }
-.introduce-title2 { font-size: 20px; }
-.introduce-cta { margin-top: 14px; height: 48px; font-size: 16px; }
+/* ===== Banner trang chủ: ảnh thật của thành phố, tự chuyển ===== */
+.Introduce-slider { height: 72vh; min-height: 460px; max-height: 760px; position: relative; overflow: hidden; display: grid; place-items: center;
+  /* nền dự phòng khi chưa tải được ảnh */
+  background: linear-gradient(135deg, rgba(15,23,42,.92), rgba(30,58,138,.88)),
+    repeating-linear-gradient(35deg, transparent 0 46px, rgba(255,255,255,.08) 46px 48px),
+    repeating-linear-gradient(125deg, transparent 0 46px, rgba(255,255,255,.08) 46px 48px); background-color: #1e3a8a; }
+.hero-slides { position: absolute; inset: 0; }
+.hero-slide { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; transform: scale(1.08); transition: opacity 1.4s ease, transform 7s ease-out; }
+.hero-slide.on { opacity: 1; transform: scale(1); }
+/* lớp phủ tối để chữ trắng luôn đọc được trên mọi ảnh */
+.Introduce-slider::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, rgba(10,15,30,.55) 0%, rgba(10,15,30,.30) 40%, rgba(10,15,30,.72) 100%); }
+.introduce-content { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 28px 20px; max-width: 860px; }
+.introduce-kicker { display: inline-flex; align-items: center; gap: 8px; color: #fff; font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.28); padding: 6px 14px; border-radius: 99px; backdrop-filter: blur(4px); }
+.introduce-kicker i { color: var(--primary-color); }
+.introduce-title1, .introduce-title2 { color: #fff; font-weight: 700; text-shadow: 0 2px 18px rgba(0,0,0,.45); padding: 8px 0; }
+.introduce-title1 { font-size: 46px; line-height: 1.2; margin-top: 10px; }
+.introduce-title2 { font-size: 20px; font-weight: 600; opacity: .95; }
+.introduce-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 16px; }
+.introduce-cta { height: 48px; font-size: 16px; padding: 0 24px; box-shadow: 0 6px 18px rgba(0,0,0,.25); }
+.introduce-cta--ghost { background: rgba(255,255,255,.14); color: #fff; border: 1px solid rgba(255,255,255,.55); backdrop-filter: blur(4px); }
+.introduce-cta--ghost:hover { background: rgba(255,255,255,.26); }
+.introduce-stats { list-style: none; display: flex; gap: 10px; margin-top: 26px; flex-wrap: wrap; justify-content: center; }
+.introduce-stats li { min-width: 120px; padding: 10px 16px; border-radius: 14px; background: rgba(0,0,0,.28); border: 1px solid rgba(255,255,255,.18); color: #fff; backdrop-filter: blur(4px); }
+.introduce-stats b { display: block; font-size: 18px; }
+.introduce-stats b i { color: var(--primary-color); font-size: 15px; margin-right: 4px; }
+.introduce-stats small { font-size: 12px; opacity: .85; }
+.hero-dots { position: absolute; z-index: 3; bottom: 18px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; }
+.hero-dots button { width: 10px; height: 10px; border-radius: 99px; background: rgba(255,255,255,.5); transition: all .3s; }
+.hero-dots button.on { width: 28px; background: var(--primary-color); }
+.hero-credit { position: absolute; z-index: 3; right: 14px; bottom: 14px; color: rgba(255,255,255,.75); font-size: 11px; max-width: 46%; text-align: right; }
+.hero-credit i { margin-right: 4px; }
+
+/* ===== Điểm nổi bật (ảnh + mô tả xen kẽ trái/phải, giống bố cục GEARS Shop) ===== */
 .product-introduces { padding: 32px 20px; }
 .product-introduces--title { text-align: center; padding: 36px 0 28px; font-size: 30px; font-weight: 700; text-decoration: underline; text-decoration-color: var(--primary-color); text-underline-offset: 8px; }
-.product-introduce { display: flex; justify-content: space-between; align-items: center; padding: 28px 40px; background: #7b7b7b22; border-radius: 36px; margin-bottom: 36px; gap: 24px; }
-.pi-visual { flex: none; width: 340px; height: 230px; border-radius: 20px; display: grid; place-items: center; color: #fff; font-size: 80px; transition: all .3s; box-shadow: 0 8px 24px rgba(0,0,0,.15); }
-.pi-visual:hover { opacity: .85; transform: scale(1.04); }
-.product-introduce-content { padding: 8px 24px; flex: 1; }
-.product-introduce--content-title { font-size: 28px; font-weight: 700; text-align: center; padding: 10px 0; color: orange; }
-.product-introduce--content-contents { font-size: 16px; text-align: justify; padding: 8px; line-height: 1.8; }
-.pi-actions { display: flex; gap: 10px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
+.product-introduce { display: flex; justify-content: space-between; align-items: center; padding: 24px; background: #fff; border-radius: 28px; margin-bottom: 32px; gap: 28px; box-shadow: 0 4px 22px rgba(0,0,0,.06); }
+.pi-visual { flex: none; width: 440px; height: 290px; border-radius: 20px; display: grid; place-items: center; color: #fff; font-size: 80px; position: relative; overflow: hidden; cursor: pointer; box-shadow: 0 10px 28px rgba(0,0,0,.18); }
+.pi-visual .poi-photo { transition: transform .6s ease; }
+.pi-visual:hover .poi-photo { transform: scale(1.06); }
+.pi-tag { position: absolute; z-index: 2; left: 14px; top: 14px; background: rgba(0,0,0,.55); color: #fff; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 99px; }
+.product-introduce-content { padding: 8px 12px; flex: 1; }
+.product-introduce--content-title { font-size: 28px; font-weight: 700; padding: 6px 0; color: #d97706; }
+.product-introduce--content-addr { font-size: 14px; color: var(--muted); }
+.product-introduce--content-addr i { color: var(--primary-dark); margin-right: 4px; }
+.product-introduce--content-contents { font-size: 16px; text-align: justify; padding: 10px 0; line-height: 1.8; }
+.pi-actions { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+
+/* ===== Bộ sưu tập ảnh ===== */
+.gallery { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 200px; gap: 14px; }
+.gallery-item { position: relative; overflow: hidden; border-radius: 18px; display: grid; place-items: center; color: #fff; font-size: 48px; text-align: left; box-shadow: 0 4px 16px rgba(0,0,0,.1); }
+.gallery-item--big { grid-column: span 2; grid-row: span 2; font-size: 80px; }
+.gallery-item .poi-photo { transition: transform .6s ease; }
+.gallery-item:hover .poi-photo { transform: scale(1.07); }
+.gallery-item::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 45%, rgba(0,0,0,.7)); pointer-events: none; z-index: 1; }
+.gallery-cap { position: absolute; z-index: 2; left: 14px; right: 14px; bottom: 12px; font-size: 15px; line-height: 1.3; }
+.gallery-cap b { display: block; }
+.gallery-cap small { font-size: 12px; opacity: .85; }
+.gallery-item--big .gallery-cap { font-size: 20px; }
+
+/* ===== Cách hoạt động ===== */
 .how { padding-bottom: 20px; }
 .how-item { background: #fff; border-radius: 20px; padding: 24px 20px; text-align: center; box-shadow: 0 2px 12px rgba(0,0,0,.06); height: 100%; margin-bottom: 8px; }
 .how-icon { display: inline-grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: #fff4de; color: var(--primary-dark); font-size: 28px; margin-bottom: 12px; }
 .how-item h4 { font-size: 18px; margin-bottom: 8px; }
 .how-item p { color: var(--muted); font-size: 14px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide { transition: opacity .3s; transform: none !important; }
+}

@@ -1,8 +1,9 @@
-/* Quản lý địa điểm (POI): tìm kiếm, lọc, phân trang, thêm / sửa / xoá, chọn vị trí trên bản đồ */
+/* Quản lý địa điểm (POI): tìm kiếm, lọc, phân trang, thêm / sửa / xoá, chọn vị trí trên bản đồ, ảnh minh hoạ */
 const PlacesPage = {
   page: 1, f: { q: "", cat: "", st: "" }, editing: null, pick: { lat: 10.7782, lng: 106.6995 }, pm: null, pl: null,
   init() {
     if (!A.init("places")) return;
+    POIService.BASE = "../"; /* ảnh đặt trong thư mục img/ của dự án nằm ở thư mục cha của Admin/ */
     $("#app").innerHTML = `
       <div class="adm-title"><h1><i class="fas fa-map-marker-alt"></i> Quản lý địa điểm</h1>
         <div><button class="btn btn--ghost" id="reset"><i class="fas fa-undo"></i> Khôi phục dữ liệu mẫu</button> <button class="btn btn--primary" id="add"><i class="fas fa-plus"></i> Thêm địa điểm</button></div></div>
@@ -12,7 +13,7 @@ const PlacesPage = {
           <select class="input-field" id="cat"><option value="">Tất cả danh mục</option></select>
           <select class="input-field" id="st"><option value="">Mọi trạng thái</option><option value="published">Đã xuất bản</option><option value="draft">Bản nháp</option></select>
           <span class="sp"></span><span id="count" class="hint" style="margin:0"></span></div>
-        <div class="tbl-wrap"><table class="tbl"><thead><tr><th>#</th><th></th><th>Tên (Tiếng Việt)</th><th>Danh mục</th><th>Bán kính</th><th>Ưu tiên</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody id="rows"></tbody></table></div>
+        <div class="tbl-wrap"><table class="tbl"><thead><tr><th>#</th><th>Ảnh</th><th>Tên (Tiếng Việt)</th><th>Danh mục</th><th>Bán kính</th><th>Ưu tiên</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody id="rows"></tbody></table></div>
         <div class="pager" id="pager"></div>
       </div>`;
     document.body.insertAdjacentHTML("beforeend", this.modalHtml());
@@ -31,6 +32,8 @@ const PlacesPage = {
       const la = parseFloat($("#flat").value), ln = parseFloat($("#flng").value);
       if (!isNaN(la) && !isNaN(ln)) { this.pick = { lat: la, lng: ln }; this.drawPicker(true); }
     }));
+    $("#fimg").addEventListener("input", () => { clearTimeout(this._pt); this._pt = setTimeout(() => this.preview(), 400); });
+    ["fico", "fgrad"].forEach(k => $("#" + k).addEventListener("change", () => this.preview()));
     $("#pForm").onsubmit = e => { e.preventDefault(); this.save(); };
     this.render();
   },
@@ -47,6 +50,15 @@ const PlacesPage = {
       <div><label>Mức ưu tiên (1-5) *</label><input class="input-field" id="fpri" type="number" min="1" max="5" required /></div>
       <div><label>Biểu tượng</label><select class="input-field" id="fico"></select></div>
       <div><label>Màu</label><select class="input-field" id="fgrad"></select></div>
+      <div class="full"><label>Ảnh thực tế</label>
+        <div style="display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap">
+          <div id="imgPrev" style="width:200px;height:130px;border-radius:12px;position:relative;overflow:hidden;display:grid;place-items:center;color:#fff;font-size:40px;flex:none"></div>
+          <div style="flex:1;min-width:220px">
+            <input class="input-field" id="fimg" maxlength="400" placeholder="VD: img/places/dinh-doc-lap.jpg hoặc tên file Wikimedia Commons hoặc https://..." />
+            <input class="input-field" id="fcredit" maxlength="120" placeholder="Ghi nguồn ảnh, VD: Nguyễn Văn A · CC BY-SA 4.0" />
+            <div class="hint">Có 3 cách: (1) bỏ ảnh vào thư mục <b>img/</b> cạnh index.html rồi nhập <b>img/ten-anh.jpg</b>; (2) nhập tên file trên Wikimedia Commons; (3) dán URL ảnh. Để trống thì hiện màu + biểu tượng.</div>
+          </div>
+        </div></div>
       <div class="full"><label>Mô tả thuyết minh - Tiếng Việt *</label><textarea class="input-field" id="tVi" required maxlength="1200" placeholder="Nội dung sẽ được đọc khi người dùng đến gần địa điểm"></textarea>
         <div class="hint">Bản dịch English / 中文 nhập ở trang "Nội dung & bản dịch".</div></div>
       <div class="full"><label>Vị trí (bấm trên bản đồ hoặc kéo ghim đỏ)</label>
@@ -55,6 +67,16 @@ const PlacesPage = {
         <div class="hint">Mẹo: trên Google Maps bấm chuột phải vào vị trí rồi chọn dòng toạ độ để sao chép. Bán kính nên nhỏ (40-80 m) vì GPS ngoài trời thường lệch 5-20 m.</div></div>
       <div class="full mfoot"><button type="button" class="btn btn--ghost" data-close>Huỷ</button><button class="btn btn--primary" type="submit"><i class="fas fa-save"></i> Lưu</button></div>
     </form></div></div>`;
+  },
+  /* ảnh thu nhỏ: ảnh thật nếu có, lỗi ảnh thì về màu + biểu tượng */
+  thumb(p, w) {
+    const src = POIService.photoUrl(p.img, w);
+    return `<i class="fas ${p.icon}" style="position:relative"></i>` + (src ? `<img src="${Helper.esc(src)}" alt="" loading="lazy" onerror="this.remove()" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" />` : "");
+  },
+  preview() {
+    const g = GRADS[Number($("#fgrad").value)] || GRADS[0];
+    $("#imgPrev").style.background = `linear-gradient(135deg, ${g[0]}, ${g[1]})`;
+    $("#imgPrev").innerHTML = this.thumb({ img: $("#fimg").value, icon: $("#fico").value }, 400);
   },
   list() {
     const q = this.f.q.trim().toLowerCase();
@@ -68,7 +90,7 @@ const PlacesPage = {
     const r = A.paginate(this.list(), this.page); this.page = r.page;
     $("#count").textContent = `${this.list().length} / ${all.length} địa điểm`;
     $("#rows").innerHTML = r.rows.length ? r.rows.map((p, i) => `<tr>
-      <td>${(r.page - 1) * 8 + i + 1}</td><td><div class="ico" style="background:${A.gradOf(p)}"><i class="fas ${p.icon}"></i></div></td>
+      <td>${(r.page - 1) * 8 + i + 1}</td><td><div class="ico" style="background:${A.gradOf(p)};position:relative;overflow:hidden">${this.thumb(p, 160)}</div></td>
       <td><b>${Helper.esc(p.name.vi)}</b><br><small style="color:#888">${Helper.esc(p.addr)}</small></td><td>${Helper.esc(p.cat)}</td><td>${p.r} m</td><td>${p.pri}</td>
       <td><button class="badge ${(p.status || "published") === "draft" ? "warn" : "ok"}" data-a="tg" data-id="${p.id}" title="Bấm để đổi trạng thái">${(p.status || "published") === "draft" ? "Nháp" : "Đã xuất bản"}</button></td>
       <td><div class="acts"><button class="ibtn" data-a="edit" data-id="${p.id}" aria-label="Sửa"><i class="fas fa-pen"></i></button><button class="ibtn del" data-a="del" data-id="${p.id}" aria-label="Xoá"><i class="fas fa-trash"></i></button></div></td></tr>`).join("")
@@ -85,12 +107,13 @@ const PlacesPage = {
   },
   open(id) {
     this.editing = id;
-    const p = id ? A.pois().find(x => x.id === id) : { name: { vi: "", en: "", zh: "" }, text: { vi: "" }, cat: "", addr: "", r: 50, pri: 2, icon: "fa-landmark", grad: GRADS[0], status: "draft", lat: POIService.ORIGIN.lat, lng: POIService.ORIGIN.lng };
+    const p = id ? A.pois().find(x => x.id === id) : { name: { vi: "", en: "", zh: "" }, text: { vi: "" }, cat: "", addr: "", r: 50, pri: 2, icon: "fa-landmark", grad: GRADS[0], status: "draft", img: "", credit: "", lat: POIService.ORIGIN.lat, lng: POIService.ORIGIN.lng };
     $("#mTitle").textContent = id ? "Sửa địa điểm" : "Thêm địa điểm";
     $("#fico").innerHTML = ICONS.map(([n, , t]) => `<option value="${n}" ${n === p.icon ? "selected" : ""}>${t}</option>`).join("");
     $("#fgrad").innerHTML = GRADS.map((g, i) => `<option value="${i}" ${g[0] === p.grad[0] ? "selected" : ""}>Màu ${i + 1}</option>`).join("");
     $("#nVi").value = p.name.vi; $("#nEn").value = p.name.en || ""; $("#nZh").value = p.name.zh || ""; $("#fcat").value = p.cat; $("#fst").value = p.status || "published";
     $("#faddr").value = p.addr; $("#fr").value = p.r; $("#fpri").value = p.pri; $("#tVi").value = p.text.vi || "";
+    $("#fimg").value = p.img || ""; $("#fcredit").value = p.credit || ""; this.preview();
     this.pick = { lat: p.lat, lng: p.lng }; $("#flat").value = p.lat; $("#flng").value = p.lng; Modal.open("pModal");
     setTimeout(() => this.initPicker(), 80);
   },
@@ -128,11 +151,13 @@ const PlacesPage = {
       name: { vi: $("#nVi").value.trim(), en: $("#nEn").value.trim(), zh: $("#nZh").value.trim() },
       cat: $("#fcat").value.trim(), addr: $("#faddr").value.trim(), r: Number($("#fr").value), pri: Number($("#fpri").value),
       lat: parseFloat($("#flat").value), lng: parseFloat($("#flng").value), status: $("#fst").value,
-      icon: $("#fico").value, grad: GRADS[Number($("#fgrad").value)]
+      icon: $("#fico").value, grad: GRADS[Number($("#fgrad").value)],
+      img: $("#fimg").value.trim(), credit: $("#fcredit").value.trim()
     };
     g.code = ICONS.find(i => i[0] === g.icon)[1];
     if (!g.name.vi || !g.cat || !g.addr || !$("#tVi").value.trim()) { toast({ title: "Thiếu thông tin", message: "Vui lòng điền đủ các trường bắt buộc.", type: "warning" }); return; }
     if (g.r < 20 || g.r > 300 || g.pri < 1 || g.pri > 5 || isNaN(g.lat) || isNaN(g.lng) || g.lat < -90 || g.lat > 90 || g.lng < -180 || g.lng > 180) { toast({ title: "Giá trị không hợp lệ", message: "Kiểm tra lại bán kính, ưu tiên và vĩ độ/kinh độ.", type: "warning" }); return; }
+    if (g.img && /^\s*javascript:/i.test(g.img)) { toast({ title: "Ảnh không hợp lệ", message: "Hãy nhập đường dẫn ảnh, tên file hoặc URL https.", type: "warning" }); return; }
     if (this.editing) {
       const p = l.find(x => x.id === this.editing); Object.assign(p, g); delete p.x; delete p.y; p.text = Object.assign({}, p.text, { vi: $("#tVi").value.trim() });
     } else {

@@ -12,7 +12,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import org.mockito.Mockito;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tourguide.translation_service.model.TranslatedItem;
 import com.tourguide.translation_service.model.TranslationResponse;
 

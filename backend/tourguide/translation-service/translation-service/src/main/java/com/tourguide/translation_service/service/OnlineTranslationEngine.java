@@ -7,16 +7,16 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 /**
  * Bộ dịch trực tuyến sử dụng MyMemory Translation API công cộng (miễn phí, không cần API key).
+ * Sử dụng thuần Java standard library để không phụ thuộc thêm thư viện ngoài.
  * Tự động timeout sau 3 giây để không làm nghẽn hàng đợi xử lý sự kiện.
  */
 @Service
@@ -24,12 +24,12 @@ public class OnlineTranslationEngine implements TranslationEngine {
 
     private static final Logger log = LoggerFactory.getLogger(OnlineTranslationEngine.class);
     private static final String API_ENDPOINT = "https://api.mymemory.translated.net/get";
+    private static final Pattern TRANSLATED_TEXT_PATTERN =
+            Pattern.compile("\"translatedText\"\\s*:\\s*\"(.*?)(?<!\\\\)\"");
 
     private final HttpClient httpClient;
-    private final ObjectMapper objectMapper;
 
-    public OnlineTranslationEngine(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
+    public OnlineTranslationEngine() {
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(3))
                 .build();
@@ -59,9 +59,7 @@ public class OnlineTranslationEngine implements TranslationEngine {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() == 200) {
-                JsonNode root = objectMapper.readTree(response.body());
-                JsonNode responseData = root.path("responseData");
-                String translatedText = responseData.path("translatedText").asText();
+                String translatedText = extractTranslatedText(response.body());
                 if (translatedText != null && !translatedText.isBlank()) {
                     return translatedText;
                 }
@@ -73,6 +71,22 @@ public class OnlineTranslationEngine implements TranslationEngine {
         }
 
         throw new RuntimeException("Online translation service unavailable");
+    }
+
+    private String extractTranslatedText(String responseBody) {
+        if (responseBody == null || responseBody.isBlank()) {
+            return null;
+        }
+        Matcher matcher = TRANSLATED_TEXT_PATTERN.matcher(responseBody);
+        if (matcher.find()) {
+            String rawText = matcher.group(1);
+            return rawText.replace("\\\"", "\"")
+                          .replace("\\\\", "\\")
+                          .replace("\\n", "\n")
+                          .replace("\\r", "\r")
+                          .replace("\\t", "\t");
+        }
+        return null;
     }
 
     @Override

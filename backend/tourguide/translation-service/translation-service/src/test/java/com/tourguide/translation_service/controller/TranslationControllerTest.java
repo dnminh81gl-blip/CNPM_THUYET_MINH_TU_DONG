@@ -16,10 +16,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tourguide.translation_service.EventPublisher;
 import com.tourguide.translation_service.model.TranslatedItem;
-import com.tourguide.translation_service.model.TranslationRequest;
 import com.tourguide.translation_service.model.TranslationResponse;
 import com.tourguide.translation_service.service.TranslationManagerService;
 import com.tourguide.translation_service.service.TranslationStorage;
@@ -30,7 +28,6 @@ class TranslationControllerTest {
     private TranslationManagerService translationManager;
     private EventPublisher publisher;
     private TranslationStorage storage;
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     void setUp() {
@@ -57,11 +54,11 @@ class TranslationControllerTest {
         when(translationManager.translateSingle("Xin chào", "vi", "en"))
                 .thenReturn(TranslationResponse.success("Xin chào", "Hello", "vi", "en", "mock_engine"));
 
-        TranslationRequest request = new TranslationRequest("Xin chào", "vi", "en");
+        String json = "{\"text\":\"Xin chào\",\"sourceLang\":\"vi\",\"targetLang\":\"en\"}";
 
         mockMvc.perform(post("/api/translations/translate")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                        .content(json))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.translatedText").value("Hello"));
@@ -69,11 +66,11 @@ class TranslationControllerTest {
 
     @Test
     void testTranslateText_EmptyBadRequest() throws Exception {
-        TranslationRequest request = new TranslationRequest("", "vi", "en");
+        String json = "{\"text\":\"\",\"sourceLang\":\"vi\",\"targetLang\":\"en\"}";
 
         mockMvc.perform(post("/api/translations/translate")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                        .content(json))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false));
     }

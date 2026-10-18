@@ -1,0 +1,24 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: notification-service
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+
+rabbitmq:
+  queue:
+    audio-ready: audio.ready
+    translation-completed: translation.completed
+  exchange:
+    tourguide: tourguide.exchange
+
+logging:
+  level:
+    com.tourguide.notification: DEBUG
+    org.springframework.web.socket: INFO
+    org.springframework.amqp: INFO

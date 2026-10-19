@@ -2,6 +2,7 @@ package com.tourguide.translation_service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,12 +16,14 @@ import com.tourguide.translation_service.model.TranslatedItem;
 import com.tourguide.translation_service.service.TranslationManagerService;
 
 /**
- * Lắng nghe narration.created -> dịch đa ngôn ngữ -> phát translation.completed.
+ * Lắng nghe narration.created -> dịch bài thuyết minh THẬT (script.vi) sang các ngôn ngữ
+ * -> phát translation.completed kèm scripts.
  */
 @Component
 public class NarrationEventsListener {
 
     private static final Logger log = LoggerFactory.getLogger(NarrationEventsListener.class);
+    private static final List<String> DEFAULT_LANGS = List.of("vi", "en", "zh");
 
     private final EventPublisher publisher;
     private final TranslationManagerService translationManager;
@@ -44,20 +47,21 @@ public class NarrationEventsListener {
             return;
         }
 
-        log.info("[translation-service] BẮT ĐẦU DỊCH: poiId={}, version={}, langs={}, eventId={}",
-                event.poiId(), event.version(), event.langs(), event.eventId());
+        List<String> langs = event.langs() != null && !event.langs().isEmpty() ? event.langs() : DEFAULT_LANGS;
+        String sourceText = event.sourceText();
 
-        // Tiến hành dịch cho từng ngôn ngữ được yêu cầu
-        List<TranslatedItem> translatedItems = translationManager.processNarrationTranslation(
-                event.poiId(),
-                event.version(),
-                event.langs() != null ? event.langs() : List.of("vi", "en", "zh")
-        );
+        log.info("[translation-service] BẮT ĐẦU DỊCH: poiId={}, version={}, langs={}, coBanGoc={}, eventId={}",
+                event.poiId(), event.version(), langs, sourceText != null, event.eventId());
+
+        // Dịch nội dung thật; nếu sự kiện không kèm script thì dùng bản gốc đã nhận trước đó của POI
+        List<TranslatedItem> translatedItems =
+                translationManager.processNarrationTranslation(event.poiId(), event.version(), langs, sourceText);
 
         List<String> completedLangs = translatedItems.stream()
                 .map(TranslatedItem::lang)
                 .distinct()
                 .toList();
+        Map<String, String> scripts = TranslationManagerService.toScripts(translatedItems);
 
         // Phát sự kiện hoàn tất dịch thuật theo đúng hợp đồng EVENTS.md
         TranslationCompletedEvent completedEvent = new TranslationCompletedEvent(
@@ -66,7 +70,8 @@ public class NarrationEventsListener {
                 event.poiId(),
                 event.version(),
                 completedLangs,
-                Instant.now().toString()
+                Instant.now().toString(),
+                scripts.isEmpty() ? null : scripts
         );
 
         publisher.publish(RabbitConfig.RK_TRANSLATION_COMPLETED, completedEvent);
@@ -74,4 +79,3 @@ public class NarrationEventsListener {
                 event.poiId(), event.version(), completedLangs);
     }
 }
-

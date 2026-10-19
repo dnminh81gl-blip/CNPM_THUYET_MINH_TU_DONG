@@ -79,39 +79,48 @@ public class TranslationController {
     }
 
     /**
-     * ENDPOINT THỬ NGHIỆM TƯƠNG TỰ TESTCONTROLLER CỦA CONTENT-SERVICE:
-     * Dễ dàng test trên trình duyệt: http://localhost:8083/api/test/translate?poiId=3&version=1&langs=vi,en,zh
-     * Kích hoạt xử lý dịch cho poiId và phát sự kiện translation.completed lên RabbitMQ.
+     * ENDPOINT THỬ NGHIỆM (tương tự TestController của content-service):
+     * http://localhost:8083/api/test/translate?poiId=3&version=1&langs=vi,en,zh&text=Xin chào
+     * Dịch nội dung thật và phát sự kiện translation.completed (kèm scripts) lên RabbitMQ.
+     * Không truyền text -> dùng bản gốc đã nhận gần nhất của POI (từ narration.created).
      */
     @GetMapping("/test/translate")
-    public Map<String, Object> testTranslate(
+    public ResponseEntity<Map<String, Object>> testTranslate(
             @RequestParam(defaultValue = "3") long poiId,
             @RequestParam(defaultValue = "1") int version,
-            @RequestParam(defaultValue = "vi,en,zh") String langs) {
+            @RequestParam(defaultValue = "vi,en,zh") String langs,
+            @RequestParam(required = false) String text) {
 
         List<String> langList = Arrays.stream(langs.split(","))
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
                 .toList();
 
-        List<TranslatedItem> items = translationManager.processNarrationTranslation(poiId, version, langList);
+        List<TranslatedItem> items = translationManager.processNarrationTranslation(poiId, version, langList, text);
+        if (items.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "message", "Chưa có nội dung gốc cho poiId=" + poiId
+                            + ". Hãy publish POI từ content-service hoặc truyền tham số ?text=..."));
+        }
 
         List<String> completedLangs = items.stream().map(TranslatedItem::lang).toList();
+        Map<String, String> scripts = TranslationManagerService.toScripts(items);
         TranslationCompletedEvent event = new TranslationCompletedEvent(
                 UUID.randomUUID().toString(),
                 "test-manual-source-" + UUID.randomUUID(),
                 poiId,
                 version,
                 completedLangs,
-                Instant.now().toString()
+                Instant.now().toString(),
+                scripts
         );
 
         publisher.publish(RabbitConfig.RK_TRANSLATION_COMPLETED, event);
 
-        return Map.of(
+        return ResponseEntity.ok(Map.of(
                 "message", "Đã xử lý dịch và phát sự kiện translation.completed thành công",
                 "event", event,
                 "translations", items
-        );
+        ));
     }
 }

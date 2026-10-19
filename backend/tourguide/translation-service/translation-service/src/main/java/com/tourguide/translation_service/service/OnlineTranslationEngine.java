@@ -45,9 +45,7 @@ public class OnlineTranslationEngine implements TranslationEngine {
         }
 
         try {
-            String encodedQuery = URLEncoder.encode(text, StandardCharsets.UTF_8);
-            String langPair = sourceLang.toLowerCase() + "|" + targetLang.toLowerCase();
-            String url = String.format("%s?q=%s&langpair=%s", API_ENDPOINT, encodedQuery, langPair);
+            String url = buildUrl(text, sourceLang, targetLang);
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
@@ -74,6 +72,17 @@ public class OnlineTranslationEngine implements TranslationEngine {
         }
 
         throw new RuntimeException("Online translation service unavailable");
+    }
+
+    /**
+     * Tao URL goi MyMemory. Ca q va langpair deu phai ma hoa: dau "|" trong "vi|en" de nguyen
+     * se lam URI.create bao loi "Illegal character in query" -> truoc day luon roi xuong tu dien offline.
+     */
+    static String buildUrl(String text, String sourceLang, String targetLang) {
+        String encodedQuery = URLEncoder.encode(text, StandardCharsets.UTF_8);
+        String langPair = URLEncoder.encode(sourceLang.toLowerCase() + "|" + targetLang.toLowerCase(),
+                StandardCharsets.UTF_8);
+        return API_ENDPOINT + "?q=" + encodedQuery + "&langpair=" + langPair;
     }
 
     /** MyMemory tra canh bao ngay trong translatedText (vd "MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS..."). */

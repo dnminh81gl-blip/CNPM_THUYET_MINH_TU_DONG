@@ -1,21 +1,14 @@
 server:
-  port: 8083
+  port: 8085   # theo bang cong trong EVENTS.md (8083 la cua translation-service)
 
 spring:
   application:
     name: notification-service
   rabbitmq:
-    host: ${RABBITMQ_HOST:localhost}
-    port: ${RABBITMQ_PORT:5672}
-    username: ${RABBITMQ_USERNAME:guest}
-    password: ${RABBITMQ_PASSWORD:guest}
-
-rabbitmq:
-  queue:
-    audio-ready: audio.ready
-    translation-completed: translation.completed
-  exchange:
-    tourguide: tourguide.exchange
+    host: ${SPRING_RABBITMQ_HOST:localhost}
+    port: ${SPRING_RABBITMQ_PORT:5672}
+    username: ${SPRING_RABBITMQ_USERNAME:guest}
+    password: ${SPRING_RABBITMQ_PASSWORD:guest}
 
 logging:
   level:

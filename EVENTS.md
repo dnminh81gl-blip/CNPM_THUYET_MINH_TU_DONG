@@ -83,6 +83,7 @@ Vi du:
 ## Cong (port) cua cac service
 | Service | Cong |
 |---|---|
+| api-gateway (cong vao duy nhat cho Frontend) | 8080 |
 | content-service | 8081 |
 | narration-service | 8082 |
 | translation-service | 8083 |

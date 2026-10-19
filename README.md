@@ -6,16 +6,25 @@ Do an mon Cong nghe phan mem. Nhom phu trach: **Backend microservices + CI/CD**.
 ```
 frontend/Thuyet-minh-tu-dong/        Giao dien web (HTML/CSS/JS, Leaflet, GPS, geofence)
 backend/tourguide/
+  api-gateway/                       Cong vao duy nhat cho Frontend, dinh tuyen + CORS (cong 8080)
   content-service/                   Quan ly noi dung, phat su kien content.published (cong 8081)
   narration-service/                 Nhan content.published, tao ban thuyet minh, phat narration.created (cong 8082)
-  translation-service/               Nhan narration.created, dich, phat translation.completed (cong 8083)
+  translation-service/               Nhan narration.created, dich vi/en/zh, phat translation.completed (cong 8083)
+  tts-service/                       Nhan translation.completed, tao giong doc, phat audio.ready (cong 8084)
+  notification-service/              Nhan translation.completed + audio.ready, day ve web qua WebSocket (cong 8085)
 docker-compose.yml                   Chay RabbitMQ + cac service
 .github/workflows/ci.yml             CI: build + test + build Docker moi lan push
 EVENTS.md                            Hop dong su kien giua cac service
 ```
 
-## Kien truc (ban dau)
-`content-service --content.published--> narration-service --narration.created--> translation-service --translation.completed--> (tts-service, notification-service...)`, tat ca qua RabbitMQ.
+## Kien truc
+```
+Frontend --HTTP/WebSocket--> api-gateway (8080) --> content / translation / notification ...
+
+content --content.published--> narration --narration.created--> translation --translation.completed--+--> tts --audio.ready--+
+                                                                                                   +-----------------------+--> notification --WebSocket--> Frontend
+```
+Cac service chi giao tiep qua su kien RabbitMQ (exchange `tourguide.events`), xem `EVENTS.md`.
 
 Phan cong va quy tac lam viec: xem `docs/PHAN-CONG.md`.
 
@@ -23,7 +32,8 @@ Phan cong va quy tac lam viec: xem `docs/PHAN-CONG.md`.
 ```
 docker compose up --build
 ```
-Thu: mo http://localhost:8081/api/test/publish?poiId=3&version=1 va xem log `narration-service`.
+Thu: mo http://localhost:8080/api/test/publish?poiId=3&version=1 (qua gateway) va xem log ca 5 service.
+Kiem tra gateway: http://localhost:8080/actuator/gateway/routes
 RabbitMQ UI: http://localhost:15672 (guest / guest).
 
 ## Chay tung service (khong Docker)

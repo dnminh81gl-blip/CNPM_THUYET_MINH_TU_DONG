@@ -20,6 +20,8 @@ jobs:
             path: backend/tourguide/narration-service/narration-service
           - service: translation-service
             path: backend/tourguide/translation-service/translation-service
+          - service: tts-service
+            path: backend/tourguide/tts-service/tts-service
           - service: notification-service
             path: backend/tourguide/notification-service
     defaults:
@@ -59,6 +61,8 @@ jobs:
             path: backend/tourguide/narration-service/narration-service
           - service: translation-service
             path: backend/tourguide/translation-service/translation-service
+          - service: tts-service
+            path: backend/tourguide/tts-service/tts-service
           - service: notification-service
             path: backend/tourguide/notification-service
     steps:

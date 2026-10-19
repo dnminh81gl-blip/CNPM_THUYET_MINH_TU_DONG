@@ -43,6 +43,16 @@ services:
       rabbitmq:
         condition: service_healthy
 
+  tts-service:
+    build: ./backend/tourguide/tts-service/tts-service
+    ports:
+      - "8084:8084"
+    environment:
+      SPRING_RABBITMQ_HOST: rabbitmq
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
   notification-service:
     build: ./backend/tourguide/notification-service
     ports:

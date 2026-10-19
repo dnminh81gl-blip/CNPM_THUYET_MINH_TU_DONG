@@ -37,7 +37,7 @@ Gui boi: narration-service. Nhan boi: translation-service.
 | createdAt | string (ISO-8601) | Thoi diem tao |
 
 ## translation.completed
-Gui boi: translation-service. Nhan boi: notification-service (tts-service se lam sau).
+Gui boi: translation-service. Nhan boi: tts-service, notification-service.
 
 | Truong | Kieu | Y nghia |
 |---|---|---|
@@ -47,6 +47,25 @@ Gui boi: translation-service. Nhan boi: notification-service (tts-service se lam
 | version | number | Phien ban noi dung |
 | langs | string[] | Ngon ngu da dich xong |
 | completedAt | string (ISO-8601) | Thoi diem hoan thanh |
+
+## audio.ready
+Gui boi: tts-service. Nhan boi: notification-service.
+
+| Truong | Kieu | Y nghia |
+|---|---|---|
+| eventId | string (UUID) | Ma duy nhat cua su kien nay |
+| sourceEventId | string (UUID) | eventId cua translation.completed da gay ra no |
+| poiId | number | Dia diem (POI) |
+| version | number | Phien ban noi dung |
+| audios | object[] | Moi ngon ngu mot phan tu: `lang`, `voice` (vd "vi-VN"), `url`, `engine` |
+| readyAt | string (ISO-8601) | Thoi diem tao xong |
+
+Ban PoC: `engine` = `client-speech` (Frontend tu doc bang Web Speech API theo `voice`), `url` la duong dan du kien, chua sinh file mp3 that.
+
+Vi du:
+```json
+{"eventId":"...","sourceEventId":"...","poiId":3,"version":1,"audios":[{"lang":"vi","voice":"vi-VN","url":"/audio/poi-3/v1/vi.mp3","engine":"client-speech"}],"readyAt":"2026-10-19T07:00:00Z"}
+```
 
 ## Thong bao WebSocket (notification-service -> Frontend)
 notification-service nhan `translation.completed` va `audio.ready` roi day ve Client.
@@ -60,10 +79,6 @@ Vi du:
 {"type":"translation.completed","data":{"eventId":"...","sourceEventId":"...","poiId":3,"version":1,"langs":["vi","en","zh"],"completedAt":"2026-10-19T06:00:00Z"}}
 ```
 
-## Su kien du kien (them sau)
-| Routing key | Gui | Nhan |
-|---|---|---|
-| audio.ready | tts-service | notification-service |
 
 ## Cong (port) cua cac service
 | Service | Cong |

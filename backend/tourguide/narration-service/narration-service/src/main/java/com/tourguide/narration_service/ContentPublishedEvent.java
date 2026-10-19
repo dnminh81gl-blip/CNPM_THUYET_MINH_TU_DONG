@@ -12,6 +12,8 @@ public record ContentPublishedEvent(
         long poiId,
         int version,
         List<String> langs,
-        String publishedAt
+        String publishedAt,
+        String name,   // MỚI: tên địa điểm (có thể null nếu bên gửi là phiên bản cũ)
+        String text    // MỚI: nội dung giới thiệu gốc tiếng Việt
 ) {
 }

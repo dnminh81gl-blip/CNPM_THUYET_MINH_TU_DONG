@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
-/** Lang nghe translation.completed -> tao audio cho tung ngon ngu -> phat audio.ready. */
+/** Lang nghe translation.completed -> tao audio cho tung ngon ngu (kem van ban da dich) -> phat audio.ready. */
 @Component
 public class TranslationEventsListener {
 
@@ -38,10 +38,10 @@ public class TranslationEventsListener {
             return;
         }
 
-        log.info("[tts-service] NHAN translation.completed: poiId={}, version={}, langs={}, eventId={}",
-                event.poiId(), event.version(), event.langs(), event.eventId());
+        log.info("[tts-service] NHAN translation.completed: poiId={}, version={}, langs={}, coBanDich={}, eventId={}",
+                event.poiId(), event.version(), event.langs(), event.scripts() != null, event.eventId());
 
-        List<AudioItem> audios = audioService.synthesize(event.poiId(), event.version(), event.langs());
+        List<AudioItem> audios = audioService.synthesize(event.poiId(), event.version(), event.langs(), event.scripts());
 
         publisher.publish(RabbitConfig.RK_AUDIO_READY, new AudioReadyEvent(
                 UUID.randomUUID().toString(), event.eventId(), event.poiId(), event.version(),

@@ -7,6 +7,7 @@ Quy uoc chung:
 - Ten queue: `<service_nhan>.<routing_key>` (vi du `narration-service.content.published`)
 - Moi su kien co `eventId` (UUID) de chong xu ly trung.
 - Chi THEM truong moi, khong doi ten/xoa truong cu.
+- Ben nhan phai chiu duoc truong MOI vang mat (null): service cu chua gui thi van chay theo cach cu. Jackson 3 (Spring Boot 4) mac dinh bo qua truong la nen ben nhan cu khong loi khi ben gui them truong.
 
 ## content.published
 Gui boi: content-service. Nhan boi: narration-service.
@@ -18,10 +19,12 @@ Gui boi: content-service. Nhan boi: narration-service.
 | version | number | Phien ban noi dung |
 | langs | string[] | Ngon ngu da co noi dung, vd ["vi","en","zh"] |
 | publishedAt | string (ISO-8601) | Thoi diem xuat ban |
+| name | string | (MOI) Ten dia diem, tieng Viet |
+| text | string | (MOI) Noi dung gioi thieu goc, tieng Viet, do admin nhap |
 
 Vi du:
 ```json
-{"eventId":"c6a5d87b-6458-41b3-97ee-c47187849615","poiId":3,"version":1,"langs":["vi","en","zh"],"publishedAt":"2026-10-08T09:54:21.686Z"}
+{"eventId":"c6a5d87b-6458-41b3-97ee-c47187849615","poiId":3,"version":1,"langs":["vi","en","zh"],"publishedAt":"2026-10-08T09:54:21.686Z","name":"Nhà thờ Đức Bà","text":"Nhà thờ Đức Bà Sài Gòn được xây dựng từ năm 1863 đến 1880..."}
 ```
 
 ## narration.created
@@ -35,6 +38,7 @@ Gui boi: narration-service. Nhan boi: translation-service.
 | version | number | Phien ban noi dung |
 | langs | string[] | Ngon ngu can xu ly |
 | createdAt | string (ISO-8601) | Thoi diem tao |
+| script | object | (MOI) Bai thuyet minh theo ngon ngu. narration-service chi tao ban goc: `{"vi":"Chào mừng bạn đến với ..."}` |
 
 ## translation.completed
 Gui boi: translation-service. Nhan boi: tts-service, notification-service.
@@ -47,6 +51,7 @@ Gui boi: translation-service. Nhan boi: tts-service, notification-service.
 | version | number | Phien ban noi dung |
 | langs | string[] | Ngon ngu da dich xong |
 | completedAt | string (ISO-8601) | Thoi diem hoan thanh |
+| scripts | object | (MOI) Bai thuyet minh da dich, moi ngon ngu mot ban: `{"vi":"...","en":"...","zh":"..."}` |
 
 ## audio.ready
 Gui boi: tts-service. Nhan boi: notification-service.
@@ -57,7 +62,7 @@ Gui boi: tts-service. Nhan boi: notification-service.
 | sourceEventId | string (UUID) | eventId cua translation.completed da gay ra no |
 | poiId | number | Dia diem (POI) |
 | version | number | Phien ban noi dung |
-| audios | object[] | Moi ngon ngu mot phan tu: `lang`, `voice` (vd "vi-VN"), `url`, `engine` |
+| audios | object[] | Moi ngon ngu mot phan tu: `lang`, `voice` (vd "vi-VN"), `url`, `engine`, `text` (MOI: van ban de doc, lay tu `scripts`; null neu ban dich chua co) |
 | readyAt | string (ISO-8601) | Thoi diem tao xong |
 
 Ban PoC: `engine` = `client-speech` (Frontend tu doc bang Web Speech API theo `voice`), `url` la duong dan du kien, chua sinh file mp3 that.

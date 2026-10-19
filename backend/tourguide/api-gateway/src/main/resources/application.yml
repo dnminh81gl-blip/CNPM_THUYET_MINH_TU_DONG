@@ -1,0 +1,71 @@
+server:
+  port: 8080
+
+# Dia chi cac service: chay tren may dung localhost (mac dinh),
+# chay bang docker compose thi docker-compose.yml truyen ten container qua bien moi truong.
+services:
+  content: ${CONTENT_URL:http://localhost:8081}
+  narration: ${NARRATION_URL:http://localhost:8082}
+  translation: ${TRANSLATION_URL:http://localhost:8083}
+  tts: ${TTS_URL:http://localhost:8084}
+  notification: ${NOTIFICATION_URL:http://localhost:8085}
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      # CORS xu ly mot lan tai gateway: Frontend (GitHub Pages, Live Server, localhost) goi duoc backend
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+      # Service phia sau cung tra header CORS (vd notification-service) -> bo ban trung de trinh duyet khong bao loi
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+      routes:
+        # Thu tu quan trong: duong dan cu the dat truoc duong dan chung
+        - id: translation-test
+          uri: ${services.translation}
+          order: 0
+          predicates:
+            - Path=/api/test/translate
+        - id: content-service
+          uri: ${services.content}
+          order: 1
+          predicates:
+            - Path=/api/pois/**,/api/test/**
+        - id: narration-service
+          uri: ${services.narration}
+          order: 1
+          predicates:
+            - Path=/api/narrations/**
+        - id: translation-service
+          uri: ${services.translation}
+          order: 1
+          predicates:
+            - Path=/api/translations/**
+        - id: tts-service
+          uri: ${services.tts}
+          order: 1
+          predicates:
+            - Path=/api/audio/**
+        # WebSocket (STOMP + SockJS) cua notification-service: gateway tu nang cap ket noi len ws khi trinh duyet yeu cau
+        - id: notification-service
+          uri: ${services.notification}
+          order: 1
+          predicates:
+            - Path=/ws-notification/**
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,gateway
+  endpoint:
+    gateway:
+      enabled: true

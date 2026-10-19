@@ -62,3 +62,21 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+
+  # Cong vao duy nhat cho Frontend: http://localhost:8080
+  api-gateway:
+    build: ./backend/tourguide/api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      CONTENT_URL: http://content-service:8081
+      NARRATION_URL: http://narration-service:8082
+      TRANSLATION_URL: http://translation-service:8083
+      TTS_URL: http://tts-service:8084
+      NOTIFICATION_URL: http://notification-service:8085
+    depends_on:
+      - content-service
+      - narration-service
+      - translation-service
+      - tts-service
+      - notification-service

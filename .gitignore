@@ -3,3 +3,14 @@ target/
 .vscode/
 *.log
 *.class
+*.docx
+
+# Biến môi trường & Khóa bảo mật (API keys, secrets)
+.env
+*.env
+*.env.local
+*.key
+*.pem
+secrets/
+application-local.properties
+application-secret.properties

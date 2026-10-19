@@ -8,10 +8,12 @@ import java.util.List;
  * Service nhận (narration-service) giữ một bản sao riêng của lớp này: hai bên chỉ thống nhất về JSON, không dùng chung code.
  */
 public record ContentPublishedEvent(
-        String eventId,       // mã duy nhất của sự kiện (dùng để chống xử lý trùng sau này)
+        String eventId,       // mã duy nhất của sự kiện (dùng để chống xử lý trùng)
         long poiId,           // địa điểm nào
         int version,          // phiên bản nội dung
-        List<String> langs,   // các ngôn ngữ đã có nội dung, ví dụ ["vi","en","zh"]
-        String publishedAt    // thời điểm xuất bản (ISO-8601)
+        List<String> langs,   // các ngôn ngữ cần có, ví dụ ["vi","en","zh"]
+        String publishedAt,   // thời điểm xuất bản (ISO-8601)
+        String name,          // MỚI: tên địa điểm (tiếng Việt)
+        String text           // MỚI: nội dung giới thiệu gốc (tiếng Việt) do admin nhập
 ) {
 }

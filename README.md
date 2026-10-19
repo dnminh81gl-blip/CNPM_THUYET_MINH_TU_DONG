@@ -36,6 +36,23 @@ Thu: mo http://localhost:8080/api/test/publish?poiId=3&version=1 (qua gateway) v
 Kiem tra gateway: http://localhost:8080/actuator/gateway/routes
 RabbitMQ UI: http://localhost:15672 (guest / guest).
 
+## API dia diem (content-service, goi qua gateway cong 8080)
+| Lenh | Duong dan | Tac dung |
+|---|---|---|
+| GET | `/api/pois` | Danh sach dia diem (5 dia diem mau o Quan 1) |
+| GET | `/api/pois/{id}` | Chi tiet mot dia diem |
+| POST | `/api/pois` | Them dia diem (ban nhap). Body: `{"name","category","address","lat","lng","radius","text"}` |
+| PUT | `/api/pois/{id}` | Sua dia diem (tang version, ve ban nhap) |
+| POST | `/api/pois/{id}/publish` | Xuat ban: phat `content.published` KEM ten + noi dung |
+
+Thu nhanh tren trinh duyet: `http://localhost:8080/api/test/publish?poiId=3` (xuat ban noi dung that cua dia diem 3).
+
+Vi du them + xuat ban (PowerShell):
+```
+curl.exe -X POST http://localhost:8080/api/pois -H "Content-Type: application/json" -d "{\"name\":\"Cho Ben Thanh\",\"text\":\"Cho Ben Thanh duoc xay dung nam 1914.\"}"
+curl.exe -X POST http://localhost:8080/api/pois/6/publish
+```
+
 ## Chay tung service (khong Docker)
 1. Bat RabbitMQ: `docker run -d --name rabbit -p 5672:5672 -p 15672:15672 rabbitmq:3.13-management`
 2. Terminal 1: vao `backend/tourguide/narration-service/narration-service`, chay `.\mvnw.cmd spring-boot:run`

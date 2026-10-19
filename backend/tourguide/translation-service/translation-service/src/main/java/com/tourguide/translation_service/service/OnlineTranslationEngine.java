@@ -60,7 +60,10 @@ public class OnlineTranslationEngine implements TranslationEngine {
 
             if (response.statusCode() == 200) {
                 String translatedText = extractTranslatedText(response.body());
-                if (translatedText != null && !translatedText.isBlank()) {
+                if (isProviderWarning(translatedText)) {
+                    // MyMemory van tra HTTP 200 khi het han muc / cau qua dai -> coi nhu loi de dung fallback
+                    log.warn("[OnlineTranslationEngine] MyMemory canh bao: {}", translatedText);
+                } else if (translatedText != null && !translatedText.isBlank()) {
                     return translatedText;
                 }
             } else {
@@ -73,20 +76,56 @@ public class OnlineTranslationEngine implements TranslationEngine {
         throw new RuntimeException("Online translation service unavailable");
     }
 
-    private String extractTranslatedText(String responseBody) {
+    /** MyMemory tra canh bao ngay trong translatedText (vd "MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS..."). */
+    static boolean isProviderWarning(String translatedText) {
+        if (translatedText == null) {
+            return false;
+        }
+        String upper = translatedText.toUpperCase();
+        return upper.startsWith("MYMEMORY WARNING")
+                || upper.contains("QUERY LENGTH LIMIT EXCEEDED")
+                || upper.startsWith("INVALID LANGUAGE PAIR");
+    }
+
+    static String extractTranslatedText(String responseBody) {
         if (responseBody == null || responseBody.isBlank()) {
             return null;
         }
         Matcher matcher = TRANSLATED_TEXT_PATTERN.matcher(responseBody);
         if (matcher.find()) {
-            String rawText = matcher.group(1);
-            return rawText.replace("\\\"", "\"")
-                          .replace("\\\\", "\\")
-                          .replace("\\n", "\n")
-                          .replace("\\r", "\r")
-                          .replace("\\t", "\t");
+            return unescapeJson(matcher.group(1));
         }
         return null;
+    }
+
+    /** Giai ma chuoi JSON, ke ca dang \\uXXXX (chu Trung/tieng Viet co the bi ma hoa nhu vay). */
+    static String unescapeJson(String raw) {
+        StringBuilder out = new StringBuilder(raw.length());
+        for (int i = 0; i < raw.length(); i++) {
+            char c = raw.charAt(i);
+            if (c != '\\' || i + 1 >= raw.length()) {
+                out.append(c);
+                continue;
+            }
+            char n = raw.charAt(++i);
+            switch (n) {
+                case 'n' -> out.append('\n');
+                case 'r' -> out.append('\r');
+                case 't' -> out.append('\t');
+                case 'b' -> out.append('\b');
+                case 'f' -> out.append('\f');
+                case 'u' -> {
+                    if (i + 4 < raw.length()) {
+                        out.append((char) Integer.parseInt(raw.substring(i + 1, i + 5), 16));
+                        i += 4;
+                    } else {
+                        out.append("\\u");
+                    }
+                }
+                default -> out.append(n); // \" \\ \/
+            }
+        }
+        return out.toString();
     }
 
     @Override

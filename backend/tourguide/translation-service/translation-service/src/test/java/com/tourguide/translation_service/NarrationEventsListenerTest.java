@@ -1,25 +1,33 @@
 package com.tourguide.translation_service;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
-import org.mockito.Mockito;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.List;
+import java.util.Map;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 
 import com.tourguide.translation_service.model.TranslatedItem;
 import com.tourguide.translation_service.service.TranslationManagerService;
 
 class NarrationEventsListenerTest {
+
+    private static final String VI = "Chào mừng bạn đến với Nhà hát Thành phố. Nhà hát khánh thành năm 1900.";
 
     private EventPublisher publisher;
     private TranslationManagerService translationManager;
@@ -32,59 +40,68 @@ class NarrationEventsListenerTest {
         listener = new NarrationEventsListener(publisher, translationManager);
     }
 
-    @Test
-    void testOnNarrationCreated_Success() {
-        NarrationCreatedEvent event = new NarrationCreatedEvent(
-                "evt-123",
-                "source-001",
-                3L,
-                1,
-                List.of("vi", "en", "zh"),
-                "2026-10-17T12:00:00Z"
-        );
-
-        when(translationManager.processNarrationTranslation(3L, 1, List.of("vi", "en", "zh")))
-                .thenReturn(List.of(
-                        TranslatedItem.of(3L, 1, "vi", "gốc", "gốc", "vi", "identity"),
-                        TranslatedItem.of(3L, 1, "en", "gốc", "translated", "vi", "test"),
-                        TranslatedItem.of(3L, 1, "zh", "gốc", "translated_zh", "vi", "test")
-                ));
-
-        listener.onNarrationCreated(event);
-
+    private TranslationCompletedEvent published() {
         ArgumentCaptor<TranslationCompletedEvent> captor = ArgumentCaptor.forClass(TranslationCompletedEvent.class);
         verify(publisher, times(1)).publish(eq(RabbitConfig.RK_TRANSLATION_COMPLETED), captor.capture());
-
-        TranslationCompletedEvent published = captor.getValue();
-        assertNotNull(published.eventId());
-        assertEquals("evt-123", published.sourceEventId());
-        assertEquals(3L, published.poiId());
-        assertEquals(1, published.version());
-        assertEquals(List.of("vi", "en", "zh"), published.langs());
+        return captor.getValue();
     }
 
     @Test
-    void testOnNarrationCreated_Idempotency() {
-        NarrationCreatedEvent event = new NarrationCreatedEvent(
-                "evt-duplicate",
-                "source-001",
-                3L,
-                1,
-                List.of("vi", "en"),
-                "2026-10-17T12:00:00Z"
-        );
+    void translatesRealScriptAndPublishesScripts() {
+        NarrationCreatedEvent event = new NarrationCreatedEvent("evt-123", "source-001", 4L, 2,
+                List.of("vi", "en", "zh"), "2026-10-19T12:00:00Z", Map.of("vi", VI));
 
-        when(translationManager.processNarrationTranslation(anyLong(), anyInt(), anyList()))
+        when(translationManager.processNarrationTranslation(4L, 2, List.of("vi", "en", "zh"), VI))
                 .thenReturn(List.of(
-                        TranslatedItem.of(3L, 1, "vi", "gốc", "gốc", "vi", "identity")
-                ));
+                        TranslatedItem.of(4L, 2, "vi", VI, VI, "vi", "identity"),
+                        TranslatedItem.of(4L, 2, "en", VI, "Welcome to the Saigon Opera House.", "vi", "test"),
+                        TranslatedItem.of(4L, 2, "zh", VI, "欢迎来到西贡歌剧院。", "vi", "test")));
 
-        // Gọi lần 1
-        listener.onNarrationCreated(event);
-        // Gọi lại cùng eventId lần 2
         listener.onNarrationCreated(event);
 
-        // Chỉ được phát sự kiện 1 lần duy nhất
+        TranslationCompletedEvent out = published();
+        assertNotNull(out.eventId());
+        assertEquals("evt-123", out.sourceEventId());
+        assertEquals(4L, out.poiId());
+        assertEquals(2, out.version());
+        assertEquals(List.of("vi", "en", "zh"), out.langs());
+        assertEquals(VI, out.scripts().get("vi"));
+        assertEquals("Welcome to the Saigon Opera House.", out.scripts().get("en"));
+        assertEquals("欢迎来到西贡歌剧院。", out.scripts().get("zh"));
+    }
+
+    @Test
+    void eventWithoutScriptPassesNullSourceText() {
+        NarrationCreatedEvent event = new NarrationCreatedEvent("evt-old", "source-002", 3L, 1,
+                null, "2026-10-19T12:00:00Z", null);
+        when(translationManager.processNarrationTranslation(eq(3L), eq(1), anyList(), isNull()))
+                .thenReturn(List.of());
+
+        listener.onNarrationCreated(event);
+
+        verify(translationManager).processNarrationTranslation(eq(3L), eq(1), eq(List.of("vi", "en", "zh")), isNull());
+        TranslationCompletedEvent out = published();
+        assertEquals(List.of(), out.langs());
+        assertNull(out.scripts());
+    }
+
+    @Test
+    void sameEventTwiceIsProcessedOnlyOnce() {
+        NarrationCreatedEvent event = new NarrationCreatedEvent("evt-duplicate", "source-001", 3L, 1,
+                List.of("vi", "en"), "2026-10-17T12:00:00Z", Map.of("vi", VI));
+        when(translationManager.processNarrationTranslation(anyLong(), anyInt(), anyList(), any()))
+                .thenReturn(List.of(TranslatedItem.of(3L, 1, "vi", VI, VI, "vi", "identity")));
+
+        listener.onNarrationCreated(event);
+        listener.onNarrationCreated(event);
+
         verify(publisher, times(1)).publish(eq(RabbitConfig.RK_TRANSLATION_COMPLETED), Mockito.any());
+    }
+
+    @Test
+    void invalidEventIsIgnored() {
+        listener.onNarrationCreated(null);
+        listener.onNarrationCreated(new NarrationCreatedEvent(null, null, 1L, 1, List.of("vi"), null, null));
+        verify(publisher, never()).publish(Mockito.anyString(), Mockito.any());
     }
 }

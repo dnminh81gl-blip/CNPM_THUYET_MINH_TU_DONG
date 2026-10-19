@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.Mockito;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -17,6 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.tourguide.translation_service.EventPublisher;
+import com.tourguide.translation_service.RabbitConfig;
 import com.tourguide.translation_service.model.TranslatedItem;
 import com.tourguide.translation_service.model.TranslationResponse;
 import com.tourguide.translation_service.service.TranslationManagerService;
@@ -87,15 +90,28 @@ class TranslationControllerTest {
 
     @Test
     void testTestTranslateEndpoint() throws Exception {
-        when(translationManager.processNarrationTranslation(eq(3L), eq(1), any()))
+        when(translationManager.processNarrationTranslation(eq(3L), eq(1), any(), any()))
                 .thenReturn(List.of(
                         TranslatedItem.of(3L, 1, "vi", "Gốc", "Gốc", "vi", "identity"),
                         TranslatedItem.of(3L, 1, "en", "Gốc", "Welcome", "vi", "mock")
                 ));
 
-        mockMvc.perform(get("/api/test/translate?poiId=3&version=1&langs=vi,en"))
+        mockMvc.perform(get("/api/test/translate?poiId=3&version=1&langs=vi,en&text=Gốc"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").exists())
-                .andExpect(jsonPath("$.translations.length()").value(2));
+                .andExpect(jsonPath("$.translations.length()").value(2))
+                .andExpect(jsonPath("$.event.scripts.en").value("Welcome"));
+        verify(publisher).publish(eq(RabbitConfig.RK_TRANSLATION_COMPLETED), any());
+    }
+
+    @Test
+    void testTestTranslateEndpoint_NoContentBadRequest() throws Exception {
+        when(translationManager.processNarrationTranslation(eq(42L), eq(1), any(), any()))
+                .thenReturn(List.of());
+
+        mockMvc.perform(get("/api/test/translate?poiId=42&version=1"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").exists());
+        verify(publisher, never()).publish(any(), any());
     }
 }

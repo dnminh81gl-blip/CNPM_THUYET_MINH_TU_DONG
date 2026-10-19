@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 import com.tourguide.translation_service.model.TranslatedItem;
 
 /**
- * Kho lưu trữ và cache các bản dịch thuyết minh của các điểm POI.
+ * Kho lưu trữ (trong bộ nhớ) các bản dịch và bản gốc thuyết minh của các điểm POI.
+ * KHÔNG còn câu mẫu viết sẵn: bản gốc đến từ sự kiện narration.created (script.vi),
+ * tức là nội dung thật do Admin nhập ở content-service.
  */
 @Service
 public class TranslationStorage {
@@ -18,35 +20,22 @@ public class TranslationStorage {
     // Key: poiId + ":" + version + ":" + lang
     private final Map<String, TranslatedItem> storage = new ConcurrentHashMap<>();
 
-    // Mẫu văn bản thuyết minh gốc (tiếng Việt) cho các điểm POI du lịch phổ biến
-    private final Map<Long, String> samplePoiNarrations = new ConcurrentHashMap<>();
-
-    public TranslationStorage() {
-        initSampleNarrations();
-    }
-
-    private void initSampleNarrations() {
-        samplePoiNarrations.put(1L, "Chào mừng bạn đến với Chùa Một Cột, một trong những biểu tượng văn hóa và di tích lịch sử ngàn năm văn hiến của thủ đô Hà Nội với kiến trúc độc đáo tựa đài sen trên mặt nước.");
-        samplePoiNarrations.put(2L, "Chào mừng bạn đến với Văn Miếu - Quốc Tử Giám, trường đại học đầu tiên của Việt Nam, nơi lưu giữ tinh hoa học vấn và truyền thống tôn sư trọng đạo.");
-        samplePoiNarrations.put(3L, "Chào mừng bạn đến với Dinh Độc Lập, công trình kiến trúc lịch sử nổi bật tại Thành phố Hồ Chí Minh, gắn liền với cột mốc thống nhất đất nước.");
-        samplePoiNarrations.put(4L, "Chào mừng bạn đến với Nhà thờ Đức Bà, tuyệt tác kiến trúc Pháp cổ kính giữa lòng Sài Gòn.");
-        samplePoiNarrations.put(5L, "Chào mừng bạn đến với Phố cổ Hội An, di sản văn hóa thế giới với những ngôi nhà cổ mái ngói rêu phong và đèn lồng rực rỡ.");
-    }
+    // Bản gốc tiếng Việt gần nhất đã nhận cho mỗi POI
+    private final Map<Long, String> originalNarrations = new ConcurrentHashMap<>();
 
     /**
-     * Lấy văn bản thuyết minh gốc của một địa điểm (nếu chưa có thì sinh câu mặc định).
+     * Lấy bản gốc tiếng Việt gần nhất của một POI; null nếu chưa nhận được.
      */
-    public String getOriginalNarration(long poiId, int version) {
-        return samplePoiNarrations.getOrDefault(poiId,
-                String.format("Chào mừng quý khách đến với địa điểm tham quan du lịch số %d. Đây là bản thuyết minh tự động giới thiệu về lịch sử, văn hóa và kiến trúc nổi bật của điểm đến này.", poiId));
+    public String getOriginalNarration(long poiId) {
+        return originalNarrations.get(poiId);
     }
 
     /**
-     * Đăng ký thêm nội dung thuyết minh mới cho một POI.
+     * Ghi nhận bản gốc tiếng Việt của một POI (lấy từ sự kiện narration.created).
      */
     public void setOriginalNarration(long poiId, String text) {
         if (text != null && !text.isBlank()) {
-            samplePoiNarrations.put(poiId, text);
+            originalNarrations.put(poiId, text);
         }
     }
 

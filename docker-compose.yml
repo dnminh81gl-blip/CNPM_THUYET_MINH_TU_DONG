@@ -42,3 +42,13 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+
+  notification-service:
+    build: ./backend/tourguide/notification-service
+    ports:
+      - "8085:8085"
+    environment:
+      SPRING_RABBITMQ_HOST: rabbitmq
+    depends_on:
+      rabbitmq:
+        condition: service_healthy

@@ -37,7 +37,7 @@ Gui boi: narration-service. Nhan boi: translation-service.
 | createdAt | string (ISO-8601) | Thoi diem tao |
 
 ## translation.completed
-Gui boi: translation-service. Nhan boi: tts-service / notification-service (se lam sau).
+Gui boi: translation-service. Nhan boi: notification-service (tts-service se lam sau).
 
 | Truong | Kieu | Y nghia |
 |---|---|---|
@@ -47,6 +47,18 @@ Gui boi: translation-service. Nhan boi: tts-service / notification-service (se l
 | version | number | Phien ban noi dung |
 | langs | string[] | Ngon ngu da dich xong |
 | completedAt | string (ISO-8601) | Thoi diem hoan thanh |
+
+## Thong bao WebSocket (notification-service -> Frontend)
+notification-service nhan `translation.completed` va `audio.ready` roi day ve Client.
+
+- Endpoint STOMP (co SockJS): `http://<host>:8085/ws-notification`
+- Kenh dang ky: `/topic/notifications`
+- Noi dung: `{"type":"<routing_key>","data":<JSON goc cua su kien>}`
+
+Vi du:
+```json
+{"type":"translation.completed","data":{"eventId":"...","sourceEventId":"...","poiId":3,"version":1,"langs":["vi","en","zh"],"completedAt":"2026-10-19T06:00:00Z"}}
+```
 
 ## Su kien du kien (them sau)
 | Routing key | Gui | Nhan |

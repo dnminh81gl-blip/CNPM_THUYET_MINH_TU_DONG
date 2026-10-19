@@ -13,10 +13,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        service: [content-service, narration-service, translation-service]
+        include:
+          - service: content-service
+            path: backend/tourguide/content-service/content-service
+          - service: narration-service
+            path: backend/tourguide/narration-service/narration-service
+          - service: translation-service
+            path: backend/tourguide/translation-service/translation-service
+          - service: notification-service
+            path: backend/tourguide/notification-service
     defaults:
       run:
-        working-directory: backend/tourguide/${{ matrix.service }}/${{ matrix.service }}
+        working-directory: ${{ matrix.path }}
     services:
       rabbitmq:
         image: rabbitmq:3.13
@@ -34,7 +42,7 @@ jobs:
           distribution: temurin
           java-version: "21"
           cache: maven
-          cache-dependency-path: backend/tourguide/${{ matrix.service }}/${{ matrix.service }}/pom.xml
+          cache-dependency-path: ${{ matrix.path }}/pom.xml
       - name: Build & test
         run: mvn -B verify
 
@@ -44,8 +52,16 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [content-service, narration-service, translation-service]
+        include:
+          - service: content-service
+            path: backend/tourguide/content-service/content-service
+          - service: narration-service
+            path: backend/tourguide/narration-service/narration-service
+          - service: translation-service
+            path: backend/tourguide/translation-service/translation-service
+          - service: notification-service
+            path: backend/tourguide/notification-service
     steps:
       - uses: actions/checkout@v4
       - name: Build image
-        run: docker build -t tourguide/${{ matrix.service }}:ci backend/tourguide/${{ matrix.service }}/${{ matrix.service }}
+        run: docker build -t tourguide/${{ matrix.service }}:ci ${{ matrix.path }}

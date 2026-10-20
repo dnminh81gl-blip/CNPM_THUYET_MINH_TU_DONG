@@ -49,3 +49,5 @@ a { color: inherit; }
 .switch.on::after { left: 23px; }
 a.btn { text-decoration: none; }
 a.tag { text-decoration: none; }
+/* điện thoại (nhất là iPhone): không cho cả trang bị kéo lệch ngang; "clip" không làm hỏng position: sticky */
+html, body { overflow-x: clip; }

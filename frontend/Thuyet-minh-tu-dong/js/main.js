@@ -99,7 +99,15 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("pointerdown", () => AudioService.unlock(), { once: true });
 
   safe("LocationService", () => LocationService.init());
-  safe("DeviceService", () => DeviceService.init());   /* thống kê thiết bị (ẩn danh, không cần tài khoản) */
+  safe("DeviceService", () => DeviceService.init());
+  /* mã QR trên trang chủ: nếu đang có backend công khai (https) thì mã kèm địa chỉ đó, để máy quét cũng được đếm */
+  safe("SiteQR", () => {
+    const api = DeviceService._clean(DeviceService.apiBase()), box = $("#siteQr");
+    if (!api || !box || !window.QRCode) return;
+    const url = location.href.split(/[?#]/)[0].replace(/index\.html$/, "") + "index.html?src=qr&api=" + encodeURIComponent(api);
+    box.innerHTML = ""; new QRCode(box, { text: url, width: 150, height: 150, correctLevel: QRCode.CorrectLevel.M });
+    box.title = url;
+  });   /* thống kê thiết bị (ẩn danh, không cần tài khoản) */
 
   /* mã QR riêng của một POI: index.html?poi=<id>&src=qr -> mở thẳng điểm đó; bấm "Nghe thuyết minh" để phát
      (iPhone không cho tự phát âm thanh khi người dùng chưa chạm vào trang) */

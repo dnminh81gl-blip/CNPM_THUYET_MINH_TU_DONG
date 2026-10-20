@@ -22,6 +22,7 @@ const DevicesPage = {
         <div class="hint">Một mã QR cho cả khu tham quan. In ra đặt ở cổng / quầy vé; du khách quét là vào web và tự chọn điểm để nghe.</div>
         <div class="toolbar"><label class="hint" style="margin:0;min-width:150px">Địa chỉ web trong mã QR</label><input class="input-field" id="qrBase" style="max-width:none" value="${Helper.esc(base)}" /></div>
         <div class="toolbar"><label class="hint" style="margin:0;min-width:150px">Backend công khai (https)</label><input class="input-field" id="pubApi" style="max-width:none" placeholder="VD: https://ten-ngau-nhien.trycloudflare.com" value="${Helper.esc(Store.get("publicApi", ""))}" /></div>
+        ${DeviceService._clean(DeviceService.FIXED_API) ? `<div class="adm-note"><i class="fas fa-check-circle"></i> Đã có backend cố định <code>${Helper.esc(DeviceService.FIXED_API)}</code>: mọi mã QR mở web (kể cả mã in sẵn trên trang chủ) đều đếm được thiết bị. Để trống ô dưới.</div>` : ""}
         <div class="hint">Điện thoại mở web trên GitHub Pages (https) chỉ gửi được số liệu về backend <b>https</b>. Chạy <code>cloudflared tunnel --url http://localhost:8080</code> trên máy chạy Docker, dán địa chỉ https nó in ra vào ô trên, bấm Lưu rồi in lại mã QR.</div>
         <div class="mini"><button class="btn btn--ghost" id="qrBaseSave"><i class="fas fa-save"></i> Lưu</button><button class="btn btn--primary" id="qrShow"><i class="fas fa-qrcode"></i> Xem / in mã QR</button></div></div>
       <div class="adm-card"><h3>Lượt nghe theo điểm</h3>

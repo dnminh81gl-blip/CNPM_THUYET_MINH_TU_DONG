@@ -19,7 +19,7 @@ const DeviceService = {
   /* >>> ĐỊA CHỈ BACKEND CỐ ĐỊNH (https) — dán tên miền ngrok của nhóm vào đây, ví dụ "https://ten-cua-ban.ngrok-free.app".
      Có địa chỉ này thì MỌI mã QR mở web (kể cả mã in sẵn) đều đếm được thiết bị, không phải tạo mã mới mỗi lần.
      Đây là địa chỉ công khai, không phải mật khẩu; KHÔNG dán authtoken của ngrok vào đây. */
-  FIXED_API: "",
+  FIXED_API: "https://smartness-remake-affluent.ngrok-free.dev",
 
   /* Địa chỉ backend (api-gateway), theo thứ tự ưu tiên:
      1. ?api=https://... trong link / mã QR (điện thoại nhớ lại cho các lần sau)

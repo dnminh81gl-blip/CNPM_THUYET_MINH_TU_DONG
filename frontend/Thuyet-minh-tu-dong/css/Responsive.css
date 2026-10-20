@@ -47,3 +47,11 @@
 @media (max-width: 1239px) {
   .container .grid.wide, .footer .grid.wide { padding: 0 12px; }
 }
+
+/* Danh sách "Chọn điểm để nghe" trên điện thoại: thẻ gọn để lướt nhanh qua các điểm,
+   đoạn giới thiệu chỉ hiện 3 dòng (bấm "Xem chi tiết" để đọc đủ) */
+#chonDiem { scroll-margin-top: calc(var(--heade-height, 64px) + 12px); }
+@media (max-width: 739px) {
+  #featured .pi-visual { width: 100%; height: 190px; font-size: 56px; }
+  #featured .product-introduce--content-contents { padding: 0; margin: 10px 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+}

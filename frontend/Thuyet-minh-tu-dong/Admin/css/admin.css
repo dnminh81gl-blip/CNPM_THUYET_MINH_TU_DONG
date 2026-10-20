@@ -105,3 +105,11 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 14px; }
 @media (max-width: 739px) {
   .container.adm-container .grid.wide { padding: 0 12px; }
 }
+/* Thiết bị: số người đang tham gia ngay lúc này */
+.live-card { display: flex; align-items: center; gap: 18px; background: linear-gradient(135deg, #0f1b3d, #1e3a8a); color: #fff; border-radius: 16px; padding: 18px 22px; margin-bottom: 16px; }
+.live-card b { display: block; font-size: 44px; line-height: 1; }
+.live-card span { font-size: 15px; opacity: .9; }
+.live-card small { display: block; margin-top: 6px; font-size: 13px; opacity: .75; }
+.live-dot { width: 16px; height: 16px; border-radius: 50%; background: #22c55e; flex: none; box-shadow: 0 0 0 0 rgba(34,197,94,.7); animation: livePulse 1.6s infinite; }
+@keyframes livePulse { 70% { box-shadow: 0 0 0 14px rgba(34,197,94,0); } 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); } }
+@media (prefers-reduced-motion: reduce) { .live-dot { animation: none; } }

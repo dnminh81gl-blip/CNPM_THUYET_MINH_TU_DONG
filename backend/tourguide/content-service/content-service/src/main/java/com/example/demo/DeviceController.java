@@ -18,6 +18,7 @@ import jakarta.validation.Valid;
  * Quản lý thiết bị quét QR để nghe thuyết minh (không cần tài khoản). Gọi qua gateway: http://localhost:8080/api/devices
  *   POST /api/devices/visits    web báo một lần mở trang (kèm hệ điều hành, trình duyệt, nguồn qr/web, POI của QR)
  *   POST /api/devices/listens   web báo một lần nghe thuyết minh
+ *   POST /api/devices/ping      web báo "vẫn đang mở" (mỗi 30 giây) -> đếm số người đang tham gia
  *   GET  /api/devices           danh sách thiết bị (trang Admin)
  *   GET  /api/devices/stats     số liệu tổng hợp (trang Admin)
  */
@@ -42,6 +43,12 @@ public class DeviceController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Device listen(@Valid @RequestBody DeviceListenRequest request) {
         return service.recordListen(request);
+    }
+
+    @PostMapping("/ping")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public Device ping(@Valid @RequestBody DevicePingRequest request) {
+        return service.ping(request.deviceId());
     }
 
     @GetMapping

@@ -70,7 +70,7 @@ class DeviceServiceTest {
     }
 
     @Test
-    void activeMeansSeenInLast15MinutesAndTodayUsesVietnamTime() {
+    void activeMeansSignalInLast2MinutesAndTodayUsesVietnamTime() {
         TestClock clock = new TestClock("2026-10-19T16:30:00Z");     // 23:30 ngày 19/10 giờ Việt Nam
         DeviceService s = new DeviceService(clock);
         s.recordVisit(visit("yesterday", "iOS", "qr", null));
@@ -81,8 +81,27 @@ class DeviceServiceTest {
         s.recordVisit(visit("new", "Android", "qr", null));
 
         Map<String, Object> st = s.stats();
-        assertEquals(1L, st.get("activeDevices"));                    // chỉ "new" trong 15 phút gần nhất
+        assertEquals(1L, st.get("activeDevices"));                    // chỉ "new" có tín hiệu trong 2 phút gần nhất
         assertEquals(2L, st.get("todayDevices"));                     // "yesterday" là ngày hôm trước theo giờ VN
         assertEquals(List.of("new", "old", "yesterday"), s.list().stream().map(Device::deviceId).toList());
+    }
+
+    @Test
+    void pingKeepsDeviceOnlineWithoutCountingAVisitAndShowsWhereTheyListen() {
+        TestClock clock = new TestClock("2026-10-20T08:00:00Z");
+        DeviceService s = new DeviceService(clock);
+        s.recordVisit(visit("a", "iOS", "qr", null));
+        s.recordVisit(visit("b", "Android", "qr", null));
+        s.recordListen(new DeviceListenRequest("a", 4L, "en"));
+
+        clock.now = Instant.parse("2026-10-20T08:01:30Z");             // 90 giây sau: "a" còn ping, "b" đã đóng web
+        Device a = s.ping("a");
+        assertEquals(1, a.visits());                                   // ping không tính là lượt mở mới
+        clock.now = Instant.parse("2026-10-20T08:02:30Z");             // b im lặng 2 phút 30 giây
+
+        Map<String, Object> st = s.stats();
+        assertEquals(1L, st.get("activeDevices"));
+        assertEquals(Map.of(4L, 1L), st.get("onlineByPoi"));           // người đang tham gia đang nghe điểm 4
+        assertEquals(120L, st.get("activeWindowSeconds"));
     }
 }

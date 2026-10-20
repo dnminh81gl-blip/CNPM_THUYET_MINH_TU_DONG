@@ -4,7 +4,9 @@
      - tên file trên Wikimedia Commons, ví dụ "Saigon_Opera_House_2014.jpg" (ảnh giấy phép tự do, cần Internet)
      - đường dẫn ảnh trong dự án, ví dụ "img/places/nha-hat.jpg" (bỏ ảnh vào thư mục img/ cạnh index.html)
      - một URL đầy đủ https://...
-   Nếu ảnh lỗi / không có mạng, giao diện tự quay về khối màu + biểu tượng như cũ. */
+   Nếu ảnh lỗi / không có mạng, giao diện tự quay về khối màu + biểu tượng như cũ.
+   ẢNH TỪNG ĐIỂM: chụp ảnh rồi lưu vào thư mục img/places/ với tên poi-3.jpg, poi-4.jpg... (đúng id của điểm).
+   Chưa có file thì điểm đó hiện màu + biểu tượng; có file là tự hiện ảnh, không phải sửa code. */
 const LANGS = {
   vi: { f: "Tiếng Việt", tts: "vi-VN", cps: 14 },
   en: { f: "English", tts: "en-US", cps: 14 },
@@ -26,25 +28,25 @@ const POIService = {
               en: "Independence Palace was designed by architect Ngo Viet Thu. Construction began in 1962 and it was inaugurated on 31 October 1966, on the site of the former French-era Norodom Palace. Its facade is known for rows of stone screens shaped like bamboo segments, which give shade and echo traditional East Asian architecture.",
               zh: "独立宫由建筑师吴越树设计，1962年动工，1966年10月31日落成，原址为法属时期的诺罗敦宫。正面以仿竹节造型的石质花帘著称，既能遮阳，又体现了东方传统建筑风格。" } },
     { id: 3, lat: 10.77712, lng: 106.69548, r: 15, pri: 2, icon: "fa-scroll", code: "\uf70e", grad: ["#b45309", "#f59e0b"], cat: "Bên trong Dinh",
-      img: "", credit: "",
+      img: "img/places/poi-3.jpg", credit: "",
       name: { vi: "Phòng Trình Quốc thư", en: "Credentials Room", zh: "国书递交厅" }, addr: "Bên trong Dinh",
       text: { vi: "Đây là phòng Trình Quốc thư, nơi các đại sứ nước ngoài trình thư uỷ nhiệm. Điểm nhấn của căn phòng là bức tranh sơn mài lớn Bình Ngô Đại Cáo gồm 40 tấm ghép lại, của hoạ sĩ Nguyễn Văn Minh.",
               en: "This is the Credentials Room, where foreign ambassadors presented their letters of credence. Its highlight is the large lacquer painting Binh Ngo Dai Cao, the Great Proclamation of Victory over the Ming, made of 40 panels by artist Nguyen Van Minh.",
               zh: "这里是国书递交厅，外国大使在此递交国书。厅内最引人注目的是画家阮文明创作的大型漆画《平吴大诰》，由40块画板拼接而成。" } },
     { id: 4, lat: 10.77695, lng: 106.69528, r: 15, pri: 2, icon: "fa-users", code: "\uf0c0", grad: ["#0ea5e9", "#2563eb"], cat: "Bên trong Dinh",
-      img: "", credit: "",
+      img: "img/places/poi-4.jpg", credit: "",
       name: { vi: "Phòng họp Nội các", en: "Cabinet Room", zh: "内阁会议室" }, addr: "Bên trong Dinh",
       text: { vi: "Phòng họp Nội các là nơi Tổng thống họp với các bộ trưởng. Căn phòng vẫn giữ bàn họp dài và hàng ghế như thời kỳ trước năm 1975, giúp du khách hình dung cách bộ máy chính quyền làm việc tại đây.",
               en: "The Cabinet Room is where the president met with his ministers. The long meeting table and rows of chairs remain as they were before 1975, helping visitors picture how the government worked here.",
               zh: "内阁会议室是总统与各部部长开会的地方。长会议桌和成排的座椅仍保持1975年以前的原貌，帮助游客了解当时政府在此办公的情景。" } },
     { id: 5, lat: 10.7768, lng: 106.69512, r: 15, pri: 2, icon: "fa-helicopter", code: "\uf533", grad: ["#10b981", "#0ea5e9"], cat: "Sân thượng",
-      img: "", credit: "",
+      img: "img/places/poi-5.jpg", credit: "",
       name: { vi: "Sân thượng và trực thăng", en: "Rooftop and Helicopter", zh: "屋顶与直升机" }, addr: "Sân thượng",
       text: { vi: "Trên sân thượng có bãi đáp trực thăng. Chiếc trực thăng UH-1 trưng bày ở đây là loại từng phục vụ Tổng thống. Ngày 8 tháng 4 năm 1975, phi công Nguyễn Thành Trung lái máy bay F-5E ném bom Dinh; các vị trí trúng bom được đánh dấu bằng vòng tròn đỏ trên sân thượng.",
               en: "The rooftop has a helipad. The UH-1 helicopter displayed here is the type once used by the president. On 8 April 1975, pilot Nguyen Thanh Trung bombed the palace from an F-5E jet; the impact points are marked with red circles on the roof.",
               zh: "屋顶设有直升机停机坪，这里展出的UH-1直升机是当年总统使用过的机型。1975年4月8日，飞行员阮成忠驾驶F-5E战机轰炸独立宫，屋顶上用红圈标出了炸弹落点。" } },
     { id: 6, lat: 10.77666, lng: 106.69496, r: 15, pri: 3, icon: "fa-broadcast-tower", code: "\uf519", grad: ["#475569", "#1e293b"], cat: "Tầng hầm",
-      img: "", credit: "",
+      img: "img/places/poi-6.jpg", credit: "",
       name: { vi: "Tầng hầm chỉ huy", en: "Command Bunker", zh: "地下指挥所" }, addr: "Tầng hầm",
       text: { vi: "Tầng hầm là hệ thống hầm chỉ huy kiên cố, được xây để chịu được bom. Bên trong có phòng thông tin liên lạc, phòng bản đồ tác chiến và phòng nghỉ của Tổng thống, cùng nhiều máy điện đàm vẫn còn được lưu giữ.",
               en: "The basement is a reinforced command bunker built to withstand bombing. It contains a communications centre, a war map room and the president's rest room, with many original radio sets still preserved.",
@@ -63,7 +65,7 @@ const POIService = {
   _c: { k: null, v: null },
   ORIGIN: { lat: 10.7772, lng: 106.6956 },   // trung tâm khuôn viên Dinh Độc Lập
   /* đổi dữ liệu mẫu (vd chuyển sang Dinh Độc Lập) thì tăng số này để trình duyệt bỏ dữ liệu địa điểm cũ đã lưu */
-  DATA_VER: "dinh-doc-lap-1",
+  DATA_VER: "dinh-doc-lap-2",
   /* dữ liệu cũ (toạ độ x,y của bản đồ giả lập) được đổi sang lat/lng; dữ liệu cũ chưa có ảnh thì lấy ảnh mẫu (nếu đúng địa điểm mẫu) */
   _migrate(p) {
     let q = p;

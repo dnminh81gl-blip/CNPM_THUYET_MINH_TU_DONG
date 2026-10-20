@@ -23,8 +23,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class DeviceService {
 
-    /** Thiết bị hoạt động trong khoảng này được tính là "đang dùng". */
-    public static final Duration ACTIVE_WINDOW = Duration.ofMinutes(15);
+    /**
+     * Thiết bị có tín hiệu trong khoảng này được tính là "đang tham gia".
+     * Web gửi ping mỗi 30 giây khi đang mở, nên quá 2 phút không có tín hiệu = đã rời đi (đóng web, khoá màn hình).
+     */
+    public static final Duration ACTIVE_WINDOW = Duration.ofMinutes(2);
     private static final ZoneId VN = ZoneId.of("Asia/Ho_Chi_Minh");
 
     private final Map<String, Device> devices = new ConcurrentHashMap<>();
@@ -48,18 +51,32 @@ public class DeviceService {
             scansByPoi.merge(r.poiId(), 1, Integer::sum);
         }
         return devices.compute(r.deviceId(), (id, old) -> old == null
-                ? new Device(id, or(r.os()), or(r.browser()), or(r.type()), or(r.lang()), r.src() == null ? "web" : r.src(), now, now, 1, 0)
+                ? new Device(id, or(r.os()), or(r.browser()), or(r.type()), or(r.lang()), r.src() == null ? "web" : r.src(), now, now, 1, 0, null)
                 : new Device(id, pick(r.os(), old.os()), pick(r.browser(), old.browser()), pick(r.type(), old.type()),
-                        pick(r.lang(), old.lang()), old.firstSrc(), old.firstSeen(), now, old.visits() + 1, old.listens()));
+                        pick(r.lang(), old.lang()), old.firstSrc(), old.firstSeen(), now, old.visits() + 1, old.listens(), old.lastPoiId()));
     }
 
     public Device recordListen(DeviceListenRequest r) {
         String now = Instant.now(clock).toString();
         listensByPoi.merge(r.poiId(), 1, Integer::sum);
         return devices.compute(r.deviceId(), (id, old) -> old == null
-                ? new Device(id, "Khác", "Khác", "Khác", or(r.lang()), "web", now, now, 1, 1)
+                ? new Device(id, "Khác", "Khác", "Khác", or(r.lang()), "web", now, now, 1, 1, r.poiId())
                 : new Device(id, old.os(), old.browser(), old.type(), pick(r.lang(), old.lang()), old.firstSrc(),
-                        old.firstSeen(), now, old.visits(), old.listens() + 1));
+                        old.firstSeen(), now, old.visits(), old.listens() + 1, r.poiId()));
+    }
+
+    /** Tín hiệu "vẫn đang mở web" (mỗi 30 giây): chỉ cập nhật lastSeen, không tăng lượt mở. */
+    public Device ping(String deviceId) {
+        String now = Instant.now(clock).toString();
+        return devices.compute(deviceId, (id, old) -> old == null
+                ? new Device(id, "Khác", "Khác", "Khác", "vi", "web", now, now, 1, 0, null)
+                : new Device(id, old.os(), old.browser(), old.type(), old.lang(), old.firstSrc(), old.firstSeen(), now,
+                        old.visits(), old.listens(), old.lastPoiId()));
+    }
+
+    /** Thiết bị đang tham gia (có tín hiệu trong ACTIVE_WINDOW). */
+    public boolean isOnline(Device d) {
+        return Duration.between(Instant.parse(d.lastSeen()), Instant.now(clock)).compareTo(ACTIVE_WINDOW) <= 0;
     }
 
     /** Danh sách thiết bị, mới hoạt động gần nhất lên đầu. */
@@ -74,7 +91,10 @@ public class DeviceService {
         Map<String, Object> s = new LinkedHashMap<>();
         s.put("totalDevices", all.size());
         s.put("todayDevices", all.stream().filter(d -> LocalDate.ofInstant(Instant.parse(d.lastSeen()), VN).equals(today)).count());
-        s.put("activeDevices", all.stream().filter(d -> Duration.between(Instant.parse(d.lastSeen()), now).compareTo(ACTIVE_WINDOW) <= 0).count());
+        List<Device> online = all.stream().filter(this::isOnline).toList();
+        s.put("activeDevices", (long) online.size());
+        s.put("onlineByPoi", online.stream().filter(d -> d.lastPoiId() != null)
+                .collect(Collectors.groupingBy(Device::lastPoiId, TreeMap::new, Collectors.counting())));
         s.put("qrDevices", all.stream().filter(d -> "qr".equals(d.firstSrc())).count());
         s.put("totalVisits", all.stream().mapToInt(Device::visits).sum());
         s.put("totalListens", all.stream().mapToInt(Device::listens).sum());
@@ -84,7 +104,7 @@ public class DeviceService {
         s.put("byLang", count(all, Device::lang));
         s.put("listensByPoi", new TreeMap<>(listensByPoi));
         s.put("scansByPoi", new TreeMap<>(scansByPoi));
-        s.put("activeWindowMinutes", ACTIVE_WINDOW.toMinutes());
+        s.put("activeWindowSeconds", ACTIVE_WINDOW.toSeconds());
         return s;
     }
 

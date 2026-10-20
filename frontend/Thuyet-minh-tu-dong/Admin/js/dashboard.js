@@ -15,7 +15,7 @@ const DashPage = {
         ${card("fa-language", "#10b981", total ? Math.round(done / total * 100) + "%" : "0%", "Bản dịch hoàn thành", "content.html")}
         ${card("fa-headphones", "#f59e0b", hist.length, "Tổng lượt nghe", "history.html")}
         ${card("fa-route", "#8b5cf6", tours.length, "Tour gợi ý", "tours.html")}
-        <span id="devCard">${card("fa-mobile-alt", "#ec4899", "…", "Thiết bị đã quét", "devices.html")}</span>
+        <span id="devCard" style="display:contents">${card("fa-user-check", "#22c55e", "…", "Đang tham gia", "devices.html")}</span>
       </div>
       <div class="grid2">
         <div class="adm-card"><h3>Lượt nghe 7 ngày qua</h3><div class="cols">${days.map(x => `<div class="col-bar"><b>${cnt[x.key] || 0}</b><i style="height:${(cnt[x.key] || 0) / mx * 130}px"></i><span>${x.label}</span></div>`).join("")}</div></div>
@@ -27,7 +27,8 @@ const DashPage = {
       </div>
       <div class="adm-note"><i class="fas fa-shield-alt"></i> Lưu ý: việc kiểm tra quyền admin hiện chạy ngay trong trình duyệt và dữ liệu lưu trong trình duyệt (bản demo), nên chưa phải bảo mật thật. Khi triển khai, cần xác thực + phân quyền admin ở backend (JWT/RBAC) và lưu dữ liệu trong CSDL. </div>`;
     /* số thiết bị lấy từ backend (hoặc nhật ký trình duyệt nếu chưa chạy backend) */
-    DeviceService.load().then(d => { const el = $("#devCard"); if (el) el.outerHTML = card("fa-mobile-alt", "#ec4899", d.stats.totalDevices, "Thiết bị đã quét" + (d.source === "local" ? " (trình duyệt này)" : ""), "devices.html"); });
+    const dev = () => DeviceService.load().then(d => { const el = $("#devCard"); if (el) el.innerHTML = card("fa-user-check", "#22c55e", d.stats.activeDevices || 0, `Đang tham gia · ${d.stats.totalDevices} thiết bị đã quét` + (d.source === "local" ? " (trình duyệt này)" : ""), "devices.html"); });
+    dev(); setInterval(dev, 5000);
   }
 };
 document.addEventListener("DOMContentLoaded", () => DashPage.init());

@@ -1,8 +1,8 @@
 /* main: khởi tạo ứng dụng và nối các service với giao diện */
 function renderFeatured() {
   const lang = Settings.get().lang;
-  /* 3 điểm nổi bật = 3 điểm có mức ưu tiên cao nhất đang xuất bản (không phụ thuộc id cố định, nên Admin xoá/ẩn điểm nào cũng không lỗi) */
-  const top = POIService.all().slice().sort((a, b) => b.pri - a.pri || a.id - b.id).slice(0, 3);
+  /* Một mã QR vào web: trang chủ liệt kê MỌI điểm đang xuất bản (theo thứ tự tham quan), du khách chạm điểm nào thì nghe điểm đó */
+  const top = POIService.all().slice().sort((a, b) => a.id - b.id);
   if (!top.length) { $("#featured").innerHTML = '<div class="empty-box"><i class="fas fa-map-marked-alt"></i>Chưa có địa điểm nào được xuất bản.</div>'; return; }
   $("#featured").innerHTML = top.map((p, i) => {
     const id = p.id;
@@ -12,7 +12,7 @@ function renderFeatured() {
       <p class="product-introduce--content-addr"><i class="fas fa-map-marker-alt"></i> ${Helper.esc(p.addr)}</p>
       <p class="product-introduce--content-contents">${Helper.esc(p.text[lang])}</p>
       <div class="pi-actions">
-        <button class="btn btn--primary" data-act="listen" data-id="${id}"><i class="fas fa-headphones"></i> Nghe thử</button>
+        <button class="btn btn--primary" data-act="listen" data-id="${id}"><i class="fas fa-headphones"></i> Nghe thuyết minh</button>
         <button class="btn btn--ghost" data-act="open" data-id="${id}"><i class="fas fa-info-circle"></i> Xem chi tiết</button>
       </div></div>`;
     return `<div class="product-introduce">${i % 2 ? body + visual : visual + body}</div>`;

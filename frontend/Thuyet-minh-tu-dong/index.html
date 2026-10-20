@@ -70,7 +70,7 @@
               <h2 class="introduce-title1">Thuyết minh tự động đa ngôn ngữ</h2>
               <h5 class="introduce-title2">Đi đến đâu - Nghe đến đó - Hiểu thêm về thành phố</h5>
               <div class="introduce-actions">
-                <button class="btn btn--primary introduce-cta" data-go="places"><i class="fas fa-headphones"></i> Bắt đầu khám phá</button>
+                <button class="btn btn--primary introduce-cta" type="button" onclick="document.getElementById('chonDiem').scrollIntoView({ behavior: 'smooth' })"><i class="fas fa-headphones"></i> Chọn điểm để nghe</button>
                 <button class="btn introduce-cta introduce-cta--ghost" data-go="tour"><i class="fas fa-route"></i> Xem tour gợi ý</button>
               </div>
               <ul class="introduce-stats">
@@ -85,7 +85,7 @@
 
           <div class="product-introduces">
             <div class="grid wide">
-              <div class="product-introduces--title">Điểm nổi bật</div>
+              <div class="product-introduces--title" id="chonDiem">Chọn điểm để nghe thuyết minh</div>
               <div id="featured"></div>
 
               <div class="product-introduces--title">Hình ảnh các điểm tham quan</div>

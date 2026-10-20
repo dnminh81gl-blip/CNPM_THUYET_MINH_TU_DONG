@@ -68,3 +68,6 @@
 @media (prefers-reduced-motion: reduce) {
   .hero-slide { transition: opacity .3s; transform: none !important; }
 }
+/* Mã QR trong thẻ "1. Quét mã QR" */
+.how-qr { display: inline-block; padding: 10px; background: #fff; border-radius: 14px; box-shadow: 0 2px 10px rgba(0,0,0,.08); margin-bottom: 12px; line-height: 0; }
+.how-qr img, .how-qr canvas { width: 150px; height: 150px; image-rendering: pixelated; }

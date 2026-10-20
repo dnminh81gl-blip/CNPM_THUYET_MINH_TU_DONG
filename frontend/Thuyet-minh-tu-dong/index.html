@@ -93,7 +93,7 @@
 
               <div class="product-introduces--title">Cách hoạt động</div>
               <div class="row sm-gutter how">
-                <div class="col l-4 m-4 c-12"><div class="how-item"><span class="how-icon"><i class="fas fa-qrcode"></i></span><h4>1. Quét mã QR</h4><p>Mở web ngay trên điện thoại, không cần cài ứng dụng. Chọn ngôn ngữ bạn muốn nghe.</p></div></div>
+                <div class="col l-4 m-4 c-12"><div class="how-item"><div class="how-qr" id="siteQr"><img src="./img/qr/qr-web.png" alt="Mã QR mở web Thuyết minh tự động" width="150" height="150" /></div><h4>1. Quét mã QR</h4><p>Mở camera điện thoại quét mã này để vào web, không cần cài ứng dụng. Chọn ngôn ngữ bạn muốn nghe.</p></div></div>
                 <div class="col l-4 m-4 c-12"><div class="how-item"><span class="how-icon"><i class="fas fa-walking"></i></span><h4>2. Đi bộ tham quan</h4><p>Hệ thống theo dõi vị trí GPS và phát hiện khi bạn đi vào vùng của một điểm tham quan.</p></div></div>
                 <div class="col l-4 m-4 c-12"><div class="how-item"><span class="how-icon"><i class="fas fa-volume-up"></i></span><h4>3. Nghe tự động</h4><p>Thuyết minh tự phát bằng ngôn ngữ của bạn, có chống phát lặp (cooldown) và ưu tiên điểm quan trọng.</p></div></div>
               </div>
@@ -402,6 +402,8 @@
     <script src="./js/components/Search.js"></script>
     <script src="./js/components/Route.js"></script>
     <script src="./js/components/Auth.js"></script>
+    <!-- tạo mã QR có kèm địa chỉ backend (khi đang demo đếm thiết bị); lỗi tải thì vẫn còn ảnh QR tĩnh -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="./js/main.js"></script>
   </body>
 </html>

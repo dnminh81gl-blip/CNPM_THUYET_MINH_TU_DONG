@@ -16,25 +16,35 @@ const DeviceService = {
     }
     return v;
   },
+  /* >>> ĐỊA CHỈ BACKEND CỐ ĐỊNH (https) — dán tên miền ngrok của nhóm vào đây, ví dụ "https://ten-cua-ban.ngrok-free.app".
+     Có địa chỉ này thì MỌI mã QR mở web (kể cả mã in sẵn) đều đếm được thiết bị, không phải tạo mã mới mỗi lần.
+     Đây là địa chỉ công khai, không phải mật khẩu; KHÔNG dán authtoken của ngrok vào đây. */
+  FIXED_API: "",
+
   /* Địa chỉ backend (api-gateway), theo thứ tự ưu tiên:
      1. ?api=https://... trong link / mã QR (điện thoại nhớ lại cho các lần sau)
-     2. địa chỉ đã nhớ từ lần quét QR trước
-     3. CONFIG.API_BASE trong js/config.js
-     4. web chạy ở localhost / mạng LAN (http) -> cổng 8080 của cùng máy
-     5. địa chỉ https công khai admin nhập ở trang Thiết bị (dùng khi mở Admin trên GitHub Pages)
-     Trang https (GitHub Pages) chỉ gọi được backend https, ví dụ đường hầm Cloudflare: https://xxx.trycloudflare.com */
+     2. web chạy ở localhost / mạng LAN (http) -> cổng 8080 của cùng máy (laptop chạy Docker)
+     3. FIXED_API ở trên (tên miền ngrok cố định)
+     4. địa chỉ đã nhớ từ lần quét mã QR có ?api= trước đó
+     5. CONFIG.API_BASE trong js/config.js
+     6. địa chỉ https admin nhập ở trang Thiết bị (khi mở Admin trên GitHub Pages)
+     Trang https (GitHub Pages) chỉ gọi được backend https. */
   _clean(u) { u = String(u || "").trim().replace(/\/+$/, ""); return /^https:\/\/[^\s/?#]+$/i.test(u) ? u : ""; },
   apiBase() {
     const fromLink = this._clean(new URLSearchParams(location.search).get("api"));
     if (fromLink) { Store.set("apiBase", fromLink); return fromLink; }
-    const saved = this._clean(Store.get("apiBase", ""));
-    if (saved) return saved;
-    if (typeof CONFIG !== "undefined" && CONFIG.API_BASE) return String(CONFIG.API_BASE).replace(/\/+$/, "");
     const h = location.hostname;
     const lan = h === "localhost" || h === "127.0.0.1" || /^(10|192\.168|172\.(1[6-9]|2\d|3[01]))\./.test(h);
     if (location.protocol === "http:" && lan) return `http://${h}:8080`;
+    const fixed = this._clean(this.FIXED_API);
+    if (fixed) return fixed;
+    const saved = this._clean(Store.get("apiBase", ""));
+    if (saved) return saved;
+    if (typeof CONFIG !== "undefined" && CONFIG.API_BASE) return String(CONFIG.API_BASE).replace(/\/+$/, "");
     return this._clean(Store.get("publicApi", ""));
   },
+  /* ngrok bản miễn phí chèn trang cảnh báo trước nội dung; header này bỏ qua trang đó cho các lệnh gọi API */
+  HEADERS: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "1" },
   /* đọc loại thiết bị từ trình duyệt (chỉ để thống kê, không định danh người dùng) */
   info(ua = navigator.userAgent, touch = navigator.maxTouchPoints || 0) {
     const ipadOs = /Macintosh/.test(ua) && touch > 1;
@@ -60,7 +70,7 @@ const DeviceService = {
   _post(path, body) {
     this._local(path.endsWith("listens") ? "listen" : "visit", body);
     const base = this.apiBase(); if (!base) return Promise.resolve(false);
-    return fetch(base + path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), keepalive: true })
+    return fetch(base + path, { method: "POST", headers: this.HEADERS, body: JSON.stringify(body), keepalive: true })
       .then(r => r.ok).catch(() => false);
   },
   /* gọi 1 lần khi trang người dùng mở */
@@ -76,7 +86,7 @@ const DeviceService = {
     const ping = () => {
       if (document.visibilityState !== "visible") return;
       const base = this.apiBase(); if (!base) return;
-      fetch(base + "/api/devices/ping", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ deviceId: this.id() }), keepalive: true }).catch(() => {});
+      fetch(base + "/api/devices/ping", { method: "POST", headers: this.HEADERS, body: JSON.stringify({ deviceId: this.id() }), keepalive: true }).catch(() => {});
     };
     clearInterval(this._hb); this._hb = setInterval(ping, this.PING_MS);
     document.addEventListener("visibilitychange", ping);
@@ -85,7 +95,7 @@ const DeviceService = {
   async _get(path) {
     const base = this.apiBase(); if (!base) throw new Error("no-api");
     const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 4000);
-    try { const r = await fetch(base + path, { signal: ctl.signal }); if (!r.ok) throw new Error("HTTP " + r.status); return await r.json(); }
+    try { const r = await fetch(base + path, { signal: ctl.signal, headers: { "ngrok-skip-browser-warning": "1" } }); if (!r.ok) throw new Error("HTTP " + r.status); return await r.json(); }
     finally { clearTimeout(t); }
   },
   isOnline(d, now = Date.now()) { return now - Date.parse(d.lastSeen) <= this.ONLINE_MS; },

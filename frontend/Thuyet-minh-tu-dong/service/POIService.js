@@ -1,4 +1,4 @@
-/* POIService: dữ liệu điểm tham quan. Hiện là dữ liệu mẫu; sau này thay bằng GET /api/v1/pois.
+/* POIService: các điểm thuyết minh (POI) BÊN TRONG khu tham quan Dinh Độc Lập. Hiện là dữ liệu mẫu; sau này thay bằng GET /api/pois.
    Toạ độ lat/lng là VĨ ĐỘ / KINH ĐỘ thật (xấp xỉ, hãy kiểm tra lại trên Google Maps và chỉnh ở trang Admin).
    Ảnh (img) nhận 1 trong 3 dạng:
      - tên file trên Wikimedia Commons, ví dụ "Saigon_Opera_House_2014.jpg" (ảnh giấy phép tự do, cần Internet)
@@ -13,39 +13,46 @@ const LANGS = {
 
 const POIService = {
   _seed: [
-    { id: 1, lat: 10.7769, lng: 106.6953, r: 60, pri: 3, icon: "fa-landmark", code: "\uf66f", grad: ["#2563eb", "#7c3aed"], cat: "Di tích lịch sử",
+    { id: 1, lat: 10.7779, lng: 106.6964, r: 30, pri: 3, icon: "fa-flag", code: "\uf024", grad: ["#dc2626", "#f59e0b"], cat: "Khuôn viên",
       img: "20190923_Independence_Palace-10.jpg", credit: "Balon Greyjoy · CC0",
-      name: { vi: "Dinh Độc Lập", en: "Independence Palace", zh: "独立宫" }, addr: "135 Nam Kỳ Khởi Nghĩa, P. Bến Thành, Q.1, TP.HCM",
-      text: { vi: "Dinh Độc Lập hoàn thành năm 1966, là công trình nổi tiếng với kiến trúc hiện đại. Nơi đây gắn liền với sự kiện lịch sử ngày 30 tháng 4 năm 1975.",
-              en: "Independence Palace was completed in 1966 and is known for its modern architecture. It is closely tied to the historic events of 30 April 1975.",
-              zh: "独立宫建成于1966年，以现代建筑风格闻名，与1975年4月30日的历史事件密切相关。" } },
-    { id: 2, lat: 10.7800, lng: 106.6999, r: 40, pri: 2, icon: "fa-envelope", code: "\uf0e0", grad: ["#0ea5e9", "#2563eb"], cat: "Kiến trúc",
-      img: "Saigon_Central_Post_Office_(52681461470).jpg", credit: "Kevin Rutherford · CC BY-SA 2.0",
-      name: { vi: "Bưu điện", en: "Central Post Office", zh: "中央邮局" }, addr: "02 Công xã Paris, P. Bến Nghé, Q.1, TP.HCM",
-      text: { vi: "Bưu điện Trung tâm Sài Gòn được xây dựng vào cuối thế kỷ 19 theo phong cách kiến trúc Pháp. Mái vòm khung sắt và những ô cửa sổ lớn là điểm nhấn của công trình.",
-              en: "The Saigon Central Post Office was built in the late 19th century in French style. Its iron-framed vaulted roof and tall windows are its signature features.",
-              zh: "西贡中央邮局建于19世纪末，采用法式建筑风格，铁架拱顶和高大的窗户是其特色。" } },
-    { id: 3, lat: 10.7798, lng: 106.6990, r: 60, pri: 3, icon: "fa-church", code: "\uf51d", grad: ["#f59e0b", "#ef4444"], cat: "Di tích lịch sử",
-      img: "Basílica_de_Nuestra_Señora,_Ciudad_Ho_Chi_Minh,_Vietnam,_2013-08-14,_DD_03.JPG", credit: "Diego Delso · CC BY-SA 3.0",
-      name: { vi: "Nhà thờ Đức Bà", en: "Notre-Dame Cathedral", zh: "圣母大教堂" }, addr: "01 Công xã Paris, P. Bến Nghé, Q.1, TP.HCM",
-      text: { vi: "Nhà thờ Đức Bà Sài Gòn được xây dựng từ năm 1863 đến 1880, nổi bật với gạch đỏ và hai tháp chuông cao gần 60 mét. Đây là một trong những biểu tượng kiến trúc của thành phố.",
-              en: "Saigon Notre-Dame Cathedral was built between 1863 and 1880, with its red bricks and twin bell towers almost 60 metres tall. It is one of the city's architectural icons.",
-              zh: "西贡圣母大教堂建于1863至1880年间，以红砖和近60米高的双钟楼闻名，是这座城市的建筑象征之一。" } },
-    { id: 4, lat: 10.7766, lng: 106.7031, r: 50, pri: 2, icon: "fa-theater-masks", code: "\uf630", grad: ["#ec4899", "#8b5cf6"], cat: "Văn hóa nghệ thuật",
-      img: "Saigon_Opera_House_2014.jpg", credit: "Ekrem Canli · CC BY-SA 3.0",
-      name: { vi: "Nhà hát Thành phố", en: "Municipal Theatre", zh: "市立剧院" }, addr: "07 Công trường Lam Sơn, P. Bến Nghé, Q.1, TP.HCM",
-      text: { vi: "Nhà hát Thành phố khánh thành năm 1900 theo phong cách Pháp. Đây là nơi diễn ra nhiều chương trình âm nhạc, ballet và kịch nghệ.",
-              en: "The Municipal Theatre opened in 1900 in French style. It hosts many music, ballet and theatre performances.",
-              zh: "市立剧院于1900年落成，采用法式风格，常举办音乐、芭蕾和戏剧演出。" } },
-    { id: 5, lat: 10.7777, lng: 106.7003, r: 50, pri: 1, icon: "fa-university", code: "\uf19c", grad: ["#10b981", "#0ea5e9"], cat: "Bảo tàng",
-      img: "Bảo_tàng_Thành_phố_Hồ_Chí_Minh_7.jpg", credit: "Bùi Thụy Đào Nguyên · CC BY-SA 3.0",
-      name: { vi: "Bảo tàng Thành phố Hồ Chí Minh", en: "Ho Chi Minh City Museum", zh: "胡志明市博物馆" }, addr: "65 Lý Tự Trọng, P. Bến Nghé, Q.1, TP.HCM",
-      text: { vi: "Đây là điểm dừng chân để tìm hiểu lịch sử và văn hóa của thành phố qua các hiện vật và tư liệu trưng bày.",
-              en: "This stop lets you explore the history and culture of the city through its exhibits and archives.",
-              zh: "在这里可以通过展品和资料了解这座城市的历史与文化。" } }
+      name: { vi: "Cổng chính và xe tăng", en: "Main Gate and Tanks", zh: "正门与坦克" }, addr: "Cổng chính phía đường Lê Duẩn",
+      text: { vi: "Bạn đang đứng ở cổng chính Dinh Độc Lập. Trưa ngày 30 tháng 4 năm 1975, xe tăng 390 húc đổ cánh cổng này, đánh dấu thời khắc kết thúc chiến tranh và thống nhất đất nước. Hai chiếc xe tăng trưng bày trong khuôn viên tái hiện xe tăng 843 và 390 đã tiến vào Dinh hôm đó.",
+              en: "You are at the main gate of Independence Palace. Around noon on 30 April 1975, tank 390 crashed through this gate, marking the end of the war and the reunification of Vietnam. The two tanks displayed on the grounds recall tanks 843 and 390, which entered the palace that day.",
+              zh: "您现在位于独立宫正门。1975年4月30日中午，390号坦克撞开了这道大门，标志着战争结束、国家统一。园内展出的两辆坦克再现了当天开进独立宫的843号和390号坦克。" } },
+    { id: 2, lat: 10.77745, lng: 106.69585, r: 30, pri: 3, icon: "fa-landmark", code: "\uf66f", grad: ["#2563eb", "#7c3aed"], cat: "Khuôn viên",
+      img: "20190923_Independence_Palace-10.jpg", credit: "Balon Greyjoy · CC0",
+      name: { vi: "Mặt tiền và kiến trúc", en: "Facade and Architecture", zh: "正立面与建筑" }, addr: "Bãi cỏ trước mặt tiền Dinh",
+      text: { vi: "Dinh Độc Lập do kiến trúc sư Ngô Viết Thụ thiết kế, khởi công năm 1962 và khánh thành ngày 31 tháng 10 năm 1966, trên nền Dinh Norodom cũ thời Pháp. Mặt tiền nổi bật với những hàng rèm hoa đá mô phỏng đốt trúc, vừa che nắng vừa mang nét kiến trúc truyền thống Á Đông.",
+              en: "Independence Palace was designed by architect Ngo Viet Thu. Construction began in 1962 and it was inaugurated on 31 October 1966, on the site of the former French-era Norodom Palace. Its facade is known for rows of stone screens shaped like bamboo segments, which give shade and echo traditional East Asian architecture.",
+              zh: "独立宫由建筑师吴越树设计，1962年动工，1966年10月31日落成，原址为法属时期的诺罗敦宫。正面以仿竹节造型的石质花帘著称，既能遮阳，又体现了东方传统建筑风格。" } },
+    { id: 3, lat: 10.77712, lng: 106.69548, r: 15, pri: 2, icon: "fa-scroll", code: "\uf70e", grad: ["#b45309", "#f59e0b"], cat: "Bên trong Dinh",
+      img: "", credit: "",
+      name: { vi: "Phòng Trình Quốc thư", en: "Credentials Room", zh: "国书递交厅" }, addr: "Bên trong Dinh",
+      text: { vi: "Đây là phòng Trình Quốc thư, nơi các đại sứ nước ngoài trình thư uỷ nhiệm. Điểm nhấn của căn phòng là bức tranh sơn mài lớn Bình Ngô Đại Cáo gồm 40 tấm ghép lại, của hoạ sĩ Nguyễn Văn Minh.",
+              en: "This is the Credentials Room, where foreign ambassadors presented their letters of credence. Its highlight is the large lacquer painting Binh Ngo Dai Cao, the Great Proclamation of Victory over the Ming, made of 40 panels by artist Nguyen Van Minh.",
+              zh: "这里是国书递交厅，外国大使在此递交国书。厅内最引人注目的是画家阮文明创作的大型漆画《平吴大诰》，由40块画板拼接而成。" } },
+    { id: 4, lat: 10.77695, lng: 106.69528, r: 15, pri: 2, icon: "fa-users", code: "\uf0c0", grad: ["#0ea5e9", "#2563eb"], cat: "Bên trong Dinh",
+      img: "", credit: "",
+      name: { vi: "Phòng họp Nội các", en: "Cabinet Room", zh: "内阁会议室" }, addr: "Bên trong Dinh",
+      text: { vi: "Phòng họp Nội các là nơi Tổng thống họp với các bộ trưởng. Căn phòng vẫn giữ bàn họp dài và hàng ghế như thời kỳ trước năm 1975, giúp du khách hình dung cách bộ máy chính quyền làm việc tại đây.",
+              en: "The Cabinet Room is where the president met with his ministers. The long meeting table and rows of chairs remain as they were before 1975, helping visitors picture how the government worked here.",
+              zh: "内阁会议室是总统与各部部长开会的地方。长会议桌和成排的座椅仍保持1975年以前的原貌，帮助游客了解当时政府在此办公的情景。" } },
+    { id: 5, lat: 10.7768, lng: 106.69512, r: 15, pri: 2, icon: "fa-helicopter", code: "\uf533", grad: ["#10b981", "#0ea5e9"], cat: "Sân thượng",
+      img: "", credit: "",
+      name: { vi: "Sân thượng và trực thăng", en: "Rooftop and Helicopter", zh: "屋顶与直升机" }, addr: "Sân thượng",
+      text: { vi: "Trên sân thượng có bãi đáp trực thăng. Chiếc trực thăng UH-1 trưng bày ở đây là loại từng phục vụ Tổng thống. Ngày 8 tháng 4 năm 1975, phi công Nguyễn Thành Trung lái máy bay F-5E ném bom Dinh; các vị trí trúng bom được đánh dấu bằng vòng tròn đỏ trên sân thượng.",
+              en: "The rooftop has a helipad. The UH-1 helicopter displayed here is the type once used by the president. On 8 April 1975, pilot Nguyen Thanh Trung bombed the palace from an F-5E jet; the impact points are marked with red circles on the roof.",
+              zh: "屋顶设有直升机停机坪，这里展出的UH-1直升机是当年总统使用过的机型。1975年4月8日，飞行员阮成忠驾驶F-5E战机轰炸独立宫，屋顶上用红圈标出了炸弹落点。" } },
+    { id: 6, lat: 10.77666, lng: 106.69496, r: 15, pri: 3, icon: "fa-broadcast-tower", code: "\uf519", grad: ["#475569", "#1e293b"], cat: "Tầng hầm",
+      img: "", credit: "",
+      name: { vi: "Tầng hầm chỉ huy", en: "Command Bunker", zh: "地下指挥所" }, addr: "Tầng hầm",
+      text: { vi: "Tầng hầm là hệ thống hầm chỉ huy kiên cố, được xây để chịu được bom. Bên trong có phòng thông tin liên lạc, phòng bản đồ tác chiến và phòng nghỉ của Tổng thống, cùng nhiều máy điện đàm vẫn còn được lưu giữ.",
+              en: "The basement is a reinforced command bunker built to withstand bombing. It contains a communications centre, a war map room and the president's rest room, with many original radio sets still preserved.",
+              zh: "地下室是一座坚固的指挥地堡，可抵御轰炸。里面有通讯中心、作战地图室和总统休息室，许多原有的无线电设备至今仍被保存。" } }
   ],
   /* Ảnh banner trang chủ (toàn cảnh thành phố) */
   HERO: [
+    { img: "20190923_Independence_Palace-10.jpg", cap: "Dinh Độc Lập", credit: "Balon Greyjoy · CC0" },
     { img: "Ho_Chi_Minh_City.jpg", cap: "Sông Sài Gòn và trung tâm thành phố", credit: "Benjamin Linh VU · CC BY-SA 2.0" },
     { img: "Nguyen_Hue_Street_2020.jpg", cap: "Phố đi bộ Nguyễn Huệ", credit: "Timback · CC BY-SA 4.0" },
     { img: "Ho_Chi_Minh_City,_City_Hall,_2020-01_CN-03.jpg", cap: "Trụ sở UBND Thành phố", credit: "Steffen Schmitz · CC BY-SA 4.0" }
@@ -54,7 +61,9 @@ const POIService = {
   BASE: "",
   /* ----- Lưu trữ: Admin ghi vào Store("pois"); nếu chưa có thì dùng dữ liệu mẫu ở trên ----- */
   _c: { k: null, v: null },
-  ORIGIN: { lat: 10.7782, lng: 106.6995 },
+  ORIGIN: { lat: 10.7772, lng: 106.6956 },   // trung tâm khuôn viên Dinh Độc Lập
+  /* đổi dữ liệu mẫu (vd chuyển sang Dinh Độc Lập) thì tăng số này để trình duyệt bỏ dữ liệu địa điểm cũ đã lưu */
+  DATA_VER: "dinh-doc-lap-1",
   /* dữ liệu cũ (toạ độ x,y của bản đồ giả lập) được đổi sang lat/lng; dữ liệu cũ chưa có ảnh thì lấy ảnh mẫu (nếu đúng địa điểm mẫu) */
   _migrate(p) {
     let q = p;
@@ -68,7 +77,8 @@ const POIService = {
     q.lng = +(this.ORIGIN.lng + ((p.x == null ? 500 : p.x) - 500) / (m * Math.cos(this.ORIGIN.lat * Math.PI / 180))).toFixed(6);
     delete q.x; delete q.y; return q;
   },
-  raw() { const s = Store.get("pois", null); return s && s.length ? s.map(p => this._migrate(p)) : this._seed.map(p => Object.assign({ status: "published" }, p)); },
+  _checkVer() { if (Store.get("poisVer", "") !== this.DATA_VER) { Store.del("pois"); Store.del("tours"); Store.del("tour"); Store.set("poisVer", this.DATA_VER); } },
+  raw() { this._checkVer(); const s = Store.get("pois", null); return s && s.length ? s.map(p => this._migrate(p)) : this._seed.map(p => Object.assign({ status: "published" }, p)); },
   save(list) { Store.set("pois", list); this._c = { k: null, v: null }; },
   resetSeed() { Store.del("pois"); this._c = { k: null, v: null }; },
   /* điền ngôn ngữ còn thiếu bằng tiếng Việt để giao diện người dùng không bị trống */

@@ -66,7 +66,7 @@
           <div class="Introduce-slider" id="heroSlider">
             <div class="hero-slides" id="heroSlides"></div>
             <div class="introduce-content">
-              <span class="introduce-kicker"><i class="fas fa-map-marker-alt"></i> Quận 1 · TP. Hồ Chí Minh</span>
+              <span class="introduce-kicker"><i class="fas fa-map-marker-alt"></i> Dinh Độc Lập · TP. Hồ Chí Minh</span>
               <h2 class="introduce-title1">Thuyết minh tự động đa ngôn ngữ</h2>
               <h5 class="introduce-title2">Đi đến đâu - Nghe đến đó - Hiểu thêm về thành phố</h5>
               <div class="introduce-actions">
@@ -293,8 +293,9 @@
       <div class="modal-main LR-main">
         <button class="modal-close" data-close><i class="fas fa-times"></i></button>
         <div class="LR-header">
-          <div class="LR-header--item isActive" data-lr="login">Đăng nhập</div>
-          <div class="LR-header--item" data-lr="register">Đăng ký</div>
+          <!-- du khách KHÔNG cần tài khoản: chỉ quản trị viên đăng nhập; phần đăng ký giữ lại nhưng ẩn -->
+          <div class="LR-header--item isActive" data-lr="login">Đăng nhập quản trị</div>
+          <div class="LR-header--item" data-lr="register" hidden>Đăng ký</div>
         </div>
         <form class="LR-form isActive" id="loginForm" data-form="login" autocomplete="on">
           <label>Email</label><input type="email" name="email" class="input-field" autocomplete="username" required />
@@ -303,7 +304,7 @@
           <div class="form-error" id="loginErr"></div>
           <button class="btn btn--primary btn--block" type="submit">Đăng nhập</button>
         </form>
-        <form class="LR-form" id="registerForm" data-form="register" autocomplete="on">
+        <form class="LR-form" id="registerForm" data-form="register" autocomplete="on" hidden>
           <label>Họ và tên</label><input type="text" name="name" class="input-field" required />
           <label>Email</label><input type="email" name="email" class="input-field" autocomplete="username" required />
           <label>Mật khẩu (tối thiểu 6 ký tự)</label><input type="password" name="pass" class="input-field" minlength="6" autocomplete="new-password" required />
@@ -391,6 +392,7 @@
     <script src="./service/RouteService.js"></script>
     <script src="./service/NavigationService.js"></script>
     <script src="./service/AuthService.js"></script>
+    <script src="./service/DeviceService.js"></script>
     <!-- Components (giao diện) -->
     <script src="./js/components/Header.js"></script>
     <script src="./js/components/Map.js"></script>

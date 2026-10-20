@@ -2,7 +2,7 @@
    Thư viện Leaflet nạp từ CDN trong index.html nên cần Internet để hiển thị bản đồ. */
 const MapUI = {
   follow: true, routeLayer: null, tempLayer: null, map: null, markers: {}, circles: {}, me: null, acc: null, group: null, activeId: null, fitted: false, gotFirstFix: false,
-  CENTER: [10.7782, 106.6995],
+  CENTER: [10.7772, 106.6956],   // khuôn viên Dinh Độc Lập
 
   init() {
     this.bindButtons();
@@ -11,7 +11,7 @@ const MapUI = {
       Bus.on("loc:status", s => GpsUI.render(s)); Bus.on("loc:mode", m => GpsUI.mode(m));
       return;
     }
-    this.map = L.map("map", { zoomControl: false, attributionControl: true }).setView(this.CENTER, 16);
+    this.map = L.map("map", { zoomControl: false, attributionControl: true }).setView(this.CENTER, 18);
     this.tiles();
     this.group = L.layerGroup().addTo(this.map);
     this.routeLayer = L.layerGroup().addTo(this.map);
@@ -51,7 +51,7 @@ const MapUI = {
       }).addTo(this.map);
     });
     /* màn hình hẹp + nhìn xa: ẩn tên địa điểm cho khỏi chồng lên nhau (vẫn còn biểu tượng, phóng to là hiện tên) */
-    const labels = () => this.map.getContainer().classList.toggle("labels-off", this.map.getSize().x < 600 && this.map.getZoom() < 17);
+    const labels = () => this.map.getContainer().classList.toggle("labels-off", this.map.getSize().x < 600 && this.map.getZoom() < 19);
     this.map.on("zoomend resize", labels); this.map.whenReady(labels);
   },
 
@@ -160,7 +160,7 @@ const MapUI = {
     if (!this.map) return;
     const pts = POIService.all().map(p => [p.lat, p.lng]);
     if (LocationService.hasFix) pts.push([LocationService.pos.lat, LocationService.pos.lng]);
-    if (pts.length) this.map.fitBounds(L.latLngBounds(pts).pad(0.25)); else this.map.setView(this.CENTER, 16);
+    if (pts.length) this.map.fitBounds(L.latLngBounds(pts).pad(0.25)); else this.map.setView(this.CENTER, 18);
   },
   /* bản đồ nằm trong tab đang ẩn nên phải báo Leaflet đo lại kích thước khi tab hiện ra */
   shown() { if (!this.map) return; this.map.invalidateSize(); if (!this.fitted) { this.fitted = true; this.fit(); } this.markActive(this.activeId); }

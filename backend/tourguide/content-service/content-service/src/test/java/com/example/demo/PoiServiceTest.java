@@ -26,8 +26,8 @@ class PoiServiceTest {
     @Test
     void startsWithFiveSamplePlaces() {
         List<Poi> all = service.list();
-        assertEquals(5, all.size());
-        assertEquals("Dinh Độc Lập", all.get(0).name());
+        assertEquals(6, all.size());
+        assertEquals("Cổng chính và xe tăng", all.get(0).name());
     }
 
     @Test
@@ -56,7 +56,7 @@ class PoiServiceTest {
 
     @Test
     void updateBumpsVersionAndReturnsToDraft() {
-        Poi edited = service.update(3, req("Nhà thờ Đức Bà", "Nội dung mới."));
+        Poi edited = service.update(3, req("Phòng Trình Quốc thư", "Nội dung mới."));
         assertEquals(2, edited.version());
         assertEquals(Poi.DRAFT, edited.status());
         assertEquals("Nội dung mới.", service.publish(3).text());

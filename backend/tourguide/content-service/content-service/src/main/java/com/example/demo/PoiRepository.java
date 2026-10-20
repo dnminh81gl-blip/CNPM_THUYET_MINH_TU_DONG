@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 /**
  * Kho địa điểm, tạm lưu TRONG BỘ NHỚ (khởi động lại thì về dữ liệu mẫu).
  * Bước sau (việc T14) thay bằng PostgreSQL; các lớp khác không phải sửa vì chỉ gọi qua lớp này.
- * Dữ liệu mẫu = 5 địa điểm ở Quận 1 giống trang web.
+ * Dữ liệu mẫu = 6 điểm thuyết minh (POI) trong khuôn viên Dinh Độc Lập, giống trang web.
  */
 @Repository
 public class PoiRepository {
@@ -22,16 +22,18 @@ public class PoiRepository {
     private final AtomicLong nextId = new AtomicLong(1);
 
     public PoiRepository() {
-        seed("Dinh Độc Lập", "Di tích lịch sử", "135 Nam Kỳ Khởi Nghĩa, P. Bến Thành, Q.1, TP.HCM", 10.7769, 106.6953, 60,
-                "Dinh Độc Lập hoàn thành năm 1966, là công trình nổi tiếng với kiến trúc hiện đại. Nơi đây gắn liền với sự kiện lịch sử ngày 30 tháng 4 năm 1975.");
-        seed("Bưu điện Trung tâm Sài Gòn", "Kiến trúc", "02 Công xã Paris, P. Bến Nghé, Q.1, TP.HCM", 10.7800, 106.6999, 40,
-                "Bưu điện Trung tâm Sài Gòn được xây dựng vào cuối thế kỷ 19 theo phong cách kiến trúc Pháp. Mái vòm khung sắt và những ô cửa sổ lớn là điểm nhấn của công trình.");
-        seed("Nhà thờ Đức Bà", "Di tích lịch sử", "01 Công xã Paris, P. Bến Nghé, Q.1, TP.HCM", 10.7798, 106.6990, 60,
-                "Nhà thờ Đức Bà Sài Gòn được xây dựng từ năm 1863 đến 1880, nổi bật với gạch đỏ và hai tháp chuông cao gần 60 mét. Đây là một trong những biểu tượng kiến trúc của thành phố.");
-        seed("Nhà hát Thành phố", "Văn hóa nghệ thuật", "07 Công trường Lam Sơn, P. Bến Nghé, Q.1, TP.HCM", 10.7766, 106.7031, 50,
-                "Nhà hát Thành phố khánh thành năm 1900 theo phong cách Pháp. Đây là nơi diễn ra nhiều chương trình âm nhạc, ballet và kịch nghệ.");
-        seed("Bảo tàng Thành phố Hồ Chí Minh", "Bảo tàng", "65 Lý Tự Trọng, P. Bến Nghé, Q.1, TP.HCM", 10.7777, 106.7003, 50,
-                "Đây là điểm dừng chân để tìm hiểu lịch sử và văn hóa của thành phố qua các hiện vật và tư liệu trưng bày.");
+        seed("Cổng chính và xe tăng", "Khuôn viên", "Cổng chính phía đường Lê Duẩn", 10.7779, 106.6964, 30,
+                "Bạn đang đứng ở cổng chính Dinh Độc Lập. Trưa ngày 30 tháng 4 năm 1975, xe tăng 390 húc đổ cánh cổng này, đánh dấu thời khắc kết thúc chiến tranh và thống nhất đất nước. Hai chiếc xe tăng trưng bày trong khuôn viên tái hiện xe tăng 843 và 390 đã tiến vào Dinh hôm đó.");
+        seed("Mặt tiền và kiến trúc", "Khuôn viên", "Bãi cỏ trước mặt tiền Dinh", 10.77745, 106.69585, 30,
+                "Dinh Độc Lập do kiến trúc sư Ngô Viết Thụ thiết kế, khởi công năm 1962 và khánh thành ngày 31 tháng 10 năm 1966, trên nền Dinh Norodom cũ thời Pháp. Mặt tiền nổi bật với những hàng rèm hoa đá mô phỏng đốt trúc, vừa che nắng vừa mang nét kiến trúc truyền thống Á Đông.");
+        seed("Phòng Trình Quốc thư", "Bên trong Dinh", "Bên trong Dinh", 10.77712, 106.69548, 15,
+                "Đây là phòng Trình Quốc thư, nơi các đại sứ nước ngoài trình thư uỷ nhiệm. Điểm nhấn của căn phòng là bức tranh sơn mài lớn Bình Ngô Đại Cáo gồm 40 tấm ghép lại, của hoạ sĩ Nguyễn Văn Minh.");
+        seed("Phòng họp Nội các", "Bên trong Dinh", "Bên trong Dinh", 10.77695, 106.69528, 15,
+                "Phòng họp Nội các là nơi Tổng thống họp với các bộ trưởng. Căn phòng vẫn giữ bàn họp dài và hàng ghế như thời kỳ trước năm 1975, giúp du khách hình dung cách bộ máy chính quyền làm việc tại đây.");
+        seed("Sân thượng và trực thăng", "Sân thượng", "Sân thượng", 10.7768, 106.69512, 15,
+                "Trên sân thượng có bãi đáp trực thăng. Chiếc trực thăng UH-1 trưng bày ở đây là loại từng phục vụ Tổng thống. Ngày 8 tháng 4 năm 1975, phi công Nguyễn Thành Trung lái máy bay F-5E ném bom Dinh; các vị trí trúng bom được đánh dấu bằng vòng tròn đỏ trên sân thượng.");
+        seed("Tầng hầm chỉ huy", "Tầng hầm", "Tầng hầm", 10.77666, 106.69496, 15,
+                "Tầng hầm là hệ thống hầm chỉ huy kiên cố, được xây để chịu được bom. Bên trong có phòng thông tin liên lạc, phòng bản đồ tác chiến và phòng nghỉ của Tổng thống, cùng nhiều máy điện đàm vẫn còn được lưu giữ.");
     }
 
     private void seed(String name, String category, String address, double lat, double lng, int radius, String text) {

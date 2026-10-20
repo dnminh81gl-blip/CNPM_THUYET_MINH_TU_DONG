@@ -1,10 +1,10 @@
 /* Admin chung: header điều hướng, phân trang, nghe thử, tiện ích.
    Dùng chung localStorage với trang người dùng (khoá "ttd:...") nên Admin sửa thì trang người dùng thấy sau khi tải lại. */
 const ADMIN_PAGES = [
-  ["dashboard", "Tổng quan", "fa-chart-pie"], ["places", "Địa điểm", "fa-map-marker-alt"], ["content", "Nội dung", "fa-language"],
-  ["audio", "Audio", "fa-volume-up"], ["tours", "Tour", "fa-route"], ["history", "Thống kê", "fa-chart-line"], ["users", "Người dùng", "fa-users"]
+  ["dashboard", "Tổng quan", "fa-chart-pie"], ["places", "POI", "fa-map-marker-alt"], ["content", "Nội dung", "fa-language"],
+  ["audio", "Audio", "fa-volume-up"], ["tours", "Tour", "fa-route"], ["history", "Thống kê", "fa-chart-line"], ["devices", "Thiết bị", "fa-mobile-alt"]
 ];
-const ICONS = [["fa-landmark", "\uf66f", "Di tích"], ["fa-church", "\uf51d", "Nhà thờ"], ["fa-envelope", "\uf0e0", "Bưu điện"], ["fa-theater-masks", "\uf630", "Nhà hát"],
+const ICONS = [["fa-flag", "\uf024", "Cổng / lối vào"], ["fa-scroll", "\uf70e", "Phòng trưng bày"], ["fa-users", "\uf0c0", "Phòng họp"], ["fa-helicopter", "\uf533", "Sân thượng"], ["fa-broadcast-tower", "\uf519", "Tầng hầm"], ["fa-landmark", "\uf66f", "Di tích"], ["fa-church", "\uf51d", "Nhà thờ"], ["fa-envelope", "\uf0e0", "Bưu điện"], ["fa-theater-masks", "\uf630", "Nhà hát"],
   ["fa-university", "\uf19c", "Bảo tàng"], ["fa-monument", "\uf5a6", "Tượng đài"], ["fa-utensils", "\uf2e7", "Ẩm thực"], ["fa-coffee", "\uf0f4", "Quán cà phê"],
   ["fa-shopping-bag", "\uf290", "Mua sắm"], ["fa-tree", "\uf1bb", "Công viên"], ["fa-umbrella-beach", "\uf5ca", "Bãi biển"], ["fa-map-marker-alt", "\uf3c5", "Địa điểm khác"]];
 const GRADS = [["#2563eb", "#7c3aed"], ["#0ea5e9", "#2563eb"], ["#f59e0b", "#ef4444"], ["#ec4899", "#8b5cf6"], ["#10b981", "#0ea5e9"], ["#14b8a6", "#22c55e"], ["#64748b", "#334155"]];

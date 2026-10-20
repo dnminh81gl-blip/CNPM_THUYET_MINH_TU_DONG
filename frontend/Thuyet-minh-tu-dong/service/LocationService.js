@@ -3,8 +3,8 @@
    - "sim": giả lập (kéo chấm / "Đi dạo thử") để demo trong phòng
    Điều kiện dùng GPS thật: trang chạy bằng HTTPS hoặc localhost, người dùng cho phép vị trí, thiết bị bật định vị. */
 const LocationService = {
-  START: { lat: 10.7783, lng: 106.6978 },
-  pos: { lat: 10.7783, lng: 106.6978, accuracy: 5, src: "sim" },
+  START: { lat: 10.7781, lng: 106.6966 },   // ngoài cổng chính Dinh Độc Lập
+  pos: { lat: 10.7781, lng: 106.6966, accuracy: 5, src: "sim" },
   hasFix: false,       // đã có vị trí dùng được chưa (giả lập: chỉ có sau khi bấm lên bản đồ)
   mode: "sim",         // "sim" | "gps"
   status: "sim",       // sim | asking | ok | weak | denied | insecure | unsupported | unavailable | timeout

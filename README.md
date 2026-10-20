@@ -32,18 +32,32 @@ Phan cong va quy tac lam viec: xem `docs/PHAN-CONG.md`.
 ```
 docker compose up --build
 ```
-Thu: mo http://localhost:8080/api/test/publish?poiId=3&version=1 (qua gateway) va xem log ca 5 service.
+Thu: mo http://localhost:8080/api/test/publish?poiId=3 (qua gateway) va xem log ca 5 service.
 Kiem tra gateway: http://localhost:8080/actuator/gateway/routes
 RabbitMQ UI: http://localhost:15672 (guest / guest).
 
 ## API dia diem (content-service, goi qua gateway cong 8080)
 | Lenh | Duong dan | Tac dung |
 |---|---|---|
-| GET | `/api/pois` | Danh sach dia diem (5 dia diem mau o Quan 1) |
+| GET | `/api/pois` | Danh sach POI (6 diem thuyet minh mau trong khuon vien Dinh Doc Lap) |
 | GET | `/api/pois/{id}` | Chi tiet mot dia diem |
 | POST | `/api/pois` | Them dia diem (ban nhap). Body: `{"name","category","address","lat","lng","radius","text"}` |
 | PUT | `/api/pois/{id}` | Sua dia diem (tang version, ve ban nhap) |
 | POST | `/api/pois/{id}/publish` | Xuat ban: phat `content.published` KEM ten + noi dung |
+
+## Khu tham quan va thiet bi (khong can tai khoan)
+Do an tap trung vao MOT khu tham quan: **Dinh Doc Lap**. Moi POI (diem thuyet minh) ben trong co ma QR rieng:
+`index.html?poi=<id>&src=qr`. Du khach quet la nghe, KHONG can tao tai khoan; chi admin dang nhap.
+
+| Lenh | Duong dan | Tac dung |
+|---|---|---|
+| POST | `/api/devices/visits` | Web bao 1 lan mo trang: `deviceId` (ma ngau nhien), he dieu hanh, trinh duyet, loai may, ngon ngu, nguon `qr`/`web`, `poiId` cua ma QR |
+| POST | `/api/devices/listens` | Web bao 1 lan nghe thuyet minh: `deviceId`, `poiId`, `lang` |
+| GET | `/api/devices` | Danh sach thiet bi (trang Admin > Thiet bi) |
+| GET | `/api/devices/stats` | Tong thiet bi, hom nay, dang dung (15 phut), quet QR, luot nghe; theo he dieu hanh / trinh duyet / ngon ngu / POI |
+
+Khong luu ten, email hay IP. Web chay o localhost hoac IP mang LAN (Live Server) se tu goi backend cong 8080;
+tren GitHub Pages (https) can khai bao `API_BASE` (backend co https) trong `js/config.js`.
 
 Thu nhanh tren trinh duyet: `http://localhost:8080/api/test/publish?poiId=3` (xuat ban noi dung that cua dia diem 3).
 

@@ -40,11 +40,13 @@ const AuthUI = {
       if (inp.form) inp.form.addEventListener("reset", () => setTimeout(() => set(false)));
     });
   },
+  /* Du khách không cần tài khoản: header chỉ hiện gì đó khi QUẢN TRỊ VIÊN đã đăng nhập.
+     Quản trị viên đăng nhập qua link "Trang quản trị" ở chân trang (mở popup đăng nhập). */
   renderAccount() {
-    const u = AuthService.current();
-    $("#accountArea").innerHTML = u
-      ? `<span class="header-username">Xin chào, ${Helper.esc(u.name)}</span>${u.role === "admin" ? '<a class="header-navbar-profile header-admin-link" href="./Admin/dashboard.html"><i class="fas fa-cogs"></i> Quản trị</a>' : ""}<span class="header-navbar-profile"><i class="fas fa-id-card"></i> Hồ sơ</span><span class="header-navbar-logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</span>`
-      : `<div class="header-navbar--item js-HandlerLR"><i class="header-user--icon far fa-user"></i> Tài khoản</div>`;
+    const u = AuthService.current(), admin = u && AuthService.isAdmin();
+    $("#accountArea").innerHTML = admin
+      ? `<a class="header-admin-link" href="./Admin/dashboard.html"><i class="fas fa-cogs"></i> Quản trị</a><span class="header-navbar-logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</span>`
+      : "";
     Nav.moveLine();
   },
   showLR(which) {

@@ -38,7 +38,7 @@ spring:
           uri: ${services.content}
           order: 1
           predicates:
-            - Path=/api/pois/**,/api/test/**
+            - Path=/api/pois/**,/api/devices/**,/api/test/**
         - id: narration-service
           uri: ${services.narration}
           order: 1

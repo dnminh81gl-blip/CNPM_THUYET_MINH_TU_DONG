@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Quản lý người dùng - TMTĐ Admin</title>
+<title>Quản lý thiết bị - TMTĐ Admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -20,12 +20,27 @@
 <div id="toast"></div>
 <div class="header" id="adminHeader"></div>
 <div class="container adm-container"><div class="grid wide" id="app"></div></div>
+<!-- popup mã QR của một POI -->
+<div class="modal-wrap" id="qrModal">
+  <div class="modal-main" style="max-width:380px;text-align:center">
+    <button class="modal-close" data-close><i class="fas fa-times"></i></button>
+    <h3 id="qrTitle" style="margin:6px 0 4px"></h3>
+    <div class="hint" id="qrSub" style="margin-bottom:10px"></div>
+    <div id="qrBox" style="display:inline-block;padding:12px;background:#fff"></div>
+    <div class="hint" id="qrLink" style="word-break:break-all;margin-top:8px"></div>
+    <div class="mini" style="justify-content:center;margin-top:6px"><button class="btn btn--primary" id="qrPrint"><i class="fas fa-print"></i> In mã QR</button><button class="btn btn--ghost" id="qrCopy"><i class="fas fa-link"></i> Sao chép link</button></div>
+  </div>
+</div>
 <script src="../js/utils/Helper.js"></script>
 <script src="../js/utils/Storage.js"></script>
+<script src="../js/config.js"></script>
 <script src="../service/POIService.js"></script>
 <script src="../service/AuthService.js"></script>
 <script src="../service/HistoryService.js"></script>
+<script src="../service/DeviceService.js"></script>
+<!-- thư viện tạo mã QR (cần Internet) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="./js/admin-common.js"></script>
-<script src="./js/users.js"></script>
+<script src="./js/devices.js"></script>
 </body>
 </html>

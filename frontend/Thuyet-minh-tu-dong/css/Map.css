@@ -33,3 +33,5 @@
 .map-fallback { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; color: #555; gap: 6px; }
 .map-fallback i { font-size: 36px; color: #bbb; }
 .map-fallback p { font-size: 13px; max-width: 420px; }
+/* màn hình hẹp, nhìn xa: ẩn tên địa điểm để không chồng lên nhau (MapUI.tiles) */
+.labels-off .lm-label { display: none; }

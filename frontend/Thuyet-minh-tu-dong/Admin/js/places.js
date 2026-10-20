@@ -5,8 +5,8 @@ const PlacesPage = {
     if (!A.init("places")) return;
     POIService.BASE = "../"; /* ảnh đặt trong thư mục img/ của dự án nằm ở thư mục cha của Admin/ */
     $("#app").innerHTML = `
-      <div class="adm-title"><h1><i class="fas fa-map-marker-alt"></i> Quản lý địa điểm</h1>
-        <div><button class="btn btn--ghost" id="reset"><i class="fas fa-undo"></i> Khôi phục dữ liệu mẫu</button> <button class="btn btn--primary" id="add"><i class="fas fa-plus"></i> Thêm địa điểm</button></div></div>
+      <div class="adm-title"><h1><i class="fas fa-map-marker-alt"></i> Quản lý POI · Dinh Độc Lập</h1>
+        <div><button class="btn btn--ghost" id="reset"><i class="fas fa-undo"></i> Khôi phục dữ liệu mẫu</button> <button class="btn btn--primary" id="add"><i class="fas fa-plus"></i> Thêm POI</button></div></div>
       <div class="adm-card">
         <div class="toolbar">
           <input class="input-field" id="q" placeholder="Tìm theo tên hoặc địa chỉ..." />
@@ -21,7 +21,7 @@ const PlacesPage = {
     $("#cat").onchange = e => { this.f.cat = e.target.value; this.page = 1; this.render(); };
     $("#st").onchange = e => { this.f.st = e.target.value; this.page = 1; this.render(); };
     $("#add").onclick = () => this.open(null);
-    $("#reset").onclick = () => { if (confirm("Khôi phục 5 địa điểm mẫu? Mọi thay đổi về địa điểm sẽ mất.")) { POIService.resetSeed(); toast({ title: "Đã khôi phục", message: "Dữ liệu mẫu đã được nạp lại.", type: "success" }); this.render(); } };
+    $("#reset").onclick = () => { if (confirm("Khôi phục 6 POI mẫu của Dinh Độc Lập? Mọi thay đổi về địa điểm sẽ mất.")) { POIService.resetSeed(); toast({ title: "Đã khôi phục", message: "Dữ liệu mẫu đã được nạp lại.", type: "success" }); this.render(); } };
     $("#rows").onclick = e => {
       const b = e.target.closest("[data-a]"); if (!b) return; const id = Number(b.dataset.id);
       if (b.dataset.a === "edit") this.open(id);
@@ -46,7 +46,7 @@ const PlacesPage = {
       <div><label>Danh mục *</label><input class="input-field" id="fcat" list="catList" required maxlength="40" /><datalist id="catList"></datalist></div>
       <div><label>Trạng thái</label><select class="input-field" id="fst"><option value="published">Đã xuất bản (hiện trên web)</option><option value="draft">Bản nháp (ẩn)</option></select></div>
       <div class="full"><label>Địa chỉ *</label><input class="input-field" id="faddr" required maxlength="160" /></div>
-      <div><label>Bán kính kích hoạt (m) *</label><input class="input-field" id="fr" type="number" min="20" max="300" required /></div>
+      <div><label>Bán kính kích hoạt (m) *</label><input class="input-field" id="fr" type="number" min="10" max="300" required /></div>
       <div><label>Mức ưu tiên (1-5) *</label><input class="input-field" id="fpri" type="number" min="1" max="5" required /></div>
       <div><label>Biểu tượng</label><select class="input-field" id="fico"></select></div>
       <div><label>Màu</label><select class="input-field" id="fgrad"></select></div>
@@ -156,7 +156,7 @@ const PlacesPage = {
     };
     g.code = ICONS.find(i => i[0] === g.icon)[1];
     if (!g.name.vi || !g.cat || !g.addr || !$("#tVi").value.trim()) { toast({ title: "Thiếu thông tin", message: "Vui lòng điền đủ các trường bắt buộc.", type: "warning" }); return; }
-    if (g.r < 20 || g.r > 300 || g.pri < 1 || g.pri > 5 || isNaN(g.lat) || isNaN(g.lng) || g.lat < -90 || g.lat > 90 || g.lng < -180 || g.lng > 180) { toast({ title: "Giá trị không hợp lệ", message: "Kiểm tra lại bán kính, ưu tiên và vĩ độ/kinh độ.", type: "warning" }); return; }
+    if (g.r < 10 || g.r > 300 || g.pri < 1 || g.pri > 5 || isNaN(g.lat) || isNaN(g.lng) || g.lat < -90 || g.lat > 90 || g.lng < -180 || g.lng > 180) { toast({ title: "Giá trị không hợp lệ", message: "Kiểm tra lại bán kính, ưu tiên và vĩ độ/kinh độ.", type: "warning" }); return; }
     if (g.img && /^\s*javascript:/i.test(g.img)) { toast({ title: "Ảnh không hợp lệ", message: "Hãy nhập đường dẫn ảnh, tên file hoặc URL https.", type: "warning" }); return; }
     if (this.editing) {
       const p = l.find(x => x.id === this.editing); Object.assign(p, g); delete p.x; delete p.y; p.text = Object.assign({}, p.text, { vi: $("#tVi").value.trim() });

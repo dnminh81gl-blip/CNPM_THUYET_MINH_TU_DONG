@@ -12,7 +12,7 @@ public record PoiRequest(
         @Size(max = 200) String address,
         Double lat,
         Double lng,
-        @Min(20) @Max(300) Integer radius,
+        @Min(10) @Max(300) Integer radius,
         @NotBlank(message = "Nội dung giới thiệu không được để trống") @Size(max = 4000) String text
 ) {
 }

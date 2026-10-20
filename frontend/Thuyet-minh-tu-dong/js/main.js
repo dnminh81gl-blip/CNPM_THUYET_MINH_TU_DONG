@@ -99,4 +99,14 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("pointerdown", () => AudioService.unlock(), { once: true });
 
   safe("LocationService", () => LocationService.init());
+  safe("DeviceService", () => DeviceService.init());   /* thống kê thiết bị (ẩn danh, không cần tài khoản) */
+
+  /* mã QR riêng của một POI: index.html?poi=<id>&src=qr -> mở thẳng điểm đó; bấm "Nghe thuyết minh" để phát
+     (iPhone không cho tự phát âm thanh khi người dùng chưa chạm vào trang) */
+  safe("QR", () => {
+    const id = DeviceService.entry().poiId, p = id && POIService.get(id);
+    if (!p) return;
+    Nav.go("places");
+    setTimeout(() => Bus.emit("poi:open", p.id), 300);
+  });
 });

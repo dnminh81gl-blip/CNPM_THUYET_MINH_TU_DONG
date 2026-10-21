@@ -2,7 +2,7 @@
 const DashPage = {
   init() {
     if (!A.init("dashboard")) return;
-    const pois = A.pois(), langs = Object.keys(LANGS), hist = HistoryService.all(), users = AuthService.users(), tours = A.tours();
+    const pois = A.pois(), langs = Object.keys(LANGS), hist = HistoryService.all(), users = AuthService.users();
     const pub = pois.filter(p => p.status !== "draft").length, total = pois.length * langs.length, done = pois.reduce((s, p) => s + langs.filter(k => A.has(p, k)).length, 0);
     const missing = pois.filter(p => langs.some(k => !A.has(p, k))), drafts = pois.filter(p => p.status === "draft");
     const weekAgo = Date.now() - 7 * 864e5, week = hist.filter(h => h.at >= weekAgo);
@@ -14,7 +14,6 @@ const DashPage = {
         ${card("fa-map-marker-alt", "#2563eb", pois.length, `POI (${pub} xuất bản)`, "places.html")}
         ${card("fa-language", "#10b981", total ? Math.round(done / total * 100) + "%" : "0%", "Bản dịch hoàn thành", "content.html")}
         ${card("fa-headphones", "#f59e0b", hist.length, "Tổng lượt nghe", "history.html")}
-        ${card("fa-route", "#8b5cf6", tours.length, "Tour gợi ý", "tours.html")}
         <span id="devCard" style="display:contents">${card("fa-user-check", "#22c55e", "…", "Đang tham gia", "devices.html")}</span>
       </div>
       <div class="grid2">
@@ -22,7 +21,6 @@ const DashPage = {
         <div class="adm-card"><h3>Việc cần xử lý</h3>
           ${missing.length ? `<p style="margin-bottom:8px"><span class="badge warn">${missing.length}</span> địa điểm còn thiếu bản dịch:</p><div class="mini" style="margin-bottom:12px">${missing.map(p => `<a class="tag" href="content.html">${Helper.esc(p.name.vi)}</a>`).join("")}</div>` : `<p style="margin-bottom:12px"><span class="badge ok">✓</span> Tất cả địa điểm đã có đủ bản dịch.</p>`}
           ${drafts.length ? `<p style="margin-bottom:8px"><span class="badge warn">${drafts.length}</span> địa điểm đang ở dạng nháp (chưa hiện trên web).</p>` : ""}
-          ${!tours.length ? `<p><span class="badge">!</span> Chưa có tour gợi ý nào cho người dùng.</p>` : ""}
           <div class="mini" style="margin-top:14px"><a class="btn btn--primary" href="places.html"><i class="fas fa-plus"></i> Thêm địa điểm</a><a class="btn btn--ghost" href="../index.html"><i class="fas fa-external-link-alt"></i> Xem trang web</a></div></div>
       </div>
       <div class="adm-note"><i class="fas fa-shield-alt"></i> Lưu ý: việc kiểm tra quyền admin hiện chạy ngay trong trình duyệt và dữ liệu lưu trong trình duyệt (bản demo), nên chưa phải bảo mật thật. Khi triển khai, cần xác thực + phân quyền admin ở backend (JWT/RBAC) và lưu dữ liệu trong CSDL. </div>`;

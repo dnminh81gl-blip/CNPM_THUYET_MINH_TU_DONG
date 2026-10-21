@@ -2,7 +2,7 @@
    Dùng chung localStorage với trang người dùng (khoá "ttd:...") nên Admin sửa thì trang người dùng thấy sau khi tải lại. */
 const ADMIN_PAGES = [
   ["dashboard", "Tổng quan", "fa-chart-pie"], ["places", "POI", "fa-map-marker-alt"], ["content", "Nội dung", "fa-language"],
-  ["audio", "Audio", "fa-volume-up"], ["tours", "Tour", "fa-route"], ["history", "Thống kê", "fa-chart-line"], ["devices", "Thiết bị", "fa-mobile-alt"]
+  ["audio", "Audio", "fa-volume-up"], ["history", "Thống kê", "fa-chart-line"], ["devices", "Thiết bị", "fa-mobile-alt"]
 ];
 const ICONS = [["fa-flag", "\uf024", "Cổng / lối vào"], ["fa-scroll", "\uf70e", "Phòng trưng bày"], ["fa-users", "\uf0c0", "Phòng họp"], ["fa-helicopter", "\uf533", "Sân thượng"], ["fa-broadcast-tower", "\uf519", "Tầng hầm"], ["fa-landmark", "\uf66f", "Di tích"], ["fa-church", "\uf51d", "Nhà thờ"], ["fa-envelope", "\uf0e0", "Bưu điện"], ["fa-theater-masks", "\uf630", "Nhà hát"],
   ["fa-university", "\uf19c", "Bảo tàng"], ["fa-monument", "\uf5a6", "Tượng đài"], ["fa-utensils", "\uf2e7", "Ẩm thực"], ["fa-coffee", "\uf0f4", "Quán cà phê"],
@@ -36,8 +36,6 @@ const A = {
   /* dữ liệu */
   pois() { return POIService.raw(); },
   savePois(l) { POIService.save(l); },
-  tours() { return Store.get("tours", []); },
-  saveTours(l) { Store.set("tours", l); },
   has(p, l) { return !!(p.text[l] && p.text[l].trim() && p.name[l] && p.name[l].trim()); },
   gradOf(p) { return `linear-gradient(135deg, ${p.grad[0]}, ${p.grad[1]})`; },
   dur(text, lang, rate = 1) { return text.length / LANGS[lang].cps / rate; },

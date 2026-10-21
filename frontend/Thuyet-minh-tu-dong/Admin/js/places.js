@@ -100,9 +100,8 @@ const PlacesPage = {
   toggle(id) { const l = A.pois(), p = l.find(x => x.id === id); p.status = (p.status || "published") === "draft" ? "published" : "draft"; A.savePois(l); this.render(); toast({ title: "Đã cập nhật", message: `${p.name.vi}: ${p.status === "draft" ? "chuyển sang nháp" : "đã xuất bản"}`, type: "success" }); },
   del(id) {
     const p = A.pois().find(x => x.id === id);
-    if (!confirm(`Xoá địa điểm "${p.name.vi}"? Địa điểm cũng sẽ bị gỡ khỏi các tour.`)) return;
+    if (!confirm(`Xoá địa điểm "${p.name.vi}"? `)) return;
     A.savePois(A.pois().filter(x => x.id !== id));
-    A.saveTours(A.tours().map(t => Object.assign(t, { poiIds: t.poiIds.filter(i => i !== id) })));
     toast({ title: "Đã xoá", message: p.name.vi, type: "success" }); this.render();
   },
   open(id) {

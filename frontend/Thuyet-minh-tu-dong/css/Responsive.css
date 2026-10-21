@@ -6,7 +6,6 @@
   .mobile-search { display: flex; }
   .mobile-category { display: block; }
   .map-card { height: 400px; }
-  .tour-summary { position: static; margin-top: 10px; }
   .row .col { margin-bottom: 0; }
 }
 @media (max-width: 739px) {
@@ -38,8 +37,6 @@
   .settings input[type=range] { width: 120px; }
   .detail-grid { grid-template-columns: 1fr; }
   .detail-visual { min-height: 220px; font-size: 64px; }
-  .tour-row { flex-wrap: wrap; }
-  .tour-ico { width: 72px; height: 56px; }
   .now-playing { right: 10px; bottom: 10px; }
   .toast { max-width: 90vw; }
   #toast { right: 10px; top: 66px; }

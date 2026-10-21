@@ -23,11 +23,9 @@ const PoiUI = {
     $("#mobileCategoryList").addEventListener("click", pickCat);
     $("#placeList").addEventListener("click", e => this.onCard(e));
     Bus.on("poi:open", id => this.openDetail(id));
-    Bus.on("tour:change", () => { this.render(); this.refreshDetailTour(); });
     Bus.on("lang:change", () => { this.render(); if (this.openId) this.openDetail(this.openId); this.updateDist(); });
     Bus.on("loc:update", () => this.updateDist());
     $("#dListen").onclick = () => { if (this.openId) NarrationService.play(POIService.get(this.openId), false); };
-    $("#dTour").onclick = () => { if (this.openId) this.toggleTour(this.openId); };
     /* chỉ đường từ cửa sổ chi tiết: đóng cửa sổ, qua tab Địa điểm và tính đường ngay */
     $("#dRoute").onclick = () => { if (!this.openId) return; const p = POIService.get(this.openId); Modal.close("detailModal"); Nav.go("places"); setTimeout(() => Bus.emit("dest:route", DestUI.poiDest(p)), 150); };
     this.render();
@@ -51,7 +49,6 @@ const PoiUI = {
           <div class="product-item--price_type"><span class="product-item--type">${Helper.esc(p.cat)}</span><span class="js-dist" data-id="${p.id}"></span></div>
           <div class="product-item-actions">
             <button class="pa-listen" data-act="listen"><i class="fas fa-headphones"></i> Nghe</button>
-            <button class="pa-tour ${TourService.has(p.id) ? "in" : ""}" data-act="tour">${TourService.has(p.id) ? '<i class="fas fa-check"></i> Đã thêm' : '<i class="fas fa-plus"></i> Tour'}</button>
           </div>
         </div></div></div>`).join("")
       : `<div class="col l-12 m-12 c-12"><div class="empty-box"><i class="fas fa-search-location"></i>Không tìm thấy địa điểm phù hợp.</div></div>`;
@@ -62,12 +59,7 @@ const PoiUI = {
     const card = e.target.closest(".product-item"); if (!card) return;
     const id = Number(card.dataset.id), act = e.target.closest("[data-act]");
     if (act && act.dataset.act === "listen") NarrationService.play(POIService.get(id), false);
-    else if (act && act.dataset.act === "tour") this.toggleTour(id);
     else this.openDetail(id);
-  },
-  toggleTour(id) {
-    const added = TourService.toggle(id), p = POIService.get(id);
-    toast({ title: added ? "Đã thêm vào tour" : "Đã bỏ khỏi tour", message: p.name.vi, type: added ? "success" : "info" });
   },
   dist(p) { return LocationService.hasFix ? Math.round(Geo.dist(p, LocationService.pos)) : null; },
   fmt(d) { return d == null ? "—" : "~ " + d + " m"; },
@@ -84,11 +76,6 @@ const PoiUI = {
     $("#dRad").textContent = `${p.r} m · Ưu tiên ${p.pri}`;
     $("#dLangs").innerHTML = Object.keys(LANGS).map(k => `<button class="chip ${k === lang ? "on" : ""}" data-l="${k}">${LANGS[k].f}</button>`).join("");
     $$("#dLangs .chip").forEach(c => c.onclick = () => { Settings.set({ lang: c.dataset.l }); Bus.emit("lang:change", c.dataset.l); });
-    this.refreshDetailTour(); this.updateDist(); Modal.open("detailModal");
-  },
-  refreshDetailTour() {
-    if (!this.openId) return;
-    const has = TourService.has(this.openId);
-    $("#dTour").innerHTML = has ? '<i class="fas fa-check"></i> Đã trong tour' : '<i class="fas fa-plus"></i> Thêm vào tour';
+    this.updateDist(); Modal.open("detailModal");
   }
 };

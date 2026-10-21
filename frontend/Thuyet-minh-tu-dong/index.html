@@ -19,7 +19,6 @@
     <link rel="stylesheet" href="./css/Map.css" />
     <link rel="stylesheet" href="./css/Audio.css" />
     <link rel="stylesheet" href="./css/Route.css" />
-    <link rel="stylesheet" href="./css/Tour.css" />
     <link rel="stylesheet" href="./css/LoginRegister.css" />
     <link rel="stylesheet" href="./css/Profile.css" />
     <link rel="stylesheet" href="./css/Footer.css" />
@@ -41,7 +40,6 @@
             <div class="header-navbar--list">
               <div class="header-navbar--item js-TabHeader headerActive" data-tab="home">Trang chủ</div>
               <div class="header-navbar--item js-TabHeader" data-tab="places">Địa điểm</div>
-              <div class="header-navbar--item js-TabHeader" data-tab="tour">Tour <span class="header-badge" id="tourBadge">0</span></div>
               <div class="header-navbar--item header-lang">
                 <i class="fas fa-globe"></i>
                 <select id="langSelect" aria-label="Ngôn ngữ thuyết minh">
@@ -71,7 +69,6 @@
               <h5 class="introduce-title2">Đi đến đâu - Nghe đến đó - Hiểu thêm về thành phố</h5>
               <div class="introduce-actions">
                 <button class="btn btn--primary introduce-cta" type="button" onclick="document.getElementById('chonDiem').scrollIntoView({ behavior: 'smooth' })"><i class="fas fa-headphones"></i> Chọn điểm để nghe</button>
-                <button class="btn introduce-cta introduce-cta--ghost" data-go="tour"><i class="fas fa-route"></i> Xem tour gợi ý</button>
               </div>
               <ul class="introduce-stats">
                 <li><b><i class="fas fa-language"></i> 3</b><small>ngôn ngữ</small></li>
@@ -216,22 +213,6 @@
           </div>
         </div>
 
-        <!-- ===== TOUR ===== -->
-        <div class="container-Cart js-Container" data-pane="tour">
-          <div class="grid wide">
-            <h2 class="page-title"><i class="fas fa-route"></i> Tour của tôi</h2>
-            <div class="row sm-gutter">
-              <div class="col l-8 m-12 c-12"><div id="presetBox"></div><div id="tourList"></div></div>
-              <div class="col l-4 m-12 c-12">
-                <div class="tour-summary">
-                  <h3>Tóm tắt tour</h3>
-                  <div class="sum-row"><span>Số điểm dừng</span><b id="sumCount">0</b></div>
-                  <div class="sum-row"><span>Đã nghe</span><b id="sumDone">0</b></div>
-                  <div class="sum-row"><span>Thời lượng nghe ước tính</span><b id="sumTime">00:00</b></div>
-                  <button class="btn btn--primary btn--block" id="tourStart"><i class="fas fa-play"></i> Bắt đầu tour</button>
-                  <button class="btn btn--ghost btn--block" id="tourClear"><i class="fas fa-trash"></i> Xoá tất cả</button>
-                  <p class="sum-note">Bấm "Bắt đầu tour" để chấm xanh tự đi qua các điểm theo thứ tự (GPS giả lập).</p>
-                </div>
               </div>
             </div>
           </div>
@@ -251,7 +232,6 @@
               <ul class="footer-list">
                 <li><a href="#" class="footer-item_link" data-go="home">Trang chủ</a></li>
                 <li><a href="#" class="footer-item_link" data-go="places">Địa điểm</a></li>
-                <li><a href="#" class="footer-item_link" data-go="tour">Tour</a></li>
                 <li><a href="./Admin/dashboard.html" class="footer-item_link">Trang quản trị</a></li>
               </ul>
             </div>
@@ -332,7 +312,6 @@
             <div class="detail-actions">
               <button class="btn btn--primary" id="dListen"><i class="fas fa-headphones"></i> Nghe thuyết minh</button>
               <button class="btn btn--ghost" id="dRoute"><i class="fas fa-route"></i> Chỉ đường</button>
-              <button class="btn btn--ghost" id="dTour"></button>
             </div>
           </div>
         </div>
@@ -387,7 +366,6 @@
     <script src="./service/AudioService.js"></script>
     <script src="./service/NarrationService.js"></script>
     <script src="./service/HistoryService.js"></script>
-    <script src="./service/TourService.js"></script>
     <script src="./service/GeocodeService.js"></script>
     <script src="./service/RouteService.js"></script>
     <script src="./service/NavigationService.js"></script>
@@ -398,12 +376,9 @@
     <script src="./js/components/Map.js"></script>
     <script src="./js/components/POI.js"></script>
     <script src="./js/components/AudioPlayer.js"></script>
-    <script src="./js/components/Tour.js"></script>
     <script src="./js/components/Search.js"></script>
     <script src="./js/components/Route.js"></script>
     <script src="./js/components/Auth.js"></script>
-    <!-- tạo mã QR có kèm địa chỉ backend (khi đang demo đếm thiết bị); lỗi tải thì vẫn còn ảnh QR tĩnh -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="./js/main.js"></script>
   </body>
 </html>

@@ -42,8 +42,6 @@
 .product-item-actions button { flex: 1; height: 34px; border-radius: 8px; font-size: 13px; font-weight: 700; }
 .pa-listen { background: var(--primary-color); }
 .pa-listen:hover { background: var(--primary-dark); }
-.pa-tour { background: #fff; border: 1px solid var(--primary-color); color: #b45309; }
-.pa-tour.in { background: #e8f8ee; border-color: var(--ok); color: var(--ok); }
 
 /* Popup chi tiết */
 .detail-main { max-width: 900px; }

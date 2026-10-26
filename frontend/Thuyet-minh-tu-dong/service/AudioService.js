@@ -29,7 +29,7 @@ const AudioService = {
   resume() { if (this.state === "paused") { speechSynthesis.resume(); this._set("playing"); } },
   toggle() { if (this.state === "playing") this.pause(); else if (this.state === "paused") this.resume(); else if (this.current) this.play(this.current); },
   replay() { if (this.current) this.play(this.current); },
-  stop() { this._tok++; if (this.supported) speechSynthesis.cancel(); Bus.emit("audio:progress", { ratio: 0, elapsed: 0, total: 0 }); this._set("idle"); },
+  stop() { this._tok++; Bus.emit("audio:stop"); if (this.supported) speechSynthesis.cancel(); Bus.emit("audio:progress", { ratio: 0, elapsed: 0, total: 0 }); this._set("idle"); },
   /* mở khoá âm thanh trên trình duyệt (cần một thao tác của người dùng) */
   unlock() { if (this.supported) { const u = new SpeechSynthesisUtterance(" "); u.volume = 0; speechSynthesis.speak(u); } }
 };

@@ -185,6 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
   Bus.on("narration:play", ({ poi, auto }) => { if (auto) toast({ title: t("ts.enter"), message: poi.name[Settings.get().lang], type: "success" }); });
   Bus.on("narration:skip", ({ poi, reason }) => toast({ title: poi.name[Settings.get().lang], type: "warning",
     message: reason === "cool" ? t("ts.cool") : t("ts.busy") }));
+  Bus.on("narration:queued", ({ poi }) => toast({ title: t("ts.queuedT"), message: t("ts.queuedM", { name: poi.name[Settings.get().lang] }), type: "info", duration: 3500 }));
   Bus.on("audio:unsupported", () => toast({ title: t("ts.noVoiceT"), message: t("ts.noVoiceM"), type: "error" }));
   Bus.on("walk:done", () => toast({ title: t("ts.walkT"), message: t("ts.walkM"), type: "info" }));
   Bus.on("lang:change", () => { renderFeatured(); renderGallery(); renderFacts(); renderCredits(); Hero.relabel(); bindSettings.upd && bindSettings.upd(); if (AudioService.state === "playing") AudioService.replay(); });

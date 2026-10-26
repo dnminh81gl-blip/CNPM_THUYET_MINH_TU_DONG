@@ -59,7 +59,7 @@ const DevicesPage = {
       ? `<i class="fas fa-server"></i> Số liệu từ backend (<code>${Helper.esc(DeviceService.apiBase())}/api/devices</code>), tự cập nhật mỗi 5 giây. Không lưu tên, email hay IP: mỗi thiết bị chỉ có một mã ngẫu nhiên.`
       : `<i class="fas fa-info-circle"></i> Chưa kết nối được backend nên đang hiện <b>nhật ký của trình duyệt này</b>. Mở Admin bằng Live Server trên máy chạy Docker, hoặc điền ô "Backend công khai (https)" bên dưới.`;
     const card = (i, c, v, t) => `<div class="stat"><i class="fas ${i}" style="background:${c}"></i><div><b>${v}</b><span>${t}</span></div></div>`;
-    const names = {}; POIService.raw().forEach(p => { names[p.id] = p.name.vi; });
+    const names = { 0: "Giới thiệu tổng quan" }; POIService.raw().forEach(p => { names[p.id] = p.name.vi; });
     $("#liveCount").textContent = s.activeDevices || 0;
     const op = Object.entries(s.onlineByPoi || {}).sort((a, b) => b[1] - a[1]);
     $("#livePoi").textContent = op.length ? "Đang nghe: " + op.map(([id, n]) => `${names[id] || "Điểm " + id} (${n})`).join(" · ") : "Tính theo tín hiệu trong 2 phút gần nhất";
@@ -68,12 +68,12 @@ const DevicesPage = {
       + card("fa-qrcode", "#8b5cf6", s.qrDevices, "Vào bằng mã QR")
       + card("fa-headphones", "#ec4899", s.totalListens, "Lượt nghe");
     [["byOs", s.byOs], ["byBrowser", s.byBrowser], ["byType", s.byType], ["byLang", this.langNames(s.byLang)]].forEach(([el, m]) => $("#" + el).innerHTML = this.bars(m));
-    const pois = POIService.raw(), lis = s.listensByPoi || {};
+    const pois = [{ id: 0, name: { vi: "Giới thiệu tổng quan" }, cat: "Tổng quan" }].concat(POIService.raw()), lis = s.listensByPoi || {};
     $("#poiRows").innerHTML = pois.slice().sort((a, b) => (lis[b.id] || 0) - (lis[a.id] || 0) || a.id - b.id)
       .map(p => `<tr><td>${p.id}</td><td><b>${Helper.esc(p.name.vi)}</b></td><td>${Helper.esc(p.cat || "")}</td><td>${lis[p.id] || 0}</td></tr>`).join("");
     const lang = l => (LANGS[l] || { f: l }).f, t = iso => iso ? new Date(iso).toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh", hour12: false }) : "";
     $("#devRows").innerHTML = d.devices.length ? d.devices.slice(0, 50).map(x => `<tr><td>${DeviceService.isOnline(x) ? '<span class="badge ok">● Đang tham gia</span>' : '<span class="badge">Đã rời</span>'}</td><td><code>${Helper.esc(String(x.deviceId).slice(0, 8))}</code></td><td>${Helper.esc(x.type)}</td><td>${Helper.esc(x.os)}</td><td>${Helper.esc(x.browser)}</td><td>${Helper.esc(lang(x.lang))}</td>
-      <td><span class="badge ${x.firstSrc === "qr" ? "ok" : ""}">${x.firstSrc === "qr" ? "Mã QR" : "Link"}</span></td><td>${t(x.firstSeen)}</td><td>${t(x.lastSeen)}</td><td>${x.visits}</td><td>${x.listens}</td><td>${x.lastPoiId ? Helper.esc(names[x.lastPoiId] || "Điểm " + x.lastPoiId) : "—"}</td></tr>`).join("")
+      <td><span class="badge ${x.firstSrc === "qr" ? "ok" : ""}">${x.firstSrc === "qr" ? "Mã QR" : "Link"}</span></td><td>${t(x.firstSeen)}</td><td>${t(x.lastSeen)}</td><td>${x.visits}</td><td>${x.listens}</td><td>${x.lastPoiId != null ? Helper.esc(names[x.lastPoiId] || "Điểm " + x.lastPoiId) : "—"}</td></tr>`).join("")
       : `<tr><td colspan="12" class="empty">Chưa có thiết bị nào. Mở web (hoặc quét mã QR) trên điện thoại để thấy thiết bị hiện tại đây.</td></tr>`;
   },
   langNames(m) { const o = {}; Object.entries(m || {}).forEach(([k, v]) => { o[(LANGS[k] || { f: k }).f] = v; }); return o; },

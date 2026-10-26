@@ -4,29 +4,111 @@ function renderFeatured() {
   /* Một mã QR vào web: trang chủ liệt kê MỌI điểm đang xuất bản (theo thứ tự tham quan), du khách chạm điểm nào thì nghe điểm đó */
   const top = POIService.all().slice().sort((a, b) => a.id - b.id);
   if (!top.length) { $("#featured").innerHTML = '<div class="empty-box"><i class="fas fa-map-marked-alt"></i>Chưa có địa điểm nào được xuất bản.</div>'; return; }
+  const curId = AudioService.state !== "idle" && AudioService.current ? AudioService.current.id : null;
   $("#featured").innerHTML = top.map((p, i) => {
-    const id = p.id;
-    const visual = `<div class="pi-visual" style="background:${POIService.grad(p)}" data-act="open" data-id="${id}">${POIService.media(p, 800)}<span class="pi-tag">${Helper.esc(p.cat)}</span></div>`;
-    const body = `<div class="product-introduce-content">
-      <p class="product-introduce--content-title">${Helper.esc(p.name[lang])}</p>
-      <p class="product-introduce--content-addr"><i class="fas fa-map-marker-alt"></i> ${Helper.esc(p.addr)}</p>
-      <p class="product-introduce--content-contents">${Helper.esc(p.text[lang])}</p>
-      <div class="pi-actions">
-        <button class="btn btn--primary" data-act="listen" data-id="${id}"><i class="fas fa-headphones"></i> Nghe thuyết minh</button>
-        <button class="btn btn--ghost" data-act="open" data-id="${id}"><i class="fas fa-info-circle"></i> Xem chi tiết</button>
-      </div></div>`;
-    return `<div class="product-introduce">${i % 2 ? body + visual : visual + body}</div>`;
+    const id = p.id, sub = lang !== "vi" ? `<small class="stop-vi">${Helper.esc(p.name.vi)}</small>` : "";
+    return `<article class="stop ${id === curId ? "is-playing" : ""}" data-stop="${id}">
+      <button class="stop-visual" type="button" data-act="open" data-id="${id}" aria-label="Xem chi tiết ${Helper.esc(p.name[lang])}">
+        ${POIService.media(p, 800)}<span class="stop-no">${String(i + 1).padStart(2, "0")}</span><span class="stop-cat">${Helper.esc(p.cat)}</span>
+        <span class="stop-eq" aria-hidden="true"><i></i><i></i><i></i></span>
+      </button>
+      <div class="stop-body">
+        <h3 class="stop-name">${Helper.esc(p.name[lang])}${sub}</h3>
+        <p class="stop-addr"><i class="fas fa-map-marker-alt"></i> ${Helper.esc(p.addr)} <span class="stop-dur"><i class="far fa-clock"></i> ${Helper.mmss(POIService.duration(p, lang, Settings.get().rate))}</span></p>
+        <p class="stop-text">${Helper.esc(p.text[lang])}</p>
+        <div class="stop-acts">
+          <button class="btn btn--primary" type="button" data-act="listen" data-id="${id}"><i class="fas fa-headphones"></i> Nghe</button>
+          <button class="btn btn--ghost" type="button" data-act="open" data-id="${id}"><i class="fas fa-info-circle"></i> Chi tiết</button>
+        </div>
+      </div></article>`;
   }).join("");
 }
 
-/* Bộ sưu tập ảnh: toàn bộ điểm đang xuất bản, bấm vào để xem chi tiết */
+/* Hiện vật và không gian trưng bày: bấm vào để xem ảnh lớn */
 function renderGallery() {
-  const lang = Settings.get().lang, list = POIService.all();
-  $("#gallery").innerHTML = list.map((p, i) => `
-    <button class="gallery-item ${i === 0 ? "gallery-item--big" : ""}" data-id="${p.id}" style="background:${POIService.grad(p)}" aria-label="${Helper.esc(p.name[lang])}">
-      ${POIService.media(p, i === 0 ? 1024 : 640)}
-      <span class="gallery-cap"><b>${Helper.esc(p.name[lang])}</b><small>${Helper.esc(p.cat)}</small></span>
+  const lang = Settings.get().lang, list = POIService.EXHIBITS;
+  $("#gallery").innerHTML = list.map((x, i) => `
+    <button class="gallery-item ${i === 0 ? "gallery-item--big" : ""}" type="button" data-ex="${i}" aria-label="${Helper.esc(x.cap[lang] || x.cap.vi)}">
+      <i class="fas fa-image poi-fallback"></i>
+      <img class="poi-photo" src="${Helper.esc(POIService.photoUrl(x.img, i === 0 ? 1024 : 640))}" alt="${Helper.esc(x.cap.vi)}" loading="lazy" decoding="async" onerror="this.remove()" />
+      <span class="gallery-cap"><b>${Helper.esc(x.cap[lang] || x.cap.vi)}</b></span>
     </button>`).join("");
+}
+function openExhibit(i) {
+  const x = POIService.EXHIBITS[i], lang = Settings.get().lang; if (!x) return;
+  $("#lbImg").src = POIService.photoUrl(x.img, 1600); $("#lbImg").alt = x.cap.vi;
+  $("#lbCap").textContent = x.cap[lang] || x.cap.vi; $("#lbCredit").textContent = x.credit ? "Ảnh: " + x.credit : "";
+  Modal.open("lightbox");
+}
+
+/* Dải số liệu dưới banner */
+function renderFacts() {
+  const n = POIService.all().length;
+  $("#facts").innerHTML = POIService.OVERVIEW.facts.concat([{ v: n, t: "Điểm thuyết minh" }, { v: "3", t: "Ngôn ngữ" }])
+    .map(f => `<li><b>${Helper.esc(String(f.v))}</b><small>${Helper.esc(f.t)}</small></li>`).join("");
+}
+
+/* Giới thiệu tổng quan: 3 phần, nghe từng phần hoặc nghe liền (tự chuyển sang phần sau khi đọc xong) */
+const OverviewUI = {
+  queue: null,
+  init() {
+    const ov = POIService.OVERVIEW, h = POIService.HERO[0];
+    $("#ovVisual").innerHTML = `<i class="fas fa-landmark poi-fallback"></i><img class="poi-photo" src="${Helper.esc(POIService.photoUrl(h.img, 1024))}" alt="Dinh Độc Lập" loading="lazy" onerror="this.remove()" />
+      <div class="ov-badge"><b>1962 – 1966</b><small>KTS Ngô Viết Thụ</small></div>`;
+    this.render();
+    $("#ovList").addEventListener("click", e => { const b = e.target.closest("[data-ch]"); if (b) this.toggle(Number(b.dataset.ch)); });
+    $("#ovAll").onclick = () => this.isAll() ? AudioService.stop() : this.playAll();
+    $("#heroListen").onclick = () => { this.playAll(); $("#tongQuan").scrollIntoView({ behavior: "smooth" }); };
+    Bus.on("audio:end", ({ poi }) => {
+      if (!this.queue || !poi || poi.ov == null) return;
+      const next = this.queue.shift();
+      if (next == null) { this.queue = null; this.mark(); return; }
+      setTimeout(() => { if (this.queue) this.play(next); }, 400);
+    });
+    Bus.on("audio:start", ({ poi }) => { if (!poi || poi.ov == null) this.queue = null; });
+    Bus.on("audio:state", () => this.mark());
+    Bus.on("lang:change", () => this.render());
+    Bus.on("settings:change", () => this.times());
+  },
+  render() {
+    const lang = Settings.get().lang;
+    $("#ovList").innerHTML = POIService.OVERVIEW.chapters.map((c, k) => `
+      <li class="ov-ch" data-k="${k}">
+        <button class="ov-play" type="button" data-ch="${k}" aria-label="Nghe phần ${k + 1}"><i class="fas fa-play"></i></button>
+        <div class="ov-txt"><span class="ov-no">Phần ${k + 1}<small class="ov-time" data-t="${k}"></small></span>
+          <b>${Helper.esc(c.title[lang] || c.title.vi)}</b><small>${Helper.esc(c.sub)}</small></div>
+      </li>`).join("");
+    this.times(); this.mark();
+  },
+  dur(k) { const { lang, rate } = Settings.get(); return POIService.duration(POIService.OVERVIEW.item(k), lang, rate); },
+  times() {
+    let all = 0;
+    POIService.OVERVIEW.chapters.forEach((c, k) => { const d = this.dur(k); all += d; const el = $(`.ov-time[data-t="${k}"]`); if (el) el.textContent = " · " + Helper.mmss(d); });
+    $("#ovAllTime").textContent = "· " + Helper.mmss(all);
+  },
+  cur() { const p = AudioService.current; return AudioService.state !== "idle" && p && p.ov != null ? p.ov : null; },
+  isAll() { return this.queue !== null && this.cur() !== null; },
+  play(k) { NarrationService.play(POIService.OVERVIEW.item(k), false); },
+  playAll() { this.queue = [1, 2]; this.play(0); this.mark(); },
+  toggle(k) { if (this.cur() === k) AudioService.toggle(); else { this.queue = null; this.play(k); } },
+  mark() {
+    const c = this.cur(), playing = AudioService.state === "playing";
+    $$("#ovList .ov-ch").forEach(li => {
+      const on = Number(li.dataset.k) === c;
+      li.classList.toggle("on", on);
+      li.querySelector(".ov-play").innerHTML = `<i class="fas fa-${on && playing ? "pause" : "play"}"></i>`;
+    });
+    const all = this.isAll();
+    $("#ovAll").classList.toggle("on", all);
+    $("#ovAll i").className = "fas fa-" + (all ? "stop" : "play");
+    $("#ovAll span").textContent = all ? "Dừng nghe" : "Nghe liền cả 3 phần";
+  }
+};
+
+/* Đánh dấu thẻ điểm đang phát */
+function markPlayingStop() {
+  const p = AudioService.current, id = AudioService.state !== "idle" && p ? p.id : null;
+  $$("#featured .stop").forEach(el => el.classList.toggle("is-playing", Number(el.dataset.stop) === id && id !== 0));
 }
 
 /* Banner trang chủ: ảnh toàn cảnh thành phố tự chuyển */
@@ -80,13 +162,16 @@ document.addEventListener("DOMContentLoaded", () => {
   safe("SearchUI", () => SearchUI.init()); safe("DestUI", () => DestUI.init()); safe("NavUI", () => NavUI.init());
   safe("AuthUI", () => AuthUI.init()); safe("Settings", bindSettings); safe("Featured", renderFeatured);
   safe("Hero", () => Hero.init()); safe("Gallery", renderGallery); safe("Credits", renderCredits);
+  safe("Facts", renderFacts); safe("Overview", () => OverviewUI.init());
 
   $("#featured").addEventListener("click", e => {
     const b = e.target.closest("[data-act]"); if (!b) return;
     const p = POIService.get(b.dataset.id);
     if (b.dataset.act === "listen") NarrationService.play(p, false); else Bus.emit("poi:open", p.id);
   });
-  $("#gallery").addEventListener("click", e => { const b = e.target.closest("[data-id]"); if (b) Bus.emit("poi:open", Number(b.dataset.id)); });
+  $("#gallery").addEventListener("click", e => { const b = e.target.closest("[data-ex]"); if (b) openExhibit(Number(b.dataset.ex)); });
+  document.addEventListener("click", e => { const b = e.target.closest("[data-scroll]"); if (b) { e.preventDefault(); const t = document.getElementById(b.dataset.scroll); if (t) t.scrollIntoView({ behavior: "smooth" }); } });
+  Bus.on("audio:state", markPlayingStop);
 
   /* thông báo cho người dùng khi service ra quyết định */
   Bus.on("narration:play", ({ poi, auto }) => { if (auto) toast({ title: "Đã vào vùng", message: poi.name[Settings.get().lang], type: "success" }); });
@@ -94,7 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
     message: reason === "cool" ? "Đang trong thời gian cooldown, bỏ qua." : "Đang phát điểm có ưu tiên cao hơn, bỏ qua." }));
   Bus.on("audio:unsupported", () => toast({ title: "Không có giọng đọc", message: "Trình duyệt này không hỗ trợ đọc văn bản thành tiếng.", type: "error" }));
   Bus.on("walk:done", () => toast({ title: "Hoàn thành", message: "Chấm xanh đã đi hết lộ trình.", type: "info" }));
-  Bus.on("lang:change", () => { renderFeatured(); renderGallery(); if (AudioService.state === "playing") AudioService.replay(); });
+  Bus.on("lang:change", () => { renderFeatured(); renderGallery(); Hero.caption(); if (AudioService.state === "playing") AudioService.replay(); });
   /* thao tác đầu tiên của người dùng mở khoá âm thanh trên trình duyệt */
   document.addEventListener("pointerdown", () => AudioService.unlock(), { once: true });
 

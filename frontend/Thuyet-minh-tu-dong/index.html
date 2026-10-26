@@ -3,12 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Thuyết minh tự động</title>
+    <title>Dinh Độc Lập · Thuyết minh tự động</title>
+    <meta name="theme-color" content="#7a1c1c" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://commons.wikimedia.org" />
     <link rel="preconnect" href="https://upload.wikimedia.org" />
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./font/css/all.min.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="./css/Base.css" />
@@ -24,6 +25,7 @@
     <link rel="stylesheet" href="./css/Footer.css" />
     <link rel="stylesheet" href="./css/Toast.css" />
     <link rel="stylesheet" href="./css/Responsive.css" />
+    <link rel="stylesheet" href="./css/Theme.css" />
   </head>
   <body>
     <div class="main_body">
@@ -35,11 +37,11 @@
         <div class="grid wide">
           <div class="header-content">
             <div class="header-logo">
-              <a href="#" class="header-logo--link"><i class="fas fa-map-marker-alt"></i> TMTĐ</a>
+              <a href="#" class="header-logo--link" data-go="home"><i class="fas fa-landmark"></i><span>Dinh Độc Lập<small>Thuyết minh tự động</small></span></a>
             </div>
             <div class="header-navbar--list">
               <div class="header-navbar--item js-TabHeader headerActive" data-tab="home">Trang chủ</div>
-              <div class="header-navbar--item js-TabHeader" data-tab="places">Địa điểm</div>
+              <div class="header-navbar--item js-TabHeader" data-tab="places">Bản đồ</div>
               <div class="header-navbar--item header-lang">
                 <i class="fas fa-globe"></i>
                 <select id="langSelect" aria-label="Ngôn ngữ thuyết minh">
@@ -58,44 +60,86 @@
 
       <!-- ================= CONTAINER ================= -->
       <div class="container">
-        <!-- ===== TRANG CHỦ ===== -->
+        <!-- ===== TRANG CHỦ: Dinh Độc Lập ===== -->
         <div class="container-Introduce js-Container headerActive" data-pane="home">
-          <!-- Banner: ảnh thật của thành phố, tự chuyển (ảnh khai báo ở POIService.HERO) -->
-          <div class="Introduce-slider" id="heroSlider">
+          <!-- Banner: ảnh Dinh Độc Lập, tự chuyển (ảnh khai báo ở POIService.HERO) -->
+          <section class="Introduce-slider" id="heroSlider">
             <div class="hero-slides" id="heroSlides"></div>
             <div class="introduce-content">
-              <span class="introduce-kicker"><i class="fas fa-map-marker-alt"></i> Dinh Độc Lập · TP. Hồ Chí Minh</span>
-              <h2 class="introduce-title1">Thuyết minh tự động đa ngôn ngữ</h2>
-              <h5 class="introduce-title2">Đi đến đâu - Nghe đến đó - Hiểu thêm về thành phố</h5>
+              <span class="introduce-kicker"><i class="fas fa-star"></i> Di tích quốc gia đặc biệt · TP. Hồ Chí Minh</span>
+              <h1 class="introduce-title1">Dinh Độc Lập</h1>
+              <p class="introduce-title2">Thuyết minh tự động · Tiếng Việt · English · 中文</p>
               <div class="introduce-actions">
-                <button class="btn btn--primary introduce-cta" type="button" onclick="document.getElementById('chonDiem').scrollIntoView({ behavior: 'smooth' })"><i class="fas fa-headphones"></i> Chọn điểm để nghe</button>
+                <button class="btn btn--primary introduce-cta" type="button" id="heroListen"><i class="fas fa-play"></i> Nghe giới thiệu tổng quan</button>
+                <button class="btn introduce-cta introduce-cta--ghost" type="button" data-scroll="chonDiem"><i class="fas fa-map-signs"></i> Chọn điểm tham quan</button>
               </div>
-              <ul class="introduce-stats">
-                <li><b><i class="fas fa-language"></i> 3</b><small>ngôn ngữ</small></li>
-                <li><b><i class="fas fa-satellite-dish"></i> GPS</b><small>tự kích hoạt</small></li>
-                <li><b><i class="fas fa-mobile-alt"></i> 0</b><small>cần cài app</small></li>
-              </ul>
             </div>
             <div class="hero-dots" id="heroDots"></div>
             <small class="hero-credit" id="heroCredit"></small>
-          </div>
+          </section>
 
-          <div class="product-introduces">
+          <!-- Dải số liệu -->
+          <div class="facts-band"><div class="grid wide"><ul class="facts" id="facts"></ul></div></div>
+
+          <!-- Giới thiệu tổng quan: nghe từng phần hoặc nghe liền -->
+          <section class="home-sec" id="tongQuan">
             <div class="grid wide">
-              <div class="product-introduces--title" id="chonDiem">Chọn điểm để nghe thuyết minh</div>
-              <div id="featured"></div>
-
-              <div class="product-introduces--title">Hình ảnh các điểm tham quan</div>
-              <div class="gallery" id="gallery"></div>
-
-              <div class="product-introduces--title">Cách hoạt động</div>
-              <div class="row sm-gutter how">
-                <div class="col l-4 m-4 c-12"><div class="how-item"><div class="how-qr" id="siteQr"><img src="./img/qr/qr-web.png" alt="Mã QR mở web Thuyết minh tự động" width="150" height="150" /></div><h4>1. Quét mã QR</h4><p>Mở camera điện thoại quét mã này để vào web, không cần cài ứng dụng. Chọn ngôn ngữ bạn muốn nghe.</p></div></div>
-                <div class="col l-4 m-4 c-12"><div class="how-item"><span class="how-icon"><i class="fas fa-walking"></i></span><h4>2. Đi bộ tham quan</h4><p>Hệ thống theo dõi vị trí GPS và phát hiện khi bạn đi vào vùng của một điểm tham quan.</p></div></div>
-                <div class="col l-4 m-4 c-12"><div class="how-item"><span class="how-icon"><i class="fas fa-volume-up"></i></span><h4>3. Nghe tự động</h4><p>Thuyết minh tự phát bằng ngôn ngữ của bạn, có chống phát lặp (cooldown) và ưu tiên điểm quan trọng.</p></div></div>
+              <div class="sec-head">
+                <span class="sec-kicker">Bắt đầu từ đây</span>
+                <h2 class="sec-title">Giới thiệu tổng quan</h2>
+                <p class="sec-lead">Nghe câu chuyện của Dinh trong khoảng 3 phút: lịch sử, kiến trúc và những gì bên trong. Nghe từng phần hoặc nghe liền cả ba.</p>
+              </div>
+              <div class="ov">
+                <div class="ov-visual" id="ovVisual"></div>
+                <div class="ov-body">
+                  <ol class="ov-list" id="ovList"></ol>
+                  <button class="btn btn--primary ov-all" id="ovAll" type="button"><i class="fas fa-play"></i> <span>Nghe liền cả 3 phần</span> <small id="ovAllTime"></small></button>
+                </div>
               </div>
             </div>
-          </div>
+          </section>
+
+          <!-- Các điểm thuyết minh trong khu tham quan -->
+          <section class="home-sec home-sec--alt" id="chonDiem">
+            <div class="grid wide">
+              <div class="sec-head">
+                <span class="sec-kicker">Hành trình tham quan</span>
+                <h2 class="sec-title">Các điểm thuyết minh</h2>
+                <p class="sec-lead">Chạm vào một điểm để nghe. Đi theo thứ tự từ cổng vào tới tầng hầm, hoặc bật GPS để điện thoại tự phát khi bạn tới gần.</p>
+              </div>
+              <div class="stops" id="featured"></div>
+            </div>
+          </section>
+
+          <!-- Hiện vật và không gian trưng bày -->
+          <section class="home-sec" id="trungBay">
+            <div class="grid wide">
+              <div class="sec-head">
+                <span class="sec-kicker">Bộ sưu tập</span>
+                <h2 class="sec-title">Hiện vật và không gian trưng bày</h2>
+              </div>
+              <div class="gallery" id="gallery"></div>
+            </div>
+          </section>
+
+          <!-- Cách sử dụng -->
+          <section class="home-sec home-sec--alt">
+            <div class="grid wide">
+              <div class="sec-head">
+                <span class="sec-kicker">Không cần cài ứng dụng</span>
+                <h2 class="sec-title">Cách sử dụng</h2>
+              </div>
+              <div class="row sm-gutter how">
+                <div class="col l-4 m-4 c-12"><div class="how-item"><div class="how-qr" id="siteQr"><img src="./img/qr/qr-web.png" alt="Mã QR mở web thuyết minh Dinh Độc Lập" width="150" height="150" /></div><h4>1. Quét mã QR</h4><p>Mở camera điện thoại quét mã ở cổng Dinh. Chọn ngôn ngữ ở góc trên bên phải.</p></div></div>
+                <div class="col l-4 m-4 c-12"><div class="how-item"><span class="how-icon"><i class="fas fa-hand-pointer"></i></span><h4>2. Chọn điểm để nghe</h4><p>Nghe phần giới thiệu tổng quan trước, rồi chạm vào từng điểm khi bạn tới đó.</p></div></div>
+                <div class="col l-4 m-4 c-12"><div class="how-item"><span class="how-icon"><i class="fas fa-satellite-dish"></i></span><h4>3. Hoặc để điện thoại tự phát</h4><p>Mở tab <a href="#" data-go="places">Bản đồ</a>, bật GPS: tới gần điểm nào, thuyết minh điểm đó tự phát.</p></div></div>
+              </div>
+              <div class="visit">
+                <div><i class="fas fa-map-marker-alt"></i><span><b>Dinh Độc Lập</b><small>135 Nam Kỳ Khởi Nghĩa, TP. Hồ Chí Minh</small></span></div>
+                <button class="btn btn--ghost" type="button" data-go="places"><i class="fas fa-map"></i> Xem bản đồ khu tham quan</button>
+              </div>
+            </div>
+          </section>
         </div>
 
         <!-- ===== ĐỊA ĐIỂM ===== -->
@@ -212,11 +256,6 @@
             </div>
           </div>
         </div>
-
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
 
       <!-- ================= FOOTER ================= -->
@@ -224,14 +263,14 @@
         <div class="grid wide">
           <div class="row sm-gutter">
             <div class="col l-6 m-8 c-12">
-              <h3 class="footer__heading">Thuyết minh tự động</h3>
-              <p class="footer__content">Hệ thống thuyết minh tự động đa ngôn ngữ dựa trên GPS và geofence: bạn đến gần điểm tham quan, nội dung được tự động phát bằng ngôn ngữ bạn chọn.</p>
+              <h3 class="footer__heading">Dinh Độc Lập · Thuyết minh tự động</h3>
+              <p class="footer__content">Thuyết minh đa ngôn ngữ cho khu di tích Dinh Độc Lập: quét một mã QR, chọn điểm để nghe, hoặc bật GPS để thuyết minh tự phát khi bạn tới gần.</p>
             </div>
             <div class="col l-2 m-6 c-6">
               <h3 class="footer__heading">Giới thiệu</h3>
               <ul class="footer-list">
                 <li><a href="#" class="footer-item_link" data-go="home">Trang chủ</a></li>
-                <li><a href="#" class="footer-item_link" data-go="places">Địa điểm</a></li>
+                <li><a href="#" class="footer-item_link" data-go="places">Bản đồ</a></li>
                 <li><a href="./Admin/dashboard.html" class="footer-item_link">Trang quản trị</a></li>
               </ul>
             </div>
@@ -252,7 +291,7 @@
             </div>
           </div>
           <details class="footer-credits">
-            <summary><i class="fas fa-camera"></i> Nguồn ảnh (Wikimedia Commons)</summary>
+            <summary><i class="fas fa-camera"></i> Nguồn ảnh (Wikimedia Commons) · Nguồn dữ kiện: dinhdoclap.gov.vn</summary>
             <ul id="photoCredits"></ul>
           </details>
         </div>
@@ -316,6 +355,15 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- ================= XEM ẢNH TRƯNG BÀY ================= -->
+    <div class="modal-wrap lightbox" id="lightbox">
+      <figure class="lb-main">
+        <button class="modal-close" data-close aria-label="Đóng"><i class="fas fa-times"></i></button>
+        <img id="lbImg" alt="" />
+        <figcaption><b id="lbCap"></b><small id="lbCredit"></small></figcaption>
+      </figure>
     </div>
 
     <!-- ================= POPUP HỒ SƠ ================= -->

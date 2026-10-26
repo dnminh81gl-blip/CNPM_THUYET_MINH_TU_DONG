@@ -18,9 +18,9 @@ const DestUI = {
     Bus.on("route:ready", e => this.ready(e));
     Bus.on("route:clear", () => { this.route = null; if (this.state !== "idle") this.state = "idle"; MapUI.clearRoute(); this.hideSteps(); this.render(); });
     Bus.on("dest:route", d => { this.show(d); this.requestRoute(); });
-    Bus.on("lang:change", () => { if (this.dest && this.dest.poi) { this.dest.name = this.dest.poi.name[Settings.get().lang]; } this.render(); if (this.route) this.renderSteps(this.route); });
+    Bus.on("lang:change", () => { if (this.dest && this.dest.poi) { this.dest.name = this.dest.poi.name[Settings.get().lang]; this.dest.sub = tv(this.dest.poi.addr); } this.render(); if (this.route) this.renderSteps(this.route); });
   },
-  poiDest(p) { return { type: "poi", id: p.id, name: p.name[Settings.get().lang], sub: p.addr, lat: p.lat, lng: p.lng, poi: p }; },
+  poiDest(p) { return { type: "poi", id: p.id, name: p.name[Settings.get().lang], sub: tv(p.addr), lat: p.lat, lng: p.lng, poi: p }; },
   showPoi(p) { this.show(this.poiDest(p)); },
   showPlace(g) { this.show({ type: "place", name: g.name, sub: g.label, lat: g.lat, lng: g.lng }); },
   show(d) {
@@ -34,8 +34,8 @@ const DestUI = {
   async requestRoute() {
     const d = this.dest; if (!d) return;
     if (!LocationService.hasFix) {
-      toast({ title: "Chưa có vị trí xuất phát", type: "warning", duration: 4500,
-        message: LocationService.mode === "gps" ? "Đang chờ GPS xác định vị trí của bạn..." : "Hãy bấm lên bản đồ để đặt vị trí xuất phát của bạn (chế độ Giả lập), hoặc bật GPS thật." });
+      toast({ title: t("rt.noStartT"), type: "warning", duration: 4500,
+        message: LocationService.mode === "gps" ? t("rt.noStartGps") : t("rt.noStartSim") });
       return;
     }
     this.state = "loading"; this.err = null; this.render();
@@ -57,12 +57,12 @@ const DestUI = {
     card.hidden = NavigationService.active;
     $("#dcName").textContent = d.name; $("#dcSub").textContent = d.sub || "";
     const info = $("#dcInfo"); info.classList.toggle("err", this.state === "error");
-    if (this.state === "loading") info.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang tìm đường đi bộ...';
+    if (this.state === "loading") info.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${Helper.esc(t("dc.loading"))}`;
     else if (this.state === "ready" && this.route) info.innerHTML = `<i class="fas fa-walking"></i> ${RouteService.fmtDur(this.route.duration, lang)} · ${RouteService.fmtDist(this.route.distance, lang)}`;
-    else if (this.state === "error" && this.err) info.textContent = this.err.message;
-    else info.textContent = LocationService.hasFix ? "Cách bạn khoảng " + RouteService.fmtDist(Geo.dist(d, LocationService.pos), lang) + " (đường chim bay)" : "Bấm \"Chỉ đường\" để xem đường đi";
+    else if (this.state === "error" && this.err) info.textContent = (this.err.code && I18N.vi["err." + this.err.code]) ? t("err." + this.err.code) : this.err.message;
+    else info.textContent = LocationService.hasFix ? t("dc.near", { d: RouteService.fmtDist(Geo.dist(d, LocationService.pos), lang) }) : t("dc.hint");
     $("#dcRoute").hidden = this.state === "ready"; $("#dcRoute").disabled = this.state === "loading";
-    $("#dcRoute").innerHTML = this.state === "error" ? '<i class="fas fa-redo"></i> Thử lại' : '<i class="fas fa-route"></i> Chỉ đường';
+    $("#dcRoute").innerHTML = this.state === "error" ? `<i class="fas fa-redo"></i> ${t("dc.retry")}` : `<i class="fas fa-route"></i> ${t("dc.route")}`;
     $("#dcStart").hidden = this.state !== "ready";
     $("#dcListen").hidden = d.type !== "poi";
     $("#dcGmaps").href = RouteService.gmapsUrl(LocationService.hasFix ? LocationService.pos : null, d);
@@ -70,7 +70,7 @@ const DestUI = {
 
   renderSteps(route) {
     const lang = Settings.get().lang, box = $("#routeSteps");
-    box.innerHTML = `<h4>Hướng dẫn đi bộ <span>${RouteService.fmtDur(route.duration, lang)} · ${RouteService.fmtDist(route.distance, lang)}</span></h4><ol>` +
+    box.innerHTML = `<h4>${t("rt.steps")} <span>${RouteService.fmtDur(route.duration, lang)} · ${RouteService.fmtDist(route.distance, lang)}</span></h4><ol>` +
       route.steps.map(s => `<li><span class="rs-ic">${stepIcon(s.type)}</span><span>${Helper.esc(RouteService.instr(s, lang))}</span><span class="rs-d">${s.type === 10 ? "" : RouteService.fmtDist(s.distance, lang)}</span></li>`).join("") + `</ol>`;
     box.hidden = false;
   },
@@ -87,8 +87,8 @@ const NavUI = {
     Bus.on("nav:update", e => this.update(e));
     Bus.on("nav:say", e => this.say(e));
     Bus.on("nav:reroute", e => {
-      if (e.state === "start") toast({ title: "Bạn đã đi lệch tuyến", message: "Đang tính lại đường...", type: "warning" });
-      else if (e.state === "fail") toast({ title: "Không tính lại được đường", message: e.error && e.error.message || "", type: "error", duration: 4000 });
+      if (e.state === "start") toast({ title: t("nv.off"), message: t("nv.reroute"), type: "warning" });
+      else if (e.state === "fail") toast({ title: t("nv.rerouteFail"), message: e.error ? ((e.error.code && I18N.vi["err." + e.error.code]) ? t("err." + e.error.code) : e.error.message) : "", type: "error", duration: 4000 });
     });
     Bus.on("nav:arrive", e => this.arrive(e));
     Bus.on("nav:stop", () => this.exit());
@@ -98,7 +98,7 @@ const NavUI = {
     const c = document.querySelector(".map-card"); c.classList.add("nav-on");
     $("#destCard").hidden = true; $("#navTop").hidden = false; $("#navBottom").hidden = false; $("#navTop").classList.remove("off");
     $("#nbSim").hidden = LocationService.mode !== "sim";
-    $("#ntIc").innerHTML = stepIcon(11); $("#ntText").textContent = "Bắt đầu đi"; $("#ntSub").textContent = "";
+    $("#ntIc").innerHTML = stepIcon(11); $("#ntText").textContent = t("nv.begin"); $("#ntSub").textContent = "";
     $("#nbRem").textContent = RouteService.fmtDist(NavigationService.route.total, Settings.get().lang); $("#nbTime").textContent = "";
     MapUI.follow = true; $("#zme").classList.remove("attn"); MapUI.resize();
     setTimeout(() => { c.scrollIntoView({ block: "start", behavior: "smooth" }); if (LocationService.hasFix) MapUI.followMe(LocationService.pos); }, 120);
@@ -113,11 +113,11 @@ const NavUI = {
     const lang = Settings.get().lang, s = next || { type: 10, name: "" };
     $("#navTop").classList.toggle("off", off);
     $("#ntIc").innerHTML = off ? '<i class="fas fa-exclamation-triangle"></i>' : stepIcon(s.type);
-    $("#ntText").textContent = off ? "Bạn đã đi lệch tuyến" : RouteService.instr(s, lang);
-    $("#ntSub").textContent = off ? "Hãy quay lại đường đã vẽ, hoặc chờ tính lại đường" : (next ? "Sau " + RouteService.fmtDist(distToNext, lang) : "Còn " + RouteService.fmtDist(remaining, lang));
+    $("#ntText").textContent = off ? t("nv.off") : RouteService.instr(s, lang);
+    $("#ntSub").textContent = off ? t("nv.offSub") : (next ? t("nv.after", { d: RouteService.fmtDist(distToNext, lang) }) : t("nv.left", { d: RouteService.fmtDist(remaining, lang) }));
     $("#nbRem").textContent = RouteService.fmtDist(remaining, lang);
     const eta = new Date(Date.now() + remTime * 1000);
-    $("#nbTime").textContent = RouteService.fmtDur(remTime, lang) + " · đến " + String(eta.getHours()).padStart(2, "0") + ":" + String(eta.getMinutes()).padStart(2, "0");
+    $("#nbTime").textContent = RouteService.fmtDur(remTime, lang) + " · " + t("nv.eta", { t: String(eta.getHours()).padStart(2, "0") + ":" + String(eta.getMinutes()).padStart(2, "0") });
     MapUI.followMe(pos);
   },
   /* đọc to chỉ dẫn. Thuyết minh địa điểm được ưu tiên: đang phát thuyết minh thì chỉ hiện chữ, không đọc chồng */
@@ -130,7 +130,7 @@ const NavUI = {
     speechSynthesis.speak(u);
   },
   arrive({ dest }) {
-    toast({ title: "Bạn đã đến nơi", message: dest ? dest.name : "", type: "success", duration: 4500 });
+    toast({ title: t("nv.arrive"), message: dest ? dest.name : "", type: "success", duration: 4500 });
     this.say({ step: { type: 10, name: "" }, dist: 0 });
     this.exit();
     NavigationService.clear();

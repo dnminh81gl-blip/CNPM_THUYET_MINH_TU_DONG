@@ -18,9 +18,9 @@ const POIService = {
     { id: 1, lat: 10.7779, lng: 106.6964, r: 30, pri: 3, icon: "fa-flag", code: "\uf024", grad: ["#dc2626", "#f59e0b"], cat: "Khuôn viên",
       img: "Tank_Remnant_in_the_Independence_Palace.jpg", credit: "",
       name: { vi: "Cổng chính và xe tăng", en: "Main Gate and Tanks", zh: "正门与坦克" }, addr: "Cổng chính phía đường Lê Duẩn",
-      text: { vi: "Bạn đang đứng ở cổng chính Dinh Độc Lập. Trưa ngày 30 tháng 4 năm 1975, xe tăng 390 húc đổ cánh cổng này, đánh dấu thời khắc kết thúc chiến tranh và thống nhất đất nước. Hai chiếc xe tăng trưng bày trong khuôn viên tái hiện xe tăng 843 và 390 đã tiến vào Dinh hôm đó.",
+      text: { vi: "Bạn đang đứng ở cổng chính Dinh Độc Lập. Trưa ngày 30 tháng 4 năm 1975, xe tăng 390 húc đổ cánh cổng này, đánh dấu thời khắc kết thúc chiến tranh và thống nhất đất nước. Hai chiếc xe tăng trưng bày trong khuôn viên gợi nhớ xe tăng 843 và 390 đã tiến vào Dinh hôm đó.",
               en: "You are at the main gate of Independence Palace. Around noon on 30 April 1975, tank 390 crashed through this gate, marking the end of the war and the reunification of Vietnam. The two tanks displayed on the grounds recall tanks 843 and 390, which entered the palace that day.",
-              zh: "您现在位于独立宫正门。1975年4月30日中午，390号坦克撞开了这道大门，标志着战争结束、国家统一。园内展出的两辆坦克再现了当天开进独立宫的843号和390号坦克。" } },
+              zh: "您现在位于独立宫正门。1975年4月30日中午，390号坦克撞开了这道大门，标志着战争结束、国家统一。园内展出的两辆坦克让人回想起当天开进独立宫的843号和390号坦克。" } },
     { id: 2, lat: 10.77745, lng: 106.69585, r: 30, pri: 3, icon: "fa-landmark", code: "\uf66f", grad: ["#2563eb", "#7c3aed"], cat: "Khuôn viên",
       img: "20190923_Independence_Palace-10.jpg", credit: "Balon Greyjoy · CC0",
       name: { vi: "Mặt tiền và kiến trúc", en: "Facade and Architecture", zh: "正立面与建筑" }, addr: "Bãi cỏ trước mặt tiền Dinh",
@@ -42,28 +42,28 @@ const POIService = {
     { id: 5, lat: 10.7768, lng: 106.69512, r: 15, pri: 2, icon: "fa-helicopter", code: "\uf533", grad: ["#10b981", "#0ea5e9"], cat: "Sân thượng",
       img: "img/places/poi-5.jpg", credit: "",
       name: { vi: "Sân thượng và trực thăng", en: "Rooftop and Helicopter", zh: "屋顶与直升机" }, addr: "Sân thượng",
-      text: { vi: "Trên sân thượng có bãi đáp trực thăng. Chiếc trực thăng UH-1 trưng bày ở đây là loại từng phục vụ Tổng thống. Ngày 8 tháng 4 năm 1975, phi công Nguyễn Thành Trung lái máy bay F-5E ném bom Dinh; các vị trí trúng bom được đánh dấu bằng vòng tròn đỏ trên sân thượng.",
-              en: "The rooftop has a helipad. The UH-1 helicopter displayed here is the type once used by the president. On 8 April 1975, pilot Nguyen Thanh Trung bombed the palace from an F-5E jet; the impact points are marked with red circles on the roof.",
-              zh: "屋顶设有直升机停机坪，这里展出的UH-1直升机是当年总统使用过的机型。1975年4月8日，飞行员阮成忠驾驶F-5E战机轰炸独立宫，屋顶上用红圈标出了炸弹落点。" } },
+      text: { vi: "Trên sân thượng có bãi đáp trực thăng, nơi trưng bày một chiếc trực thăng UH-1. Sáng ngày 8 tháng 4 năm 1975, phi công Nguyễn Thành Trung lái máy bay F-5E ném bom Dinh Độc Lập rồi hạ cánh an toàn ở vùng giải phóng Phước Long.",
+              en: "The rooftop has a helipad, where a UH-1 helicopter is on display. On the morning of 8 April 1975, pilot Nguyen Thanh Trung bombed the palace from an F-5E jet and then landed safely in the liberated area of Phuoc Long.",
+              zh: "屋顶设有直升机停机坪，这里展出一架UH-1直升机。1975年4月8日上午，飞行员阮成忠驾驶F-5E战机轰炸独立宫，随后安全降落在已解放的福隆地区。" } },
     { id: 6, lat: 10.77666, lng: 106.69496, r: 15, pri: 3, icon: "fa-broadcast-tower", code: "\uf519", grad: ["#475569", "#1e293b"], cat: "Tầng hầm",
       img: "img/places/poi-6.jpg", credit: "",
       name: { vi: "Tầng hầm chỉ huy", en: "Command Bunker", zh: "地下指挥所" }, addr: "Tầng hầm",
-      text: { vi: "Tầng hầm là hệ thống hầm chỉ huy kiên cố, được xây để chịu được bom. Bên trong có phòng thông tin liên lạc, phòng bản đồ tác chiến và phòng nghỉ của Tổng thống, cùng nhiều máy điện đàm vẫn còn được lưu giữ.",
-              en: "The basement is a reinforced command bunker built to withstand bombing. It contains a communications centre, a war map room and the president's rest room, with many original radio sets still preserved.",
-              zh: "地下室是一座坚固的指挥地堡，可抵御轰炸。里面有通讯中心、作战地图室和总统休息室，许多原有的无线电设备至今仍被保存。" } }
+      text: { vi: "Tầng hầm là hệ thống hầm chỉ huy kiên cố, được xây để chịu được bom. Bên trong có trung tâm chỉ huy, các thiết bị thông tin liên lạc và phòng bản đồ tác chiến, nhiều bản đồ vẫn còn giữ nguyên dấu bút chì đánh dấu.",
+              en: "The basement is a reinforced command bunker built to withstand bombing. It contains a command centre, communications equipment and a war map room, where many maps still carry their original pencil markings.",
+              zh: "地下室是一座坚固的指挥地堡，可抵御轰炸。里面有指挥中心、通讯设备和作战地图室，许多地图上仍保留着当年的铅笔标记。" } }
   ],
   /* Ảnh banner trang chủ: Dinh Độc Lập (ảnh giấy phép tự do trên Wikimedia Commons) */
   HERO: [
     { img: "20190923_Independence_Palace-10.jpg", cap: "Mặt tiền Dinh Độc Lập", credit: "Balon Greyjoy · CC0" },
     { img: "Independence_Palace_Ho_Chi_Minh_city_(38647623045).jpg", cap: "Dinh Độc Lập", credit: "Wikimedia Commons" },
-    { img: "Dinh_Doc_Lap.jpg", cap: "Dinh Độc Lập nhìn từ thảm cỏ phía trước", credit: "Wikimedia Commons" },
+    { img: "Dinh_Doc_Lap.jpg", cap: "Dinh Độc Lập", credit: "Wikimedia Commons" },
     { img: "Tank_Remnant_in_the_Independence_Palace.jpg", cap: "Xe tăng trưng bày trong khuôn viên", credit: "Wikimedia Commons" }
   ],
   /* Hiện vật và không gian trưng bày (bộ sưu tập ảnh trên trang chủ). Thêm ảnh của nhóm: img: "img/exhibits/ten-anh.jpg" */
   EXHIBITS: [
     { img: "HCMC_Reunification_Palace-Banquet_Room.jpg", cap: { vi: "Phòng Khánh tiết", en: "Banquet Room", zh: "宴会厅" }, credit: "Wikimedia Commons" },
     { img: "Reunification_Palace_-_Presidents_international_reception_room.jpg", cap: { vi: "Phòng tiếp khách quốc tế của Tổng thống", en: "President's International Reception Room", zh: "总统国际接待室" }, credit: "Wikimedia Commons" },
-    { img: "Independence_Palace_Ho_Chi_Minh_city_(38647623045).jpg", cap: { vi: "Mặt tiền với rèm hoa đá", en: "Facade with stone screens", zh: "石质花帘立面" }, credit: "Wikimedia Commons" },
+    { img: "Independence_Palace_Ho_Chi_Minh_city_(38647623045).jpg", cap: { vi: "Dinh Độc Lập", en: "Independence Palace", zh: "独立宫" }, credit: "Wikimedia Commons" },
     { img: "Dinh_Độc_lập.JPG", cap: { vi: "Toàn cảnh Dinh Độc Lập", en: "Independence Palace", zh: "独立宫全景" }, credit: "Wikimedia Commons" },
     { img: "Palacio_de_la_Reunificación,_Ciudad_Ho_Chi_Minh,_Vietnam,_2013-08-14,_DD_17.JPG", cap: { vi: "Dinh Độc Lập", en: "Independence Palace", zh: "独立宫" }, credit: "Diego Delso · Wikimedia Commons" }
   ],
@@ -97,9 +97,9 @@ const POIService = {
         title: { vi: "Bên trong Dinh có những gì", en: "What is inside the palace", zh: "宫内有什么" },
         sub: "Phòng nghi lễ · Khu gia đình · Sân thượng · Tầng hầm",
         text: {
-          vi: "Bên trong Dinh có gần một trăm phòng, mỗi phòng được trang trí riêng theo công năng. Ở các tầng chính là những không gian nghi lễ như phòng Trình Quốc thư với bức tranh sơn mài Bình Ngô Đại Cáo, phòng họp Nội các, phòng Khánh tiết dùng để đãi tiệc, cùng phòng làm việc của Tổng thống và Phó Tổng thống. Các tầng trên là khu sinh hoạt của gia đình Tổng thống và phòng giải trí. Trên sân thượng có bãi đáp trực thăng, còn dưới tầng hầm là hệ thống hầm chỉ huy kiên cố với phòng thông tin liên lạc và phòng bản đồ tác chiến. Ngoài khuôn viên trưng bày hai chiếc xe tăng gợi nhớ ngày 30 tháng 4 năm 1975. Hãy chọn một điểm trong danh sách bên dưới để nghe thuyết minh chi tiết.",
-          en: "Inside the palace there are nearly one hundred rooms, each decorated for its own purpose. The main floors hold the ceremonial spaces: the Credentials Room with the lacquer painting Binh Ngo Dai Cao, the Cabinet Room, the Banquet Room, and the offices of the President and Vice President. The upper floors contain the living quarters of the President's family and an entertainment room. The rooftop has a helipad, and the basement holds a reinforced command bunker with a communications centre and a war map room. Out in the grounds, two tanks recall the events of 30 April 1975. Choose a stop from the list below to hear its detailed story.",
-          zh: "宫内有近一百个房间，每个房间都按用途分别装饰。主楼层是礼仪空间，包括陈列漆画《平吴大诰》的国书递交厅、内阁会议室、宴会厅，以及总统和副总统的办公室。上层是总统家庭的生活区和娱乐室。屋顶设有直升机停机坪，地下室则是坚固的指挥地堡，内有通讯中心和作战地图室。园内展出的两辆坦克让人回想起1975年4月30日。请在下方列表中选择一个地点，收听详细讲解。" } }
+          vi: "Bên trong Dinh có gần một trăm phòng, mỗi phòng được trang trí riêng theo công năng. Ở các tầng chính là những không gian nghi lễ như phòng Trình Quốc thư với bức tranh sơn mài Bình Ngô Đại Cáo, phòng họp Nội các, phòng Khánh tiết dùng để đãi tiệc, cùng phòng làm việc của Tổng thống. Tầng trên là khu sinh hoạt của gia đình Tổng thống, có cả phòng khách gia đình và rạp chiếu phim riêng. Trên sân thượng có bãi đáp trực thăng, còn dưới tầng hầm là hệ thống hầm chỉ huy kiên cố với phòng thông tin liên lạc và phòng bản đồ tác chiến. Ngoài khuôn viên trưng bày hai chiếc xe tăng gợi nhớ ngày 30 tháng 4 năm 1975. Hãy chọn một điểm trong danh sách bên dưới để nghe thuyết minh chi tiết.",
+          en: "Inside the palace there are nearly one hundred rooms, each decorated for its own purpose. The main floors hold the ceremonial spaces: the Credentials Room with the lacquer painting Binh Ngo Dai Cao, the Cabinet Room, the Banquet Room, and the President's office. The upper floor holds the living quarters of the President's family, including a family lounge and a private cinema. The rooftop has a helipad, and the basement holds a reinforced command bunker with a communications centre and a war map room. Out in the grounds, two tanks recall the events of 30 April 1975. Choose a stop from the list below to hear its detailed story.",
+          zh: "宫内有近一百个房间，每个房间都按用途分别装饰。主楼层是礼仪空间，包括陈列漆画《平吴大诰》的国书递交厅、内阁会议室、宴会厅，以及总统办公室。楼上是总统家庭的生活区，设有家庭客厅和私人影院。屋顶设有直升机停机坪，地下室则是坚固的指挥地堡，内有通讯中心和作战地图室。园内展出的两辆坦克让人回想起1975年4月30日。请在下方列表中选择一个地点，收听详细讲解。" } }
     ],
     /* đối tượng để AudioService phát một phần (giống một POI nhưng không có toạ độ) */
     item(k) {
@@ -114,7 +114,7 @@ const POIService = {
   _c: { k: null, v: null },
   ORIGIN: { lat: 10.7772, lng: 106.6956 },   // trung tâm khuôn viên Dinh Độc Lập
   /* đổi dữ liệu mẫu (vd chuyển sang Dinh Độc Lập) thì tăng số này để trình duyệt bỏ dữ liệu địa điểm cũ đã lưu */
-  DATA_VER: "dinh-doc-lap-3",
+  DATA_VER: "dinh-doc-lap-4",
   /* dữ liệu cũ (toạ độ x,y của bản đồ giả lập) được đổi sang lat/lng; dữ liệu cũ chưa có ảnh thì lấy ảnh mẫu (nếu đúng địa điểm mẫu) */
   _migrate(p) {
     let q = p;
@@ -166,7 +166,7 @@ const POIService = {
   media(p, w = 800) {
     const src = this.photoUrl(p.img, w), ic = `<i class="fas ${p.icon} poi-fallback"></i>`;
     if (!src) return ic;
-    return ic + `<img class="poi-photo" src="${Helper.esc(src)}" alt="${Helper.esc(p.name.vi)}" loading="lazy" decoding="async"${p.credit ? ` title="Ảnh: ${Helper.esc(p.credit)}"` : ""} onerror="this.remove()" />`;
+    return ic + `<img class="poi-photo" src="${Helper.esc(src)}" alt="${Helper.esc(p.name.vi)}" loading="lazy" decoding="async"${p.credit ? ` title="${typeof t === "function" ? t("photo") : "Ảnh"}: ${Helper.esc(p.credit)}"` : ""} onerror="this.remove()" />`;
   },
   /* danh sách ghi nguồn ảnh cho footer */
   credits() {

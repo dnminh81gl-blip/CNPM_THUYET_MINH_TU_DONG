@@ -3,22 +3,22 @@ function renderFeatured() {
   const lang = Settings.get().lang;
   /* Một mã QR vào web: trang chủ liệt kê MỌI điểm đang xuất bản (theo thứ tự tham quan), du khách chạm điểm nào thì nghe điểm đó */
   const top = POIService.all().slice().sort((a, b) => a.id - b.id);
-  if (!top.length) { $("#featured").innerHTML = '<div class="empty-box"><i class="fas fa-map-marked-alt"></i>Chưa có địa điểm nào được xuất bản.</div>'; return; }
+  if (!top.length) { $("#featured").innerHTML = `<div class="empty-box"><i class="fas fa-map-marked-alt"></i>${t("pl.none")}</div>`; return; }
   const curId = AudioService.state !== "idle" && AudioService.current ? AudioService.current.id : null;
   $("#featured").innerHTML = top.map((p, i) => {
     const id = p.id, sub = lang !== "vi" ? `<small class="stop-vi">${Helper.esc(p.name.vi)}</small>` : "";
     return `<article class="stop ${id === curId ? "is-playing" : ""}" data-stop="${id}">
-      <button class="stop-visual" type="button" data-act="open" data-id="${id}" aria-label="Xem chi tiết ${Helper.esc(p.name[lang])}">
-        ${POIService.media(p, 800)}<span class="stop-no">${String(i + 1).padStart(2, "0")}</span><span class="stop-cat">${Helper.esc(p.cat)}</span>
+      <button class="stop-visual" type="button" data-act="open" data-id="${id}" aria-label="${Helper.esc(t("st.detailAria", { name: p.name[lang] }))}">
+        ${POIService.media(p, 800)}<span class="stop-no">${String(i + 1).padStart(2, "0")}</span><span class="stop-cat">${Helper.esc(tv(p.cat))}</span>
         <span class="stop-eq" aria-hidden="true"><i></i><i></i><i></i></span>
       </button>
       <div class="stop-body">
         <h3 class="stop-name">${Helper.esc(p.name[lang])}${sub}</h3>
-        <p class="stop-addr"><i class="fas fa-map-marker-alt"></i> ${Helper.esc(p.addr)} <span class="stop-dur"><i class="far fa-clock"></i> ${Helper.mmss(POIService.duration(p, lang, Settings.get().rate))}</span></p>
+        <p class="stop-addr"><i class="fas fa-map-marker-alt"></i> ${Helper.esc(tv(p.addr))} <span class="stop-dur"><i class="far fa-clock"></i> ${Helper.mmss(POIService.duration(p, lang, Settings.get().rate))}</span></p>
         <p class="stop-text">${Helper.esc(p.text[lang])}</p>
         <div class="stop-acts">
-          <button class="btn btn--primary" type="button" data-act="listen" data-id="${id}"><i class="fas fa-headphones"></i> Nghe</button>
-          <button class="btn btn--ghost" type="button" data-act="open" data-id="${id}"><i class="fas fa-info-circle"></i> Chi tiết</button>
+          <button class="btn btn--primary" type="button" data-act="listen" data-id="${id}"><i class="fas fa-headphones"></i> ${t("st.listen")}</button>
+          <button class="btn btn--ghost" type="button" data-act="open" data-id="${id}"><i class="fas fa-info-circle"></i> ${t("st.detail")}</button>
         </div>
       </div></article>`;
   }).join("");
@@ -37,15 +37,15 @@ function renderGallery() {
 function openExhibit(i) {
   const x = POIService.EXHIBITS[i], lang = Settings.get().lang; if (!x) return;
   $("#lbImg").src = POIService.photoUrl(x.img, 1600); $("#lbImg").alt = x.cap.vi;
-  $("#lbCap").textContent = x.cap[lang] || x.cap.vi; $("#lbCredit").textContent = x.credit ? "Ảnh: " + x.credit : "";
+  $("#lbCap").textContent = x.cap[lang] || x.cap.vi; $("#lbCredit").textContent = x.credit ? t("photo") + ": " + tv(x.credit) : "";
   Modal.open("lightbox");
 }
 
 /* Dải số liệu dưới banner */
 function renderFacts() {
   const n = POIService.all().length;
-  $("#facts").innerHTML = POIService.OVERVIEW.facts.concat([{ v: n, t: "Điểm thuyết minh" }, { v: "3", t: "Ngôn ngữ" }])
-    .map(f => `<li><b>${Helper.esc(String(f.v))}</b><small>${Helper.esc(f.t)}</small></li>`).join("");
+  $("#facts").innerHTML = POIService.OVERVIEW.facts.concat([{ v: n, k: "fact.poi" }, { v: "3", k: "fact.lang" }])
+    .map(f => `<li><b>${Helper.esc(String(f.v))}</b><small>${Helper.esc(f.k ? t(f.k) : tv(f.t))}</small></li>`).join("");
 }
 
 /* Giới thiệu tổng quan: 3 phần, nghe từng phần hoặc nghe liền (tự chuyển sang phần sau khi đọc xong) */
@@ -53,8 +53,8 @@ const OverviewUI = {
   queue: null,
   init() {
     const ov = POIService.OVERVIEW, h = POIService.HERO[0];
-    $("#ovVisual").innerHTML = `<i class="fas fa-landmark poi-fallback"></i><img class="poi-photo" src="${Helper.esc(POIService.photoUrl(h.img, 1024))}" alt="Dinh Độc Lập" loading="lazy" onerror="this.remove()" />
-      <div class="ov-badge"><b>1962 – 1966</b><small>KTS Ngô Viết Thụ</small></div>`;
+    $("#ovVisual").innerHTML = `<i class="fas fa-landmark poi-fallback"></i><img class="poi-photo" src="${Helper.esc(POIService.photoUrl(h.img, 1024))}" alt="${Helper.esc(t("logo.name"))}" loading="lazy" onerror="this.remove()" />
+      <div class="ov-badge"><b>1962 – 1966</b><small data-i="ov.arch">${Helper.esc(t("ov.arch"))}</small></div>`;
     this.render();
     $("#ovList").addEventListener("click", e => { const b = e.target.closest("[data-ch]"); if (b) this.toggle(Number(b.dataset.ch)); });
     $("#ovAll").onclick = () => this.isAll() ? AudioService.stop() : this.playAll();
@@ -74,9 +74,9 @@ const OverviewUI = {
     const lang = Settings.get().lang;
     $("#ovList").innerHTML = POIService.OVERVIEW.chapters.map((c, k) => `
       <li class="ov-ch" data-k="${k}">
-        <button class="ov-play" type="button" data-ch="${k}" aria-label="Nghe phần ${k + 1}"><i class="fas fa-play"></i></button>
-        <div class="ov-txt"><span class="ov-no">Phần ${k + 1}<small class="ov-time" data-t="${k}"></small></span>
-          <b>${Helper.esc(c.title[lang] || c.title.vi)}</b><small>${Helper.esc(c.sub)}</small></div>
+        <button class="ov-play" type="button" data-ch="${k}" aria-label="${Helper.esc(t("ov.playPart", { n: k + 1 }))}"><i class="fas fa-play"></i></button>
+        <div class="ov-txt"><span class="ov-no">${Helper.esc(t("ov.part", { n: k + 1 }))}<small class="ov-time" data-t="${k}"></small></span>
+          <b>${Helper.esc(c.title[lang] || c.title.vi)}</b><small>${Helper.esc(tv(c.sub))}</small></div>
       </li>`).join("");
     this.times(); this.mark();
   },
@@ -101,7 +101,7 @@ const OverviewUI = {
     const all = this.isAll();
     $("#ovAll").classList.toggle("on", all);
     $("#ovAll i").className = "fas fa-" + (all ? "stop" : "play");
-    $("#ovAll span").textContent = all ? "Dừng nghe" : "Nghe liền cả 3 phần";
+    $("#ovAll span").textContent = all ? t("ov.stop") : t("ov.all");
   }
 };
 
@@ -116,9 +116,9 @@ const Hero = {
   i: 0, t: null,
   init() {
     const h = POIService.HERO; if (!h.length) return;
-    $("#heroSlides").innerHTML = h.map((s, i) => `<div class="hero-slide ${i ? "" : "on"}" style="background-image:url('${POIService.photoUrl(s.img, 1920)}')" role="img" aria-label="${Helper.esc(s.cap)}"></div>`).join("");
-    $("#heroDots").innerHTML = h.map((s, i) => `<button class="${i ? "" : "on"}" data-i="${i}" aria-label="Ảnh ${i + 1}: ${Helper.esc(s.cap)}"></button>`).join("");
-    $("#heroDots").onclick = e => { const b = e.target.closest("[data-i]"); if (b) { this.show(Number(b.dataset.i)); this.play(); } };
+    $("#heroSlides").innerHTML = h.map((s, i) => `<div class="hero-slide ${i ? "" : "on"}" style="background-image:url('${POIService.photoUrl(s.img, 1920)}')" role="img" aria-label="${Helper.esc(tv(s.cap))}"></div>`).join("");
+    $("#heroDots").innerHTML = h.map((s, i) => `<button class="${i ? "" : "on"}" data-idx="${i}" aria-label="${Helper.esc(t("photoN", { n: i + 1, cap: tv(s.cap) }))}"></button>`).join("");
+    $("#heroDots").onclick = e => { const b = e.target.closest("[data-idx]"); if (b) { this.show(Number(b.dataset.idx)); this.play(); } };
     this.caption();
     let reduce = false; try { reduce = matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) {}
     if (!reduce && h.length > 1) this.play();
@@ -131,22 +131,29 @@ const Hero = {
     $$("#heroDots button").forEach((el, k) => el.classList.toggle("on", k === i));
     this.caption();
   },
-  caption() { const s = POIService.HERO[this.i]; $("#heroCredit").innerHTML = `<i class="fas fa-camera"></i> ${Helper.esc(s.cap)} · Ảnh: ${Helper.esc(s.credit)}`; }
+  relabel() {
+    const h = POIService.HERO;
+    $$("#heroSlides .hero-slide").forEach((el, k) => el.setAttribute("aria-label", tv(h[k].cap)));
+    $$("#heroDots button").forEach((el, k) => el.setAttribute("aria-label", t("photoN", { n: k + 1, cap: tv(h[k].cap) })));
+    this.caption();
+  },
+  caption() { const s = POIService.HERO[this.i]; $("#heroCredit").innerHTML = `<i class="fas fa-camera"></i> ${Helper.esc(tv(s.cap))} · ${t("photo")}: ${Helper.esc(tv(s.credit))}`; }
 };
 
 /* Ghi nguồn ảnh (bắt buộc với ảnh giấy phép CC BY / CC BY-SA) */
 function renderCredits() {
   $("#photoCredits").innerHTML = POIService.credits().map(c =>
-    `<li><b>${Helper.esc(c.name)}</b>: ${c.page ? `<a href="${Helper.esc(c.page)}" target="_blank" rel="noopener">${Helper.esc(c.credit)}</a>` : Helper.esc(c.credit)}</li>`).join("");
+    `<li><b>${Helper.esc(tv(c.name))}</b>: ${c.page ? `<a href="${Helper.esc(c.page)}" target="_blank" rel="noopener">${Helper.esc(c.credit)}</a>` : Helper.esc(c.credit)}</li>`).join("");
 }
 
 function bindSettings() {
   const upd = () => {
     const s = Settings.get();
     $("#setAuto").classList.toggle("on", s.auto);
-    $("#setCool").value = s.cool; $("#coolVal").textContent = s.cool + " giây giữa hai lần phát cùng một điểm";
+    $("#setCool").value = s.cool; $("#coolVal").textContent = t("set.coolV", { n: s.cool });
     $("#setRate").value = s.rate; $("#rateVal").textContent = "×" + Number(s.rate).toFixed(1);
   };
+  bindSettings.upd = upd;
   $("#setAuto").onclick = () => Settings.set({ auto: !Settings.get().auto });
   $("#setCool").oninput = e => Settings.set({ cool: Number(e.target.value) });
   $("#setRate").oninput = e => Settings.set({ rate: Number(Number(e.target.value).toFixed(1)) });
@@ -155,6 +162,7 @@ function bindSettings() {
 
 document.addEventListener("DOMContentLoaded", () => {
   Modal.init();
+  try { I18n.init(); } catch (e) { console.error("Lỗi khởi tạo I18n", e); }
   GeofenceService.init(); NarrationService.init(); HistoryService.init();
   const safe = (name, fn) => { try { fn(); } catch (e) { console.error("Lỗi khởi tạo " + name, e); } };
   safe("Navigation", () => NavigationService.init());
@@ -174,12 +182,12 @@ document.addEventListener("DOMContentLoaded", () => {
   Bus.on("audio:state", markPlayingStop);
 
   /* thông báo cho người dùng khi service ra quyết định */
-  Bus.on("narration:play", ({ poi, auto }) => { if (auto) toast({ title: "Đã vào vùng", message: poi.name[Settings.get().lang], type: "success" }); });
+  Bus.on("narration:play", ({ poi, auto }) => { if (auto) toast({ title: t("ts.enter"), message: poi.name[Settings.get().lang], type: "success" }); });
   Bus.on("narration:skip", ({ poi, reason }) => toast({ title: poi.name[Settings.get().lang], type: "warning",
-    message: reason === "cool" ? "Đang trong thời gian cooldown, bỏ qua." : "Đang phát điểm có ưu tiên cao hơn, bỏ qua." }));
-  Bus.on("audio:unsupported", () => toast({ title: "Không có giọng đọc", message: "Trình duyệt này không hỗ trợ đọc văn bản thành tiếng.", type: "error" }));
-  Bus.on("walk:done", () => toast({ title: "Hoàn thành", message: "Chấm xanh đã đi hết lộ trình.", type: "info" }));
-  Bus.on("lang:change", () => { renderFeatured(); renderGallery(); Hero.caption(); if (AudioService.state === "playing") AudioService.replay(); });
+    message: reason === "cool" ? t("ts.cool") : t("ts.busy") }));
+  Bus.on("audio:unsupported", () => toast({ title: t("ts.noVoiceT"), message: t("ts.noVoiceM"), type: "error" }));
+  Bus.on("walk:done", () => toast({ title: t("ts.walkT"), message: t("ts.walkM"), type: "info" }));
+  Bus.on("lang:change", () => { renderFeatured(); renderGallery(); renderFacts(); renderCredits(); Hero.relabel(); bindSettings.upd && bindSettings.upd(); if (AudioService.state === "playing") AudioService.replay(); });
   /* thao tác đầu tiên của người dùng mở khoá âm thanh trên trình duyệt */
   document.addEventListener("pointerdown", () => AudioService.unlock(), { once: true });
 

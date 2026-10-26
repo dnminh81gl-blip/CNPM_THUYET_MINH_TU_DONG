@@ -2,15 +2,15 @@
    Nạp SAU CÙNG trong index.html nên ghi đè màu, chữ và bố cục trang chủ. Trang Admin không dùng file này.
    Bảng màu: đỏ sơn mài (--lacquer), vàng đồng (--gold), nền giấy dó (--paper). */
 :root {
-  --lacquer: #8a1f1f;
-  --lacquer-dark: #5e1212;
-  --lacquer-deep: #3a0c0c;
+  --lacquer: #b1291f;
+  --lacquer-dark: #8f1f17;
+  --lacquer-deep: #6e1d15;
   --gold: #c9a24b;
   --gold-dark: #a8842f;
   --gold-soft: #f3e6c4;
-  --paper: #f7f1e6;
-  --paper-2: #efe4d0;
-  --ink: #2b1d16;
+  --paper: #fdfaf4;
+  --paper-2: #f8f0e1;
+  --ink: #33241b;
   --ink-soft: #6b5a4e;
   --primary-color: #c9a24b;
   --primary-dark: #a8842f;
@@ -46,9 +46,9 @@ body, h1, h2, h3, h4, b, .facts b, .ov-badge b, .stop-no, .sec-title, .ov-txt b,
 /* ===== Banner ===== */
 .Introduce-slider { height: 86vh; min-height: 520px; max-height: 820px; background-color: var(--lacquer-deep);
   background-image: linear-gradient(160deg, var(--lacquer) 0%, var(--lacquer-deep) 100%); }
-.Introduce-slider::after { background: linear-gradient(180deg, rgba(30, 8, 6, .55) 0%, rgba(30, 8, 6, .25) 38%, rgba(30, 8, 6, .82) 100%); }
+.Introduce-slider::after { background: linear-gradient(180deg, rgba(30, 8, 6, .35) 0%, rgba(30, 8, 6, .08) 40%, rgba(30, 8, 6, .55) 100%); }
 .introduce-content { max-width: 900px; }
-.introduce-kicker { background: rgba(0, 0, 0, .25); border-color: rgba(201, 162, 75, .7); color: var(--gold-soft); letter-spacing: .1em; }
+.introduce-kicker { background: rgba(0, 0, 0, .3); border-color: rgba(201, 162, 75, .7); color: var(--gold-soft); letter-spacing: .1em; }
 .introduce-kicker i { color: var(--gold); }
 .introduce-title1 { font-family: var(--serif); font-size: 76px; font-weight: 700; letter-spacing: .01em; margin-top: 14px; padding: 0; }
 .introduce-title1::after { content: ""; display: block; width: 120px; height: 2px; margin: 18px auto 6px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
@@ -61,13 +61,13 @@ body, h1, h2, h3, h4, b, .facts b, .ov-badge b, .stop-no, .sec-title, .ov-txt b,
 .hero-dots button.on { background: var(--gold); }
 
 /* ===== Dải số liệu ===== */
-.facts-band { background: var(--lacquer-deep); background-image: linear-gradient(90deg, var(--lacquer-deep), var(--lacquer) 50%, var(--lacquer-deep)); border-bottom: 3px solid var(--gold); }
+.facts-band { background: #fff8ea; border-top: 3px solid var(--gold); border-bottom: 1px solid #ecdcbc; }
 .facts { list-style: none; display: grid; grid-template-columns: repeat(6, 1fr); }
-.facts li { padding: 20px 10px; text-align: center; color: #fff; border-left: 1px solid rgba(201, 162, 75, .28); }
+.facts li { padding: 20px 10px; text-align: center; color: var(--ink); border-left: 1px solid #ecdcbc; }
 .facts li:first-child { border-left: none; }
 /* số liệu dùng chữ không chân (số thẳng hàng chắc chắn), màu kem sáng cho nổi trên nền đỏ */
-.facts b { display: block; font-family: "Be Vietnam Pro", sans-serif; font-weight: 700; font-size: 30px; letter-spacing: .02em; color: #fff6e0; line-height: 1.15; }
-.facts small { font-size: 12.5px; font-weight: 600; color: var(--gold); letter-spacing: .02em; }
+.facts b { display: block; font-family: "Be Vietnam Pro", sans-serif; font-weight: 700; font-size: 30px; letter-spacing: .02em; color: var(--lacquer); line-height: 1.15; }
+.facts small { font-size: 12.5px; font-weight: 600; color: var(--ink-soft); letter-spacing: .02em; }
 
 /* ===== Khối nội dung trang chủ ===== */
 .home-sec { padding: 72px 0; }
@@ -81,11 +81,11 @@ body, h1, h2, h3, h4, b, .facts b, .ov-badge b, .stop-no, .sec-title, .ov-txt b,
 #tongQuan, #chonDiem, #trungBay { scroll-margin-top: var(--heade-height); }
 
 /* Khối ảnh dự phòng: màu sơn mài + hoạ tiết khi ảnh chưa có hoặc lỗi */
-.ov-visual, .stop-visual, .gallery-item { background-color: var(--lacquer);
-  background-image: linear-gradient(150deg, rgba(201, 162, 75, .22), transparent 60%),
+.ov-visual, .stop-visual, .gallery-item { background-color: #c0483a;
+  background-image: linear-gradient(150deg, rgba(240, 200, 120, .35), transparent 65%),
     repeating-linear-gradient(45deg, rgba(201, 162, 75, .12) 0 2px, transparent 2px 16px),
     repeating-linear-gradient(-45deg, rgba(201, 162, 75, .12) 0 2px, transparent 2px 16px); }
-.poi-fallback { color: var(--gold); opacity: .85; }
+.poi-fallback { color: #f6deb0; opacity: .9; }
 .ov-visual .poi-photo, .stop-visual .poi-photo, .gallery-item .poi-photo { background: transparent; }
 
 /* ===== Giới thiệu tổng quan ===== */
@@ -108,7 +108,7 @@ body, h1, h2, h3, h4, b, .facts b, .ov-badge b, .stop-no, .sec-title, .ov-txt b,
 .ov-txt > small { color: var(--muted); font-size: 13px; }
 .ov-all { height: 54px; font-size: 16px; width: 100%; }
 .ov-all small { font-weight: 500; opacity: .8; }
-.ov-all.on { background: var(--ink); }
+.ov-all.on { background: var(--lacquer-dark); }
 
 /* ===== Các điểm thuyết minh ===== */
 .stops { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
@@ -142,7 +142,7 @@ body, h1, h2, h3, h4, b, .facts b, .ov-badge b, .stop-no, .sec-title, .ov-txt b,
 .gallery-item--big .gallery-cap { font-family: var(--serif); font-size: 22px; }
 
 /* Xem ảnh lớn */
-.lightbox { background: rgba(20, 6, 4, .88); }
+.lightbox { background: rgba(30, 12, 8, .8); }
 .lb-main { position: relative; max-width: min(1100px, 100%); margin: 0; }
 .lb-main img { display: block; max-width: 100%; max-height: 80vh; border-radius: 12px; margin: 0 auto; background: var(--lacquer-deep); }
 .lb-main figcaption { color: #fff; text-align: center; padding: 12px 8px 0; }
@@ -180,7 +180,7 @@ body, h1, h2, h3, h4, b, .facts b, .ov-badge b, .stop-no, .sec-title, .ov-txt b,
 .info-row > i { color: var(--gold-dark); }
 
 /* Trình phát nổi */
-.now-playing { background: var(--lacquer-deep); border: 1px solid rgba(201, 162, 75, .5); }
+.now-playing { background: var(--lacquer); border: 1px solid rgba(201, 162, 75, .5); }
 .now-playing > i { color: var(--gold); }
 .now-playing button:hover { background: var(--gold); color: var(--lacquer-deep); }
 
@@ -188,8 +188,8 @@ body, h1, h2, h3, h4, b, .facts b, .ov-badge b, .stop-no, .sec-title, .ov-txt b,
 .footer { border-top: 3px solid var(--gold); background: #fffaf2; margin-top: 0; }
 .footer__heading { color: var(--lacquer-deep); }
 .footer-item_link:hover { color: var(--lacquer); }
-.footer__bottom { background: var(--lacquer-deep); }
-.footer__text { color: rgba(255, 255, 255, .75); }
+.footer__bottom { background: #f3e7d1; }
+.footer__text { color: var(--ink-soft); }
 .footer-credits a { color: var(--lacquer); }
 
 /* ===== Máy tính bảng ===== */
@@ -197,7 +197,7 @@ body, h1, h2, h3, h4, b, .facts b, .ov-badge b, .stop-no, .sec-title, .ov-txt b,
   .introduce-title1 { font-size: 58px; }
   .facts { grid-template-columns: repeat(3, 1fr); }
   .facts li:nth-child(4) { border-left: none; }
-  .facts li:nth-child(n+4) { border-top: 1px solid rgba(201, 162, 75, .28); }
+  .facts li:nth-child(n+4) { border-top: 1px solid #ecdcbc; }
   .ov { grid-template-columns: 1fr; }
   .ov-visual { min-height: 300px; }
   .stops { grid-template-columns: repeat(2, 1fr); }

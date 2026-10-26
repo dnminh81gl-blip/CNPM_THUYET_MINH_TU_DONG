@@ -7,8 +7,9 @@ const MapUI = {
   init() {
     this.bindButtons();
     if (!window.L) {
-      $("#map").innerHTML = '<div class="map-fallback"><i class="fas fa-wifi"></i><b>Không tải được bản đồ</b><p>Cần kết nối Internet để tải bản đồ (Leaflet + OpenStreetMap). Vị trí, geofence và thuyết minh vẫn hoạt động; bạn vẫn dùng được danh sách địa điểm bên dưới.</p></div>';
-      Bus.on("loc:status", s => GpsUI.render(s)); Bus.on("loc:mode", m => GpsUI.mode(m));
+      $("#map").innerHTML = '<div class="map-fallback"><i class="fas fa-wifi"></i><b data-i="map.failT"></b><p data-i="map.failP"></p></div>';
+      $("#map").querySelector("b").textContent = t("map.failT"); $("#map").querySelector("p").textContent = t("map.failP");
+      Bus.on("loc:status", s => GpsUI.render(s)); Bus.on("loc:mode", m => GpsUI.mode(m)); Bus.on("lang:change", () => GpsUI.render(GpsUI.last));
       return;
     }
     this.map = L.map("map", { zoomControl: false, attributionControl: true }).setView(this.CENTER, 18);
@@ -28,7 +29,7 @@ const MapUI = {
     Bus.on("poi:filter", ids => this.filter(ids));
     Bus.on("poi:focus", list => this.focus(list));
     Bus.on("audio:state", ({ state, poi }) => this.markActive(state !== "idle" && poi ? poi.id : null));
-    Bus.on("lang:change", () => this.labels());
+    Bus.on("lang:change", () => { this.labels(); GpsUI.render(GpsUI.last); $("#walkTxt").textContent = LocationService.walking ? t("map.walkStop") : t("map.walk"); });
     Bus.on("loc:status", s => GpsUI.render(s));
     Bus.on("loc:mode", m => { GpsUI.mode(m); this.dragMode(m); });
     Bus.on("nav:change", n => { if (n === "places") setTimeout(() => this.shown(), 60); });
@@ -69,7 +70,7 @@ const MapUI = {
     $("#walkBtn").onclick = () => LocationService.walking ? LocationService.stopWalk() : LocationService.startWalk();
     $("#modeGps").onclick = () => LocationService.mode === "gps" ? null : LocationService.startGps();
     $("#modeSim").onclick = () => LocationService.mode === "sim" ? null : LocationService.stopGps();
-    Bus.on("walk:state", on => { $("#walkBtn").classList.toggle("on", on); $("#walkTxt").textContent = on ? "Dừng đi" : "Đi dạo thử"; });
+    Bus.on("walk:state", on => { $("#walkBtn").classList.toggle("on", on); $("#walkTxt").textContent = on ? t("map.walkStop") : t("map.walk"); });
   },
 
   icon(p) {
@@ -174,21 +175,13 @@ const MapUI = {
 
 /* Thanh trạng thái định vị + nút chọn nguồn vị trí */
 const GpsUI = {
-  TEXT: {
-    sim: ["", "Chế độ giả lập: bấm vào bản đồ để đặt vị trí của bạn (kéo chấm xanh để di chuyển)"],
-    asking: ["warn", "Đang xin quyền vị trí... hãy bấm \"Cho phép\" trên trình duyệt"],
-    ok: ["ok", "GPS đang hoạt động"],
-    weak: ["warn", "Tín hiệu GPS yếu — chưa dùng để kích hoạt thuyết minh"],
-    denied: ["bad", "Bạn đã từ chối quyền vị trí. Bật lại ở biểu tượng ổ khoá cạnh địa chỉ rồi bấm \"GPS thật\" lần nữa. Đang dùng chế độ giả lập"],
-    insecure: ["bad", "GPS chỉ hoạt động khi mở trang bằng HTTPS hoặc localhost. Đang dùng chế độ giả lập"],
-    unsupported: ["bad", "Thiết bị/trình duyệt không hỗ trợ định vị. Đang dùng chế độ giả lập"],
-    unavailable: ["warn", "Chưa xác định được vị trí. Hãy bật định vị (GPS/Location) của thiết bị"],
-    timeout: ["warn", "Chờ GPS hơi lâu... hãy ra chỗ thoáng và đợi thêm"]
-  },
-  render({ status, accuracy }) {
-    const [cls, txt] = this.TEXT[status] || this.TEXT.sim, chip = $("#gpsChip");
-    chip.className = "map-legend " + cls;
-    chip.textContent = status === "ok" || status === "weak" ? `${txt} · sai số ±${accuracy} m` : txt;
+  CLS: { sim: "", asking: "warn", ok: "ok", weak: "warn", denied: "bad", insecure: "bad", unsupported: "bad", unavailable: "warn", timeout: "warn" },
+  last: { status: "sim" },
+  render(st) {
+    st = st || { status: "sim" }; this.last = st;
+    const status = this.CLS[st.status] != null ? st.status : "sim", chip = $("#gpsChip"), txt = t("gps." + status);
+    chip.className = "map-legend " + this.CLS[status];
+    chip.textContent = status === "ok" || status === "weak" ? `${txt} · ${t("gps.acc", { a: st.accuracy })}` : txt;
   },
   mode(m) {
     $("#modeGps").classList.toggle("on", m === "gps"); $("#modeSim").classList.toggle("on", m === "sim");

@@ -13,20 +13,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./font/css/all.min.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="./css/Base.css?v=20261026" />
-    <link rel="stylesheet" href="./css/Grid.css?v=20261026" />
-    <link rel="stylesheet" href="./css/Header.css?v=20261026" />
-    <link rel="stylesheet" href="./css/Introduce.css?v=20261026" />
-    <link rel="stylesheet" href="./css/POI.css?v=20261026" />
-    <link rel="stylesheet" href="./css/Map.css?v=20261026" />
-    <link rel="stylesheet" href="./css/Audio.css?v=20261026" />
-    <link rel="stylesheet" href="./css/Route.css?v=20261026" />
-    <link rel="stylesheet" href="./css/LoginRegister.css?v=20261026" />
-    <link rel="stylesheet" href="./css/Profile.css?v=20261026" />
-    <link rel="stylesheet" href="./css/Footer.css?v=20261026" />
-    <link rel="stylesheet" href="./css/Toast.css?v=20261026" />
-    <link rel="stylesheet" href="./css/Responsive.css?v=20261026" />
-    <link rel="stylesheet" href="./css/Theme.css?v=20261026" />
+    <link rel="stylesheet" href="./css/Base.css?v=20261027" />
+    <link rel="stylesheet" href="./css/Grid.css?v=20261027" />
+    <link rel="stylesheet" href="./css/Header.css?v=20261027" />
+    <link rel="stylesheet" href="./css/Introduce.css?v=20261027" />
+    <link rel="stylesheet" href="./css/POI.css?v=20261027" />
+    <link rel="stylesheet" href="./css/Map.css?v=20261027" />
+    <link rel="stylesheet" href="./css/Audio.css?v=20261027" />
+    <link rel="stylesheet" href="./css/Route.css?v=20261027" />
+    <link rel="stylesheet" href="./css/LoginRegister.css?v=20261027" />
+    <link rel="stylesheet" href="./css/Profile.css?v=20261027" />
+    <link rel="stylesheet" href="./css/Footer.css?v=20261027" />
+    <link rel="stylesheet" href="./css/Toast.css?v=20261027" />
+    <link rel="stylesheet" href="./css/Responsive.css?v=20261027" />
+    <link rel="stylesheet" href="./css/Theme.css?v=20261027" />
   </head>
   <body>
     <div class="main_body">
@@ -38,14 +38,14 @@
         <div class="grid wide">
           <div class="header-content">
             <div class="header-logo">
-              <a href="#" class="header-logo--link" data-go="home"><i class="fas fa-landmark"></i><span>Dinh Độc Lập<small>Thuyết minh tự động</small></span></a>
+              <a href="#" class="header-logo--link" data-go="home"><i class="fas fa-landmark"></i><span><span data-i="logo.name">Dinh Độc Lập</span><small data-i="logo.sub">Thuyết minh tự động</small></span></a>
             </div>
             <div class="header-navbar--list">
-              <div class="header-navbar--item js-TabHeader headerActive" data-tab="home">Trang chủ</div>
-              <div class="header-navbar--item js-TabHeader" data-tab="places">Bản đồ</div>
+              <div class="header-navbar--item js-TabHeader headerActive" data-tab="home" data-i="nav.home">Trang chủ</div>
+              <div class="header-navbar--item js-TabHeader" data-tab="places" data-i="nav.map">Bản đồ</div>
               <div class="header-navbar--item header-lang">
                 <i class="fas fa-globe"></i>
-                <select id="langSelect" aria-label="Ngôn ngữ thuyết minh">
+                <select id="langSelect" aria-label="Ngôn ngữ thuyết minh" data-i-aria="nav.lang">
                   <option value="vi">Tiếng Việt</option>
                   <option value="en">English</option>
                   <option value="zh">中文</option>
@@ -54,7 +54,7 @@
               <div id="accountArea" class="header-account"></div>
               <div class="line"></div>
             </div>
-            <div class="header-mobile--btn js-mobile-bars"><i class="fas fa-bars"></i></div>
+            <div class="header-mobile--btn js-mobile-bars" role="button" aria-label="Mở menu" data-i-aria="nav.menu"><i class="fas fa-bars"></i></div>
           </div>
         </div>
       </div>
@@ -67,12 +67,12 @@
           <section class="Introduce-slider" id="heroSlider">
             <div class="hero-slides" id="heroSlides"></div>
             <div class="introduce-content">
-              <span class="introduce-kicker"><i class="fas fa-star"></i> Di tích quốc gia đặc biệt · TP. Hồ Chí Minh</span>
-              <h1 class="introduce-title1">Dinh Độc Lập</h1>
-              <p class="introduce-title2">Thuyết minh tự động · Tiếng Việt · English · 中文</p>
+              <span class="introduce-kicker"><i class="fas fa-star"></i> <span data-i="hero.kicker">Di tích quốc gia đặc biệt · TP. Hồ Chí Minh</span></span>
+              <h1 class="introduce-title1" data-i="hero.title">Dinh Độc Lập</h1>
+              <p class="introduce-title2" data-i="hero.sub">Thuyết minh tự động · Tiếng Việt · English · 中文</p>
               <div class="introduce-actions">
-                <button class="btn btn--primary introduce-cta" type="button" id="heroListen"><i class="fas fa-play"></i> Nghe giới thiệu tổng quan</button>
-                <button class="btn introduce-cta introduce-cta--ghost" type="button" data-scroll="chonDiem"><i class="fas fa-map-signs"></i> Chọn điểm tham quan</button>
+                <button class="btn btn--primary introduce-cta" type="button" id="heroListen"><i class="fas fa-play"></i> <span data-i="hero.listen">Nghe giới thiệu tổng quan</span></button>
+                <button class="btn introduce-cta introduce-cta--ghost" type="button" data-scroll="chonDiem"><i class="fas fa-map-signs"></i> <span data-i="hero.pick">Chọn điểm tham quan</span></button>
               </div>
             </div>
             <div class="hero-dots" id="heroDots"></div>
@@ -86,9 +86,9 @@
           <section class="home-sec" id="tongQuan">
             <div class="grid wide">
               <div class="sec-head">
-                <span class="sec-kicker">Bắt đầu từ đây</span>
-                <h2 class="sec-title">Giới thiệu tổng quan</h2>
-                <p class="sec-lead">Nghe câu chuyện của Dinh trong khoảng 3 phút: lịch sử, kiến trúc và những gì bên trong. Nghe từng phần hoặc nghe liền cả ba.</p>
+                <span class="sec-kicker" data-i="ov.k">Bắt đầu từ đây</span>
+                <h2 class="sec-title" data-i="ov.t">Giới thiệu tổng quan</h2>
+                <p class="sec-lead" data-i="ov.lead">Nghe câu chuyện của Dinh trong khoảng 3 phút: lịch sử, kiến trúc và những gì bên trong. Nghe từng phần hoặc nghe liền cả ba.</p>
               </div>
               <div class="ov">
                 <div class="ov-visual" id="ovVisual"></div>
@@ -104,9 +104,9 @@
           <section class="home-sec home-sec--alt" id="chonDiem">
             <div class="grid wide">
               <div class="sec-head">
-                <span class="sec-kicker">Hành trình tham quan</span>
-                <h2 class="sec-title">Các điểm thuyết minh</h2>
-                <p class="sec-lead">Chạm vào một điểm để nghe. Đi theo thứ tự từ cổng vào tới tầng hầm, hoặc bật GPS để điện thoại tự phát khi bạn tới gần.</p>
+                <span class="sec-kicker" data-i="st.k">Hành trình tham quan</span>
+                <h2 class="sec-title" data-i="st.t">Các điểm thuyết minh</h2>
+                <p class="sec-lead" data-i="st.lead">Chạm vào một điểm để nghe. Đi theo thứ tự từ cổng vào tới tầng hầm, hoặc bật GPS để điện thoại tự phát khi bạn tới gần.</p>
               </div>
               <div class="stops" id="featured"></div>
             </div>
@@ -116,8 +116,8 @@
           <section class="home-sec" id="trungBay">
             <div class="grid wide">
               <div class="sec-head">
-                <span class="sec-kicker">Bộ sưu tập</span>
-                <h2 class="sec-title">Hiện vật và không gian trưng bày</h2>
+                <span class="sec-kicker" data-i="ga.k">Bộ sưu tập</span>
+                <h2 class="sec-title" data-i="ga.t">Hiện vật và không gian trưng bày</h2>
               </div>
               <div class="gallery" id="gallery"></div>
             </div>
@@ -127,17 +127,17 @@
           <section class="home-sec home-sec--alt">
             <div class="grid wide">
               <div class="sec-head">
-                <span class="sec-kicker">Không cần cài ứng dụng</span>
-                <h2 class="sec-title">Cách sử dụng</h2>
+                <span class="sec-kicker" data-i="how.k">Không cần cài ứng dụng</span>
+                <h2 class="sec-title" data-i="how.t">Cách sử dụng</h2>
               </div>
               <div class="row sm-gutter how">
-                <div class="col l-4 m-4 c-12"><div class="how-item"><div class="how-qr" id="siteQr"><img src="./img/qr/qr-web.png" alt="Mã QR mở web thuyết minh Dinh Độc Lập" width="150" height="150" /></div><h4>1. Quét mã QR</h4><p>Mở camera điện thoại quét mã ở cổng Dinh. Chọn ngôn ngữ ở góc trên bên phải.</p></div></div>
-                <div class="col l-4 m-4 c-12"><div class="how-item"><span class="how-icon"><i class="fas fa-hand-pointer"></i></span><h4>2. Chọn điểm để nghe</h4><p>Nghe phần giới thiệu tổng quan trước, rồi chạm vào từng điểm khi bạn tới đó.</p></div></div>
-                <div class="col l-4 m-4 c-12"><div class="how-item"><span class="how-icon"><i class="fas fa-satellite-dish"></i></span><h4>3. Hoặc để điện thoại tự phát</h4><p>Mở tab <a href="#" data-go="places">Bản đồ</a>, bật GPS: tới gần điểm nào, thuyết minh điểm đó tự phát.</p></div></div>
+                <div class="col l-4 m-4 c-12"><div class="how-item"><div class="how-qr" id="siteQr"><img src="./img/qr/qr-web.png" alt="Mã QR mở web thuyết minh Dinh Độc Lập" data-i-alt="how.qrAlt" width="150" height="150" /></div><h4 data-i="how.1t">1. Quét mã QR</h4><p data-i="how.1p">Mở camera điện thoại quét mã ở cổng Dinh. Chọn ngôn ngữ ở góc trên bên phải.</p></div></div>
+                <div class="col l-4 m-4 c-12"><div class="how-item"><span class="how-icon"><i class="fas fa-hand-pointer"></i></span><h4 data-i="how.2t">2. Chọn điểm để nghe</h4><p data-i="how.2p">Nghe phần giới thiệu tổng quan trước, rồi chạm vào từng điểm khi bạn tới đó.</p></div></div>
+                <div class="col l-4 m-4 c-12"><div class="how-item"><span class="how-icon"><i class="fas fa-satellite-dish"></i></span><h4 data-i="how.3t">3. Hoặc để điện thoại tự phát</h4><p data-i-html="how.3p">Mở tab <a href="#" data-go="places">Bản đồ</a>, bật GPS: tới gần điểm nào, thuyết minh điểm đó tự phát.</p></div></div>
               </div>
               <div class="visit">
-                <div><i class="fas fa-map-marker-alt"></i><span><b>Dinh Độc Lập</b><small>135 Nam Kỳ Khởi Nghĩa, TP. Hồ Chí Minh</small></span></div>
-                <button class="btn btn--ghost" type="button" data-go="places"><i class="fas fa-map"></i> Xem bản đồ khu tham quan</button>
+                <div><i class="fas fa-map-marker-alt"></i><span><b data-i="logo.name">Dinh Độc Lập</b><small data-i="visit.addr">135 Nam Kỳ Khởi Nghĩa, TP. Hồ Chí Minh</small></span></div>
+                <button class="btn btn--ghost" type="button" data-go="places"><i class="fas fa-map"></i> <span data-i="visit.btn">Xem bản đồ khu tham quan</span></button>
               </div>
             </div>
           </section>
@@ -149,72 +149,72 @@
             <div class="row sm-gutter">
               <div class="col l-2 m-0 c-0">
                 <div class="category">
-                  <h3 class="category-header">Tìm kiếm</h3>
+                  <h3 class="category-header" data-i="pl.search">Tìm kiếm</h3>
                   <form class="category-search" onsubmit="return false">
-                    <input type="text" class="category-search--input js-q" placeholder="Tìm địa điểm" />
+                    <input type="text" class="category-search--input js-q" placeholder="Tìm địa điểm" data-i-ph="pl.searchPh" />
                     <button type="button" class="category-search--btn js-q-btn"><i class="fas fa-search"></i></button>
                   </form>
                 </div>
                 <div class="category">
-                  <h3 class="category-header">Danh mục</h3>
+                  <h3 class="category-header" data-i="pl.cats">Danh mục</h3>
                   <ul class="category-list" id="categoryList"></ul>
                 </div>
               </div>
 
               <div class="col l-10 m-12 c-12">
                 <form class="mobile-search" onsubmit="return false">
-                  <input type="text" class="mobile-search--input js-q" placeholder="Tìm địa điểm" />
+                  <input type="text" class="mobile-search--input js-q" placeholder="Tìm địa điểm" data-i-ph="pl.searchPh" />
                   <button type="button" class="mobile-search--btn js-q-btn"><i class="fas fa-search"></i></button>
                 </form>
                 <div class="mobile-category"><ul class="mobile-category-list" id="mobileCategoryList"></ul></div>
 
                 <div class="category">
-                  <h3 class="category-header">Tìm nâng cao</h3>
+                  <h3 class="category-header" data-i="pl.adv">Tìm nâng cao</h3>
                   <form class="category-search" onsubmit="return false">
-                    <input type="text" id="advName" class="category-search--input" placeholder="Tên hoặc địa chỉ..." />
-                    <select id="advCat" class="category-search--input"><option value="">Tất cả danh mục</option></select>
+                    <input type="text" id="advName" class="category-search--input" placeholder="Tên hoặc địa chỉ..." data-i-ph="pl.advPh" />
+                    <select id="advCat" class="category-search--input"><option value="" data-i="pl.allCats">Tất cả danh mục</option></select>
                     <select id="advRad" class="category-search--input">
-                      <option value="0">Mọi bán kính kích hoạt</option>
-                      <option value="80">Tối đa 80 m</option>
-                      <option value="90">Tối đa 90 m</option>
-                      <option value="100">Tối đa 100 m</option>
+                      <option value="0" data-i="pl.anyR">Mọi bán kính kích hoạt</option>
+                      <option value="80" data-i-n="pl.maxR" data-n="80">Tối đa 80 m</option>
+                      <option value="90" data-i-n="pl.maxR" data-n="90">Tối đa 90 m</option>
+                      <option value="100" data-i-n="pl.maxR" data-n="100">Tối đa 100 m</option>
                     </select>
-                    <button type="button" id="advBtn" class="category-search--btn"><i class="fas fa-search"></i> Tìm nâng cao</button>
+                    <button type="button" id="advBtn" class="category-search--btn"><i class="fas fa-search"></i> <span data-i="pl.advBtn">Tìm nâng cao</span></button>
                   </form>
                 </div>
 
                 <!-- Bản đồ + trình phát -->
                 <div class="map-search" id="mapSearch">
                   <i class="fas fa-search ms-ic0"></i>
-                  <input id="msInput" type="text" placeholder="Tìm địa điểm hoặc địa chỉ (ví dụ: Đại học Sài Gòn)" autocomplete="off" aria-label="Tìm địa điểm hoặc địa chỉ" />
-                  <button type="button" id="msClear" aria-label="Xoá" hidden><i class="fas fa-times"></i></button>
+                  <input id="msInput" type="text" placeholder="Tìm điểm thuyết minh hoặc địa chỉ (ví dụ: Phòng họp Nội các)" autocomplete="off" aria-label="Tìm địa điểm hoặc địa chỉ" data-i-ph="ms.ph" data-i-aria="ms.ph" />
+                  <button type="button" id="msClear" aria-label="Xoá" data-i-aria="ms.clear" hidden><i class="fas fa-times"></i></button>
                   <div class="ms-drop" id="msDrop" hidden></div>
                 </div>
 
                 <div class="map-card">
-                  <div id="map" role="application" aria-label="Bản đồ"></div>
-                  <div class="mode-seg" role="group" aria-label="Nguồn vị trí">
-                    <button id="modeGps" title="Dùng GPS thật của thiết bị"><i class="fas fa-satellite-dish"></i> GPS thật</button>
-                    <button id="modeSim" class="on" title="Giả lập vị trí để demo"><i class="fas fa-gamepad"></i> Giả lập</button>
+                  <div id="map" role="application" aria-label="Bản đồ" data-i-aria="map.aria"></div>
+                  <div class="mode-seg" role="group" aria-label="Nguồn vị trí" data-i-aria="map.src">
+                    <button id="modeGps" title="Dùng GPS thật của thiết bị" data-i-title="map.gpsT"><i class="fas fa-satellite-dish"></i> <span data-i="map.gps">GPS thật</span></button>
+                    <button id="modeSim" class="on" title="Giả lập vị trí để demo" data-i-title="map.simT"><i class="fas fa-gamepad"></i> <span data-i="map.sim">Giả lập</span></button>
                   </div>
-                  <button class="mwalk" id="walkBtn"><i class="fas fa-walking"></i> <span id="walkTxt">Đi dạo thử</span></button>
+                  <button class="mwalk" id="walkBtn"><i class="fas fa-walking"></i> <span id="walkTxt" data-i="map.walk">Đi dạo thử</span></button>
                   <div class="map-tools">
-                    <button id="zin" aria-label="Phóng to"><i class="fas fa-plus"></i></button>
-                    <button id="zout" aria-label="Thu nhỏ"><i class="fas fa-minus"></i></button>
-                    <button id="zfit" aria-label="Xem tất cả địa điểm" title="Xem tất cả địa điểm"><i class="fas fa-expand"></i></button>
-                    <button id="zme" aria-label="Vị trí của tôi" title="Vị trí của tôi"><i class="fas fa-crosshairs"></i></button>
+                    <button id="zin" aria-label="Phóng to" data-i-aria="map.zin"><i class="fas fa-plus"></i></button>
+                    <button id="zout" aria-label="Thu nhỏ" data-i-aria="map.zout"><i class="fas fa-minus"></i></button>
+                    <button id="zfit" aria-label="Xem tất cả địa điểm" title="Xem tất cả địa điểm" data-i-aria="map.fit" data-i-title="map.fit"><i class="fas fa-expand"></i></button>
+                    <button id="zme" aria-label="Vị trí của tôi" title="Vị trí của tôi" data-i-aria="map.me" data-i-title="map.me"><i class="fas fa-crosshairs"></i></button>
                   </div>
                   <div class="map-legend" id="gpsChip"></div>
 
                   <div class="dest-card" id="destCard" hidden>
-                    <button class="dc-x" id="dcClose" aria-label="Đóng"><i class="fas fa-times"></i></button>
+                    <button class="dc-x" id="dcClose" aria-label="Đóng" data-i-aria="dc.close"><i class="fas fa-times"></i></button>
                     <b id="dcName"></b><small id="dcSub"></small>
                     <div class="dc-info" id="dcInfo"></div>
                     <div class="dc-acts">
                       <button class="btn btn--primary" id="dcRoute"><i class="fas fa-route"></i> Chỉ đường</button>
-                      <button class="btn btn--primary" id="dcStart" hidden><i class="fas fa-location-arrow"></i> Bắt đầu</button>
-                      <button class="btn btn--ghost" id="dcListen" hidden><i class="fas fa-headphones"></i> Nghe thuyết minh</button>
-                      <a class="btn btn--ghost" id="dcGmaps" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> Google Maps</a>
+                      <button class="btn btn--primary" id="dcStart" hidden><i class="fas fa-location-arrow"></i> <span data-i="dc.start">Bắt đầu</span></button>
+                      <button class="btn btn--ghost" id="dcListen" hidden><i class="fas fa-headphones"></i> <span data-i="dc.listen">Nghe thuyết minh</span></button>
+                      <a class="btn btn--ghost" id="dcGmaps" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> <span data-i="dc.gmaps">Google Maps</span></a>
                     </div>
                   </div>
 
@@ -224,34 +224,34 @@
                   </div>
                   <div class="nav-bottom" id="navBottom" hidden>
                     <div class="nb-info"><b id="nbRem"></b><small id="nbTime"></small></div>
-                    <button id="nbVoice" title="Bật/tắt giọng chỉ đường"><i class="fas fa-volume-up"></i></button>
-                    <button id="nbSim" title="Chạy thử dọc theo đường (chế độ giả lập)" hidden><i class="fas fa-play"></i><span class="tx">Chạy thử</span></button>
-                    <button id="nbStop" class="nb-stop"><i class="fas fa-times"></i> Thoát</button>
+                    <button id="nbVoice" title="Bật/tắt giọng chỉ đường" data-i-title="nv.voice"><i class="fas fa-volume-up"></i></button>
+                    <button id="nbSim" title="Chạy thử dọc theo đường (chế độ giả lập)" data-i-title="nv.simT" hidden><i class="fas fa-play"></i><span class="tx" data-i="nv.sim">Chạy thử</span></button>
+                    <button id="nbStop" class="nb-stop"><i class="fas fa-times"></i> <span data-i="nv.exit">Thoát</span></button>
                   </div>
                 </div>
 
                 <div class="route-steps" id="routeSteps" hidden></div>
 
                 <div class="player" id="player">
-                  <button class="player-btn" id="pPlay" aria-label="Phát/Tạm dừng"><i class="fas fa-play"></i></button>
+                  <button class="player-btn" id="pPlay" aria-label="Phát/Tạm dừng" data-i-aria="pv.play"><i class="fas fa-play"></i></button>
                   <div class="player-info">
                     <b id="pName">Chưa chọn điểm nào</b>
                     <div class="player-bar"><i id="pBar"></i></div>
                     <small id="pStat">Sẵn sàng</small> · <small id="pTime">00:00</small>
                   </div>
                   <div class="wave"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-                  <button class="player-btn player-btn--sm" id="pReplay" aria-label="Nghe lại"><i class="fas fa-redo"></i></button>
-                  <button class="player-btn player-btn--sm" id="pStop" aria-label="Dừng"><i class="fas fa-stop"></i></button>
+                  <button class="player-btn player-btn--sm" id="pReplay" aria-label="Nghe lại" data-i-aria="pv.replay"><i class="fas fa-redo"></i></button>
+                  <button class="player-btn player-btn--sm" id="pStop" aria-label="Dừng" data-i-aria="pv.stop"><i class="fas fa-stop"></i></button>
                 </div>
 
                 <div class="category settings">
-                  <h3 class="category-header">Cài đặt thuyết minh</h3>
-                  <div class="set-row"><div><b>Tự động phát khi vào vùng</b><small>Tắt nếu bạn muốn tự bấm nghe</small></div><button class="switch" id="setAuto" aria-label="Tự động phát"></button></div>
-                  <div class="set-row"><div><b>Cooldown</b><small id="coolVal"></small></div><input type="range" id="setCool" min="10" max="120" step="5" /></div>
-                  <div class="set-row"><div><b>Tốc độ đọc</b><small id="rateVal"></small></div><input type="range" id="setRate" min="0.7" max="1.3" step="0.1" /></div>
+                  <h3 class="category-header" data-i="set.h">Cài đặt thuyết minh</h3>
+                  <div class="set-row"><div><b data-i="set.auto">Tự động phát khi vào vùng</b><small data-i="set.autoS">Tắt nếu bạn muốn tự bấm nghe</small></div><button class="switch" id="setAuto" aria-label="Tự động phát" data-i-aria="set.auto"></button></div>
+                  <div class="set-row"><div><b data-i="set.cool">Cooldown</b><small id="coolVal"></small></div><input type="range" id="setCool" min="10" max="120" step="5" /></div>
+                  <div class="set-row"><div><b data-i="set.rate">Tốc độ đọc</b><small id="rateVal"></small></div><input type="range" id="setRate" min="0.7" max="1.3" step="0.1" /></div>
                 </div>
 
-                <h3 class="list-title">Danh sách địa điểm <span id="placeCount"></span></h3>
+                <h3 class="list-title"><span data-i="pl.list">Danh sách địa điểm</span> <span id="placeCount"></span></h3>
                 <div id="placeList" class="row sm-gutter"></div>
               </div>
             </div>
@@ -264,27 +264,27 @@
         <div class="grid wide">
           <div class="row sm-gutter">
             <div class="col l-6 m-8 c-12">
-              <h3 class="footer__heading">Dinh Độc Lập · Thuyết minh tự động</h3>
-              <p class="footer__content">Thuyết minh đa ngôn ngữ cho khu di tích Dinh Độc Lập: quét một mã QR, chọn điểm để nghe, hoặc bật GPS để thuyết minh tự phát khi bạn tới gần.</p>
+              <h3 class="footer__heading" data-i="ft.h">Dinh Độc Lập · Thuyết minh tự động</h3>
+              <p class="footer__content" data-i="ft.p">Thuyết minh đa ngôn ngữ cho khu di tích Dinh Độc Lập: quét một mã QR, chọn điểm để nghe, hoặc bật GPS để thuyết minh tự phát khi bạn tới gần.</p>
             </div>
             <div class="col l-2 m-6 c-6">
-              <h3 class="footer__heading">Giới thiệu</h3>
+              <h3 class="footer__heading" data-i="ft.about">Giới thiệu</h3>
               <ul class="footer-list">
-                <li><a href="#" class="footer-item_link" data-go="home">Trang chủ</a></li>
-                <li><a href="#" class="footer-item_link" data-go="places">Bản đồ</a></li>
-                <li><a href="./Admin/dashboard.html" class="footer-item_link">Trang quản trị</a></li>
+                <li><a href="#" class="footer-item_link" data-go="home" data-i="nav.home">Trang chủ</a></li>
+                <li><a href="#" class="footer-item_link" data-go="places" data-i="nav.map">Bản đồ</a></li>
+                <li><a href="./Admin/dashboard.html" class="footer-item_link" data-i="ft.admin">Trang quản trị</a></li>
               </ul>
             </div>
             <div class="col l-2 m-4 c-6">
-              <h3 class="footer__heading">Trợ giúp</h3>
+              <h3 class="footer__heading" data-i="ft.help">Trợ giúp</h3>
               <ul class="footer-list">
-                <li><a href="#" class="footer-item_link">Hướng dẫn sử dụng</a></li>
-                <li><a href="#" class="footer-item_link">Quyền riêng tư vị trí</a></li>
-                <li><a href="#" class="footer-item_link">Liên hệ</a></li>
+                <li><a href="#" class="footer-item_link" data-i="ft.guide">Hướng dẫn sử dụng</a></li>
+                <li><a href="#" class="footer-item_link" data-i="ft.privacy">Quyền riêng tư vị trí</a></li>
+                <li><a href="#" class="footer-item_link" data-i="ft.contact">Liên hệ</a></li>
               </ul>
             </div>
             <div class="col l-2 m-6 c-12">
-              <h3 class="footer__heading">Theo dõi</h3>
+              <h3 class="footer__heading" data-i="ft.follow">Theo dõi</h3>
               <ul class="footer-list-icon">
                 <li><a href="#" class="footer-item_link"><i class="footer-item_icon fab fa-facebook"></i> Facebook</a></li>
                 <li><a href="#" class="footer-item_link"><i class="footer-item_icon fab fa-github"></i> GitHub</a></li>
@@ -292,11 +292,11 @@
             </div>
           </div>
           <details class="footer-credits">
-            <summary><i class="fas fa-camera"></i> Nguồn ảnh (Wikimedia Commons) · Nguồn dữ kiện: dinhdoclap.gov.vn</summary>
+            <summary><i class="fas fa-camera"></i> <span data-i="ft.credits">Nguồn ảnh (Wikimedia Commons) · Nguồn dữ kiện: dinhdoclap.gov.vn</span></summary>
             <ul id="photoCredits"></ul>
           </details>
         </div>
-        <div class="footer__bottom"><p class="footer__text">© Đồ án môn Công nghệ phần mềm - Thuyết minh tự động đa ngôn ngữ</p></div>
+        <div class="footer__bottom"><p class="footer__text" data-i="ft.copy">© Đồ án môn Công nghệ phần mềm - Thuyết minh tự động đa ngôn ngữ</p></div>
       </div>
     </div>
 
@@ -304,8 +304,8 @@
     <div class="now-playing" id="nowPlaying" hidden>
       <i class="fas fa-headphones"></i>
       <b id="npName">—</b>
-      <button id="npToggle" aria-label="Phát/Tạm dừng"><i class="fas fa-pause"></i></button>
-      <button id="npStop" aria-label="Dừng"><i class="fas fa-times"></i></button>
+      <button id="npToggle" aria-label="Phát/Tạm dừng" data-i-aria="pv.play"><i class="fas fa-pause"></i></button>
+      <button id="npStop" aria-label="Dừng" data-i-aria="pv.stop"><i class="fas fa-times"></i></button>
     </div>
 
     <!-- ================= POPUP ĐĂNG NHẬP / ĐĂNG KÝ ================= -->
@@ -345,13 +345,13 @@
             <span class="tag" id="dCat"></span>
             <h3 id="dName"></h3>
             <p class="detail-desc" id="dDesc"></p>
-            <div class="info-row"><i class="fas fa-map-marker-alt"></i><div><small>Địa chỉ</small><span id="dAddr"></span></div></div>
-            <div class="info-row"><i class="fas fa-ruler"></i><div><small>Khoảng cách từ bạn</small><span id="dDist"></span></div></div>
-            <div class="info-row"><i class="fas fa-bullseye"></i><div><small>Bán kính kích hoạt · Ưu tiên</small><span id="dRad"></span></div></div>
+            <div class="info-row"><i class="fas fa-map-marker-alt"></i><div><small data-i="dt.addr">Địa chỉ</small><span id="dAddr"></span></div></div>
+            <div class="info-row"><i class="fas fa-ruler"></i><div><small data-i="dt.dist">Khoảng cách từ bạn</small><span id="dDist"></span></div></div>
+            <div class="info-row"><i class="fas fa-bullseye"></i><div><small data-i="dt.rad">Bán kính kích hoạt · Ưu tiên</small><span id="dRad"></span></div></div>
             <div class="chips" id="dLangs"></div>
             <div class="detail-actions">
-              <button class="btn btn--primary" id="dListen"><i class="fas fa-headphones"></i> Nghe thuyết minh</button>
-              <button class="btn btn--ghost" id="dRoute"><i class="fas fa-route"></i> Chỉ đường</button>
+              <button class="btn btn--primary" id="dListen"><i class="fas fa-headphones"></i> <span data-i="dt.listen">Nghe thuyết minh</span></button>
+              <button class="btn btn--ghost" id="dRoute"><i class="fas fa-route"></i> <span data-i="dt.route">Chỉ đường</span></button>
             </div>
           </div>
         </div>
@@ -361,7 +361,7 @@
     <!-- ================= XEM ẢNH TRƯNG BÀY ================= -->
     <div class="modal-wrap lightbox" id="lightbox">
       <figure class="lb-main">
-        <button class="modal-close" data-close aria-label="Đóng"><i class="fas fa-times"></i></button>
+        <button class="modal-close" data-close aria-label="Đóng" data-i-aria="close"><i class="fas fa-times"></i></button>
         <img id="lbImg" alt="" />
         <figcaption><b id="lbCap"></b><small id="lbCredit"></small></figcaption>
       </figure>
@@ -404,30 +404,32 @@
     <!-- Bản đồ thật (Leaflet + OpenStreetMap), cần Internet -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <!-- Tiện ích -->
-    <script src="./js/utils/Helper.js?v=20261026"></script>
-    <script src="./js/utils/Storage.js?v=20261026"></script>
+    <script src="./js/utils/Helper.js?v=20261027"></script>
+    <script src="./js/utils/Storage.js?v=20261027"></script>
     <!-- Cấu hình + khoá API: DÁN KHOÁ Ở js/config.js -->
-    <script src="./js/config.js?v=20261026"></script>
+    <script src="./js/config.js?v=20261027"></script>
+    <!-- Đa ngôn ngữ cho giao diện du khách -->
+    <script src="./js/i18n.js?v=20261027"></script>
     <!-- Services (logic, không đụng vào giao diện) -->
-    <script src="./service/POIService.js?v=20261026"></script>
-    <script src="./service/LocationService.js?v=20261026"></script>
-    <script src="./service/GeofenceService.js?v=20261026"></script>
-    <script src="./service/AudioService.js?v=20261026"></script>
-    <script src="./service/NarrationService.js?v=20261026"></script>
-    <script src="./service/HistoryService.js?v=20261026"></script>
-    <script src="./service/GeocodeService.js?v=20261026"></script>
-    <script src="./service/RouteService.js?v=20261026"></script>
-    <script src="./service/NavigationService.js?v=20261026"></script>
-    <script src="./service/AuthService.js?v=20261026"></script>
-    <script src="./service/DeviceService.js?v=20261026"></script>
+    <script src="./service/POIService.js?v=20261027"></script>
+    <script src="./service/LocationService.js?v=20261027"></script>
+    <script src="./service/GeofenceService.js?v=20261027"></script>
+    <script src="./service/AudioService.js?v=20261027"></script>
+    <script src="./service/NarrationService.js?v=20261027"></script>
+    <script src="./service/HistoryService.js?v=20261027"></script>
+    <script src="./service/GeocodeService.js?v=20261027"></script>
+    <script src="./service/RouteService.js?v=20261027"></script>
+    <script src="./service/NavigationService.js?v=20261027"></script>
+    <script src="./service/AuthService.js?v=20261027"></script>
+    <script src="./service/DeviceService.js?v=20261027"></script>
     <!-- Components (giao diện) -->
-    <script src="./js/components/Header.js?v=20261026"></script>
-    <script src="./js/components/Map.js?v=20261026"></script>
-    <script src="./js/components/POI.js?v=20261026"></script>
-    <script src="./js/components/AudioPlayer.js?v=20261026"></script>
-    <script src="./js/components/Search.js?v=20261026"></script>
-    <script src="./js/components/Route.js?v=20261026"></script>
-    <script src="./js/components/Auth.js?v=20261026"></script>
-    <script src="./js/main.js?v=20261026"></script>
+    <script src="./js/components/Header.js?v=20261027"></script>
+    <script src="./js/components/Map.js?v=20261027"></script>
+    <script src="./js/components/POI.js?v=20261027"></script>
+    <script src="./js/components/AudioPlayer.js?v=20261027"></script>
+    <script src="./js/components/Search.js?v=20261027"></script>
+    <script src="./js/components/Route.js?v=20261027"></script>
+    <script src="./js/components/Auth.js?v=20261027"></script>
+    <script src="./js/main.js?v=20261027"></script>
   </body>
 </html>

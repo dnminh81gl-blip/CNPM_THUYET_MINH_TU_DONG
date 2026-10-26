@@ -4,7 +4,8 @@ const PoiUI = {
   openId: null,
   init() {
     const cats = POIService.categories();
-    $("#advCat").innerHTML += cats.map(c => `<option value="${Helper.esc(c)}">${Helper.esc(c)}</option>`).join("");
+    this.fillAdvCat = () => { const v = $("#advCat").value; $("#advCat").innerHTML = `<option value="" data-i="pl.allCats">${Helper.esc(t("pl.allCats"))}</option>` + cats.map(c => `<option value="${Helper.esc(c)}">${Helper.esc(tv(c))}</option>`).join(""); $("#advCat").value = v; };
+    this.fillAdvCat();
     this.renderCats();
     $$(".js-q").forEach(inp => {
       inp.addEventListener("input", () => { this.filters.q = inp.value; $$(".js-q").forEach(o => o.value = inp.value); this.render(); this.focusSoon(); });
@@ -23,7 +24,7 @@ const PoiUI = {
     $("#mobileCategoryList").addEventListener("click", pickCat);
     $("#placeList").addEventListener("click", e => this.onCard(e));
     Bus.on("poi:open", id => this.openDetail(id));
-    Bus.on("lang:change", () => { this.render(); if (this.openId) this.openDetail(this.openId); this.updateDist(); });
+    Bus.on("lang:change", () => { this.fillAdvCat(); this.renderCats(); this.render(); if (this.openId) this.openDetail(this.openId); this.updateDist(); });
     Bus.on("loc:update", () => this.updateDist());
     $("#dListen").onclick = () => { if (this.openId) NarrationService.play(POIService.get(this.openId), false); };
     /* chỉ đường từ cửa sổ chi tiết: đóng cửa sổ, qua tab Địa điểm và tính đường ngay */
@@ -34,7 +35,7 @@ const PoiUI = {
   focusSoon() { clearTimeout(this._ft); this._ft = setTimeout(() => this.focusNow(), 350); },
   focusNow() { clearTimeout(this._ft); Bus.emit("poi:focus", POIService.search(this.filters)); },
   renderCats() {
-    const items = [["", "Tất cả"], ...POIService.categories().map(c => [c, c])];
+    const items = [["", t("pl.all")], ...POIService.categories().map(c => [c, tv(c)])];
     $("#categoryList").innerHTML = items.map(([v, t]) => `<li class="category-list--item"><a class="category-list--item-link ${this.filters.cat === v ? "catagory-Active" : ""}" data-cat="${Helper.esc(v)}">${Helper.esc(t)}</a></li>`).join("");
     $("#mobileCategoryList").innerHTML = items.map(([v, t]) => `<li class="mobile-category__item"><a class="mobile-category__link ${this.filters.cat === v ? "catagory-Active" : ""}" data-cat="${Helper.esc(v)}">${Helper.esc(t)}</a></li>`).join("");
   },
@@ -43,15 +44,15 @@ const PoiUI = {
     $("#placeCount").textContent = `(${list.length})`;
     $("#placeList").innerHTML = list.length ? list.map(p => `
       <div class="col l-2-4 m-4 c-6"><div class="product-item" data-id="${p.id}">
-        <div class="product-item--img" style="background:${POIService.grad(p)}">${POIService.media(p, 480)}<span class="product-item--badge">Ưu tiên ${p.pri}</span></div>
+        <div class="product-item--img" style="background:${POIService.grad(p)}">${POIService.media(p, 480)}<span class="product-item--badge">${Helper.esc(t("pl.pri", { p: p.pri }))}</span></div>
         <div class="product-item-main">
-          <div class="product-item--name">${Helper.esc(p.name.vi)}</div>
-          <div class="product-item--price_type"><span class="product-item--type">${Helper.esc(p.cat)}</span><span class="js-dist" data-id="${p.id}"></span></div>
+          <div class="product-item--name">${Helper.esc(p.name[Settings.get().lang])}</div>
+          <div class="product-item--price_type"><span class="product-item--type">${Helper.esc(tv(p.cat))}</span><span class="js-dist" data-id="${p.id}"></span></div>
           <div class="product-item-actions">
-            <button class="pa-listen" data-act="listen"><i class="fas fa-headphones"></i> Nghe</button>
+            <button class="pa-listen" data-act="listen"><i class="fas fa-headphones"></i> ${t("st.listen")}</button>
           </div>
         </div></div></div>`).join("")
-      : `<div class="col l-12 m-12 c-12"><div class="empty-box"><i class="fas fa-search-location"></i>Không tìm thấy địa điểm phù hợp.</div></div>`;
+      : `<div class="col l-12 m-12 c-12"><div class="empty-box"><i class="fas fa-search-location"></i>${t("pl.empty")}</div></div>`;
     Bus.emit("poi:filter", list.map(p => p.id));
     this.updateDist();
   },
@@ -70,10 +71,10 @@ const PoiUI = {
   openDetail(id) {
     const p = POIService.get(id), lang = Settings.get().lang; this.openId = id;
     $("#dVisual").style.background = POIService.grad(p);
-    $("#dVisual").innerHTML = POIService.media(p, 1024) + (p.img && p.credit ? `<small class="photo-credit">Ảnh: ${Helper.esc(p.credit)}</small>` : "");
-    $("#dCat").textContent = p.cat; $("#dName").textContent = p.name[lang] + (lang !== "vi" ? ` (${p.name.vi})` : "");
-    $("#dDesc").textContent = p.text[lang]; $("#dAddr").textContent = p.addr;
-    $("#dRad").textContent = `${p.r} m · Ưu tiên ${p.pri}`;
+    $("#dVisual").innerHTML = POIService.media(p, 1024) + (p.img && p.credit ? `<small class="photo-credit">${t("photo")}: ${Helper.esc(p.credit)}</small>` : "");
+    $("#dCat").textContent = tv(p.cat); $("#dName").textContent = p.name[lang] + (lang !== "vi" ? ` (${p.name.vi})` : "");
+    $("#dDesc").textContent = p.text[lang]; $("#dAddr").textContent = tv(p.addr);
+    $("#dRad").textContent = t("dt.radV", { r: p.r, p: p.pri });
     $("#dLangs").innerHTML = Object.keys(LANGS).map(k => `<button class="chip ${k === lang ? "on" : ""}" data-l="${k}">${LANGS[k].f}</button>`).join("");
     $$("#dLangs .chip").forEach(c => c.onclick = () => { Settings.set({ lang: c.dataset.l }); Bus.emit("lang:change", c.dataset.l); });
     this.updateDist(); Modal.open("detailModal");

@@ -34,22 +34,28 @@ const MapUI = {
     Bus.on("nav:change", n => { if (n === "places") setTimeout(() => this.shown(), 60); });
   },
 
-  /* Nền bản đồ: OpenStreetMap; nếu ô bản đồ tải lỗi liên tục (một số mạng di động / trình duyệt trong Zalo, Facebook
-     chặn tile.openstreetmap.org) thì tự đổi sang nền CARTO (cũng dữ liệu OpenStreetMap, không cần khoá). */
+  /* Nền bản đồ: thử lần lượt các nguồn KHÔNG cần khoá. Nguồn nào tải lỗi liên tục (mạng chặn, trình duyệt trong
+     Zalo/Facebook, mở file trực tiếp không qua http...) thì tự chuyển sang nguồn kế tiếp.
+     (Đã bỏ CARTO: nay CARTO trả về ảnh "API KEY REQUIRED" thay vì báo lỗi.) */
   tiles() {
     const OSM = '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>';
-    const osm = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: OSM }).addTo(this.map);
-    let ok = 0, bad = 0, switched = false;
-    osm.on("tileload", () => { ok++; });
-    osm.on("tileerror", () => {
-      bad++;
-      if (switched || ok > 0 || bad < 3) return;
-      switched = true; this.map.removeLayer(osm);
-      L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-        maxZoom: 19, subdomains: "abcd",
-        attribution: OSM + ' &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>'
-      }).addTo(this.map);
-    });
+    const SOURCES = [
+      { url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", o: { maxZoom: 19, attribution: OSM } },
+      { url: "https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", o: { maxZoom: 19, subdomains: "abc", attribution: OSM + ' · <a href="https://www.hotosm.org/" target="_blank" rel="noopener">HOT</a>' } },
+      { url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", o: { maxZoom: 19, maxNativeZoom: 18, attribution: 'Tiles &copy; <a href="https://www.esri.com/" target="_blank" rel="noopener">Esri</a>' } }
+    ];
+    const use = k => {
+      const src = SOURCES[k]; if (!src) return;
+      const layer = L.tileLayer(src.url, src.o).addTo(this.map);
+      let ok = 0, bad = 0, moved = false;
+      layer.on("tileload", () => { ok++; });
+      layer.on("tileerror", () => {
+        bad++;
+        if (moved || ok > 0 || bad < 3) return;
+        moved = true; this.map.removeLayer(layer); use(k + 1);
+      });
+    };
+    use(0);
     /* màn hình hẹp + nhìn xa: ẩn tên địa điểm cho khỏi chồng lên nhau (vẫn còn biểu tượng, phóng to là hiện tên) */
     const labels = () => this.map.getContainer().classList.toggle("labels-off", this.map.getSize().x < 600 && this.map.getZoom() < 19);
     this.map.on("zoomend resize", labels); this.map.whenReady(labels);

@@ -16,7 +16,7 @@ const LANGS = {
 const POIService = {
   _seed: [
     { id: 1, lat: 10.7779, lng: 106.6964, r: 30, pri: 3, icon: "fa-flag", code: "\uf024", grad: ["#dc2626", "#f59e0b"], cat: "Khuôn viên",
-      img: "20190923_Independence_Palace-10.jpg", credit: "Balon Greyjoy · CC0",
+      img: "Tank_Remnant_in_the_Independence_Palace.jpg", credit: "",
       name: { vi: "Cổng chính và xe tăng", en: "Main Gate and Tanks", zh: "正门与坦克" }, addr: "Cổng chính phía đường Lê Duẩn",
       text: { vi: "Bạn đang đứng ở cổng chính Dinh Độc Lập. Trưa ngày 30 tháng 4 năm 1975, xe tăng 390 húc đổ cánh cổng này, đánh dấu thời khắc kết thúc chiến tranh và thống nhất đất nước. Hai chiếc xe tăng trưng bày trong khuôn viên tái hiện xe tăng 843 và 390 đã tiến vào Dinh hôm đó.",
               en: "You are at the main gate of Independence Palace. Around noon on 30 April 1975, tank 390 crashed through this gate, marking the end of the war and the reunification of Vietnam. The two tanks displayed on the grounds recall tanks 843 and 390, which entered the palace that day.",
@@ -52,20 +52,69 @@ const POIService = {
               en: "The basement is a reinforced command bunker built to withstand bombing. It contains a communications centre, a war map room and the president's rest room, with many original radio sets still preserved.",
               zh: "地下室是一座坚固的指挥地堡，可抵御轰炸。里面有通讯中心、作战地图室和总统休息室，许多原有的无线电设备至今仍被保存。" } }
   ],
-  /* Ảnh banner trang chủ (toàn cảnh thành phố) */
+  /* Ảnh banner trang chủ: Dinh Độc Lập (ảnh giấy phép tự do trên Wikimedia Commons) */
   HERO: [
-    { img: "20190923_Independence_Palace-10.jpg", cap: "Dinh Độc Lập", credit: "Balon Greyjoy · CC0" },
-    { img: "Ho_Chi_Minh_City.jpg", cap: "Sông Sài Gòn và trung tâm thành phố", credit: "Benjamin Linh VU · CC BY-SA 2.0" },
-    { img: "Nguyen_Hue_Street_2020.jpg", cap: "Phố đi bộ Nguyễn Huệ", credit: "Timback · CC BY-SA 4.0" },
-    { img: "Ho_Chi_Minh_City,_City_Hall,_2020-01_CN-03.jpg", cap: "Trụ sở UBND Thành phố", credit: "Steffen Schmitz · CC BY-SA 4.0" }
+    { img: "20190923_Independence_Palace-10.jpg", cap: "Mặt tiền Dinh Độc Lập", credit: "Balon Greyjoy · CC0" },
+    { img: "Independence_Palace_Ho_Chi_Minh_city_(38647623045).jpg", cap: "Dinh Độc Lập", credit: "Wikimedia Commons" },
+    { img: "Dinh_Doc_Lap.jpg", cap: "Dinh Độc Lập nhìn từ thảm cỏ phía trước", credit: "Wikimedia Commons" },
+    { img: "Tank_Remnant_in_the_Independence_Palace.jpg", cap: "Xe tăng trưng bày trong khuôn viên", credit: "Wikimedia Commons" }
   ],
+  /* Hiện vật và không gian trưng bày (bộ sưu tập ảnh trên trang chủ). Thêm ảnh của nhóm: img: "img/exhibits/ten-anh.jpg" */
+  EXHIBITS: [
+    { img: "HCMC_Reunification_Palace-Banquet_Room.jpg", cap: { vi: "Phòng Khánh tiết", en: "Banquet Room", zh: "宴会厅" }, credit: "Wikimedia Commons" },
+    { img: "Reunification_Palace_-_Presidents_international_reception_room.jpg", cap: { vi: "Phòng tiếp khách quốc tế của Tổng thống", en: "President's International Reception Room", zh: "总统国际接待室" }, credit: "Wikimedia Commons" },
+    { img: "Independence_Palace_Ho_Chi_Minh_city_(38647623045).jpg", cap: { vi: "Mặt tiền với rèm hoa đá", en: "Facade with stone screens", zh: "石质花帘立面" }, credit: "Wikimedia Commons" },
+    { img: "Dinh_Độc_lập.JPG", cap: { vi: "Toàn cảnh Dinh Độc Lập", en: "Independence Palace", zh: "独立宫全景" }, credit: "Wikimedia Commons" },
+    { img: "Palacio_de_la_Reunificación,_Ciudad_Ho_Chi_Minh,_Vietnam,_2013-08-14,_DD_17.JPG", cap: { vi: "Dinh Độc Lập", en: "Independence Palace", zh: "独立宫" }, credit: "Diego Delso · Wikimedia Commons" }
+  ],
+  /* Thuyết minh TỔNG QUAN về Dinh (không gắn với vị trí GPS, không hiện trên bản đồ).
+     Nghe từng phần hoặc nghe liền cả 3 phần. Nguồn dữ kiện: dinhdoclap.gov.vn (Lịch sử, Kiến trúc Dinh Độc Lập). id 0 = "Tổng quan" trong thống kê. */
+  OVERVIEW: {
+    id: 0, pri: 9, icon: "fa-landmark", cat: "Tổng quan",
+    name: { vi: "Giới thiệu tổng quan Dinh Độc Lập", en: "Independence Palace overview", zh: "独立宫概况" },
+    facts: [
+      { v: "1868", t: "Đặt đá xây Dinh Norodom" },
+      { v: "1966", t: "Khánh thành Dinh mới" },
+      { v: "12 ha", t: "Khuôn viên" },
+      { v: "~100", t: "Phòng bên trong" }
+    ],
+    chapters: [
+      { key: "lich-su", icon: "fa-history",
+        title: { vi: "Lịch sử: từ Dinh Norodom đến Dinh Độc Lập", en: "History: from Norodom Palace to Independence Palace", zh: "历史：从诺罗敦宫到独立宫" },
+        sub: "1868 · 1954 · 1962 · 30/4/1975 · 2009",
+        text: {
+          vi: "Chào mừng bạn đến với Dinh Độc Lập. Ngày 23 tháng 2 năm 1868, chính quyền thuộc địa Pháp đặt viên đá đầu tiên xây dinh Thống đốc Nam Kỳ trên khu đất này. Công trình hoàn thành năm 1871 và được gọi là Dinh Norodom. Tháng 9 năm 1954, người Pháp bàn giao dinh cho chính quyền Ngô Đình Diệm, và dinh được đổi tên thành Dinh Độc Lập. Ngày 27 tháng 2 năm 1962, hai phi công Nguyễn Văn Cử và Phạm Phú Quốc ném bom làm toà nhà hư hại nặng, nên dinh cũ bị phá bỏ để xây dinh mới ngay trên nền cũ. Ngày 30 tháng 4 năm 1975, xe tăng Quân Giải phóng húc đổ cổng Dinh. Đến 11 giờ 30 phút, lá cờ Mặt trận Dân tộc Giải phóng tung bay trên nóc Dinh, khép lại cuộc chiến và mở ra thời kỳ thống nhất đất nước. Năm 2009, Dinh Độc Lập được xếp hạng Di tích quốc gia đặc biệt.",
+          en: "Welcome to Independence Palace. On 23 February 1868, the French colonial government laid the foundation stone of a palace for the Governor of Cochinchina on this site. Completed in 1871, it became known as Norodom Palace. In September 1954 the French handed it over to Ngo Dinh Diem's government, and it was renamed Independence Palace. On 27 February 1962, two pilots, Nguyen Van Cu and Pham Phu Quoc, bombed the palace and badly damaged it, so the old building was demolished and a new palace was built on the same site. On 30 April 1975, Liberation Army tanks crashed through the palace gates. At 11:30 a.m. the flag of the National Liberation Front was raised on the roof, ending the war and opening the way to national reunification. In 2009 the palace was ranked a Special National Monument.",
+          zh: "欢迎来到独立宫。1868年2月23日，法国殖民当局在这片土地上为南圻总督兴建官邸并举行奠基仪式，1871年落成，称为诺罗敦宫。1954年9月，法国将其移交给吴庭艳政府，并更名为独立宫。1962年2月27日，两名飞行员阮文举和范富国轰炸了这座建筑，造成严重损毁，旧宫随后被拆除，并在原址上兴建新宫。1975年4月30日，解放军坦克撞开宫门。11时30分，民族解放阵线的旗帜在宫顶升起，战争就此结束，国家走向统一。2009年，独立宫被列为国家特别级遗迹。" } },
+      { key: "kien-truc", icon: "fa-drafting-compass",
+        title: { vi: "Kiến trúc và quá trình xây dựng", en: "Architecture and construction", zh: "建筑与建造" },
+        sub: "KTS Ngô Viết Thụ · 1962 – 1966",
+        text: {
+          vi: "Dinh Độc Lập ngày nay do kiến trúc sư Ngô Viết Thụ thiết kế. Ông là người Việt Nam đầu tiên đoạt giải Khôi nguyên La Mã. Công trình khởi công ngày 1 tháng 7 năm 1962 và khánh thành ngày 31 tháng 10 năm 1966. Khuôn viên rộng 12 héc ta. Toà nhà chính cao 26 mét, diện tích sử dụng khoảng 20 nghìn mét vuông, gồm tầng trệt, ba tầng chính, hai gác lửng, sân thượng và tầng hầm. Nhìn tổng thể, mặt bằng của Dinh gợi hình chữ Cát trong chữ Hán, nghĩa là may mắn, tốt lành. Các đường nét của mái, ban công và cột cờ còn gợi những chữ như Trung, Chủ và Hưng. Bao quanh tầng hai là hàng rèm hoa đá mô phỏng đốt trúc, lấy cảm hứng từ cửa bàn khoa của cung điện Huế, vừa trang trí vừa điều hoà ánh sáng. Phía trước Dinh là thảm cỏ hình bầu dục đường kính 102 mét.",
+          en: "Today's Independence Palace was designed by architect Ngo Viet Thu, the first Vietnamese to win the Prix de Rome. Construction began on 1 July 1962 and the palace was inaugurated on 31 October 1966. The grounds cover 12 hectares. The main building is 26 metres tall, with about 20,000 square metres of floor space spread over a ground floor, three main floors, two mezzanines, a rooftop terrace and a basement. Seen as a whole, the layout evokes the Chinese character for good fortune, while the lines of the roof, balconies and flagpole suggest other characters meaning loyalty, sovereignty and prosperity. Around the second floor runs a screen of stone bamboo segments, inspired by the doors of the imperial palace in Hue, which decorates the facade and softens the sunlight. In front of the palace lies an oval lawn 102 metres across.",
+          zh: "今天的独立宫由建筑师吴越树设计，他是第一位获得罗马大奖的越南人。工程于1962年7月1日动工，1966年10月31日落成。园区占地12公顷；主楼高26米，使用面积约2万平方米，包括地面层、三层主楼、两层夹层、屋顶平台和地下室。整体平面布局形似汉字“吉”，寓意吉祥如意；屋檐、阳台和旗杆的线条还暗含“中”“主”“兴”等字。二楼四周环绕着仿竹节造型的石质花帘，灵感来自顺化皇宫的门饰，既美观又能调节光线。宫前是一片直径102米的椭圆形草坪。" } },
+      { key: "ben-trong", icon: "fa-door-open",
+        title: { vi: "Bên trong Dinh có những gì", en: "What is inside the palace", zh: "宫内有什么" },
+        sub: "Phòng nghi lễ · Khu gia đình · Sân thượng · Tầng hầm",
+        text: {
+          vi: "Bên trong Dinh có gần một trăm phòng, mỗi phòng được trang trí riêng theo công năng. Ở các tầng chính là những không gian nghi lễ như phòng Trình Quốc thư với bức tranh sơn mài Bình Ngô Đại Cáo, phòng họp Nội các, phòng Khánh tiết dùng để đãi tiệc, cùng phòng làm việc của Tổng thống và Phó Tổng thống. Các tầng trên là khu sinh hoạt của gia đình Tổng thống và phòng giải trí. Trên sân thượng có bãi đáp trực thăng, còn dưới tầng hầm là hệ thống hầm chỉ huy kiên cố với phòng thông tin liên lạc và phòng bản đồ tác chiến. Ngoài khuôn viên trưng bày hai chiếc xe tăng gợi nhớ ngày 30 tháng 4 năm 1975. Hãy chọn một điểm trong danh sách bên dưới để nghe thuyết minh chi tiết.",
+          en: "Inside the palace there are nearly one hundred rooms, each decorated for its own purpose. The main floors hold the ceremonial spaces: the Credentials Room with the lacquer painting Binh Ngo Dai Cao, the Cabinet Room, the Banquet Room, and the offices of the President and Vice President. The upper floors contain the living quarters of the President's family and an entertainment room. The rooftop has a helipad, and the basement holds a reinforced command bunker with a communications centre and a war map room. Out in the grounds, two tanks recall the events of 30 April 1975. Choose a stop from the list below to hear its detailed story.",
+          zh: "宫内有近一百个房间，每个房间都按用途分别装饰。主楼层是礼仪空间，包括陈列漆画《平吴大诰》的国书递交厅、内阁会议室、宴会厅，以及总统和副总统的办公室。上层是总统家庭的生活区和娱乐室。屋顶设有直升机停机坪，地下室则是坚固的指挥地堡，内有通讯中心和作战地图室。园内展出的两辆坦克让人回想起1975年4月30日。请在下方列表中选择一个地点，收听详细讲解。" } }
+    ],
+    /* đối tượng để AudioService phát một phần (giống một POI nhưng không có toạ độ) */
+    item(k) {
+      const c = this.chapters[k], n = {};
+      Object.keys(LANGS).forEach(l => { n[l] = c.title[l] || c.title.vi; });
+      return { id: 0, pri: 9, cat: "Tổng quan", icon: c.icon, ov: k, name: n, text: c.text };
+    }
+  },
   /* tiền tố cho ảnh nằm trong dự án (trang Admin đặt "../") */
   BASE: "",
   /* ----- Lưu trữ: Admin ghi vào Store("pois"); nếu chưa có thì dùng dữ liệu mẫu ở trên ----- */
   _c: { k: null, v: null },
   ORIGIN: { lat: 10.7772, lng: 106.6956 },   // trung tâm khuôn viên Dinh Độc Lập
   /* đổi dữ liệu mẫu (vd chuyển sang Dinh Độc Lập) thì tăng số này để trình duyệt bỏ dữ liệu địa điểm cũ đã lưu */
-  DATA_VER: "dinh-doc-lap-2",
+  DATA_VER: "dinh-doc-lap-3",
   /* dữ liệu cũ (toạ độ x,y của bản đồ giả lập) được đổi sang lat/lng; dữ liệu cũ chưa có ảnh thì lấy ảnh mẫu (nếu đúng địa điểm mẫu) */
   _migrate(p) {
     let q = p;
@@ -123,6 +172,7 @@ const POIService = {
   credits() {
     const out = [];
     this.HERO.forEach(h => out.push({ name: h.cap, credit: h.credit, page: this.photoPage(h.img) }));
+    this.EXHIBITS.forEach(h => out.push({ name: h.cap.vi, credit: h.credit, page: this.photoPage(h.img) }));
     this.all().forEach(p => { if (p.img && (p.credit || this.isCommons(p.img))) out.push({ name: p.name.vi, credit: p.credit || "Wikimedia Commons", page: this.photoPage(p.img) }); });
     return out;
   },

@@ -194,6 +194,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   safe("LocationService", () => LocationService.init());
   safe("DeviceService", () => DeviceService.init());
+  /* thông báo thời gian thực + nội dung mới do quản trị viên xuất bản (T11) */
+  safe("RemoteContent", () => RemoteContentService.init());
+  safe("Notification", () => NotificationService.start());
+  Bus.on("content:update", ({ poiId, quiet }) => {
+    renderFeatured(); try { PoiUI.render(); if (PoiUI.openId === poiId) PoiUI.openDetail(poiId); } catch (e) {}
+    const p = POIService.get(poiId);
+    if (!quiet && p) toast({ title: t("ts.updT"), message: t("ts.updM", { name: p.name[Settings.get().lang] }), type: "success", duration: 4000 });
+  });
   /* thống kê thiết bị (ẩn danh, không cần tài khoản) */
 
   /* mã QR riêng của một POI: index.html?poi=<id>&src=qr -> mở thẳng điểm đó; bấm "Nghe thuyết minh" để phát

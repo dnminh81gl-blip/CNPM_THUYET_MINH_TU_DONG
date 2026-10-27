@@ -13,7 +13,8 @@ const PlacesPage = {
           <select class="input-field" id="cat"><option value="">Tất cả danh mục</option></select>
           <select class="input-field" id="st"><option value="">Mọi trạng thái</option><option value="published">Đã xuất bản</option><option value="draft">Bản nháp</option></select>
           <span class="sp"></span><span id="count" class="hint" style="margin:0"></span></div>
-        <div class="tbl-wrap"><table class="tbl"><thead><tr><th>#</th><th>Ảnh</th><th>Tên (Tiếng Việt)</th><th>Danh mục</th><th>Bán kính</th><th>Ưu tiên</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody id="rows"></tbody></table></div>
+        <div class="hint" id="beInfo" style="margin:0 0 10px"><i class="fas fa-spinner fa-spin"></i> Đang kết nối backend...</div>
+        <div class="tbl-wrap"><table class="tbl"><thead><tr><th>#</th><th>Ảnh</th><th>Tên (Tiếng Việt)</th><th>Danh mục</th><th>Bán kính</th><th>Ưu tiên</th><th>Trạng thái</th><th>Backend</th><th>Thao tác</th></tr></thead><tbody id="rows"></tbody></table></div>
         <div class="pager" id="pager"></div>
       </div>`;
     document.body.insertAdjacentHTML("beforeend", this.modalHtml());
@@ -27,6 +28,7 @@ const PlacesPage = {
       if (b.dataset.a === "edit") this.open(id);
       else if (b.dataset.a === "del") this.del(id);
       else if (b.dataset.a === "tg") this.toggle(id);
+      else if (b.dataset.a === "pub") BE.publish(id);
     };
     ["flat", "flng", "fr"].forEach(k => $("#" + k).addEventListener("input", () => {
       const la = parseFloat($("#flat").value), ln = parseFloat($("#flng").value);
@@ -36,6 +38,7 @@ const PlacesPage = {
     ["fico", "fgrad"].forEach(k => $("#" + k).addEventListener("change", () => this.preview()));
     $("#pForm").onsubmit = e => { e.preventDefault(); this.save(); };
     this.render();
+    BE.init();
   },
   modalHtml() {
     return `<div class="modal-wrap" id="pModal"><div class="modal-main adm-modal"><button class="modal-close" data-close><i class="fas fa-times"></i></button>
@@ -93,8 +96,9 @@ const PlacesPage = {
       <td>${(r.page - 1) * 8 + i + 1}</td><td><div class="ico" style="background:${A.gradOf(p)};position:relative;overflow:hidden">${this.thumb(p, 160)}</div></td>
       <td><b>${Helper.esc(p.name.vi)}</b><br><small style="color:#888">${Helper.esc(p.addr)}</small></td><td>${Helper.esc(p.cat)}</td><td>${p.r} m</td><td>${p.pri}</td>
       <td><button class="badge ${(p.status || "published") === "draft" ? "warn" : "ok"}" data-a="tg" data-id="${p.id}" title="Bấm để đổi trạng thái">${(p.status || "published") === "draft" ? "Nháp" : "Đã xuất bản"}</button></td>
-      <td><div class="acts"><button class="ibtn" data-a="edit" data-id="${p.id}" aria-label="Sửa"><i class="fas fa-pen"></i></button><button class="ibtn del" data-a="del" data-id="${p.id}" aria-label="Xoá"><i class="fas fa-trash"></i></button></div></td></tr>`).join("")
-      : `<tr><td colspan="8" class="empty">Không có địa điểm phù hợp.</td></tr>`;
+      <td>${BE.cell(p.id)}</td>
+      <td><div class="acts">${BE.on ? `<button class="ibtn" data-a="pub" data-id="${p.id}" aria-label="Xuất bản" title="Xuất bản lên hệ thống: tự soạn bài, dịch, tạo giọng đọc"><i class="fas fa-paper-plane"></i></button>` : ""}<button class="ibtn" data-a="edit" data-id="${p.id}" aria-label="Sửa"><i class="fas fa-pen"></i></button><button class="ibtn del" data-a="del" data-id="${p.id}" aria-label="Xoá"><i class="fas fa-trash"></i></button></div></td></tr>`).join("")
+      : `<tr><td colspan="9" class="empty">Không có địa điểm phù hợp.</td></tr>`;
     A.pager($("#pager"), r.page, r.pages, n => { this.page = n; this.render(); });
   },
   toggle(id) { const l = A.pois(), p = l.find(x => x.id === id); p.status = (p.status || "published") === "draft" ? "published" : "draft"; A.savePois(l); this.render(); toast({ title: "Đã cập nhật", message: `${p.name.vi}: ${p.status === "draft" ? "chuyển sang nháp" : "đã xuất bản"}`, type: "success" }); },
@@ -163,6 +167,104 @@ const PlacesPage = {
       l.push(Object.assign({ id: Math.max(0, ...l.map(x => x.id)) + 1, text: { vi: $("#tVi").value.trim(), en: "", zh: "" } }, g));
     }
     A.savePois(l); Modal.close("pModal"); toast({ title: "Đã lưu", message: g.name.vi, type: "success" }); this.render();
+    BE.saved(this.editing || l[l.length - 1].id);
+  }
+};
+
+/* BE (T9 + T10): nối trang POI với content-service qua api-gateway.
+   - Lưu POI -> POST /api/pois (thêm) hoặc PUT /api/pois/{id} (sửa; backend chuyển về NHÁP, version + 1).
+   - Nút máy bay giấy -> POST /api/pois/{id}/publish: backend tự soạn bài, dịch en/zh, tạo giọng đọc.
+   - Theo dõi tiến trình bằng thông báo thời gian thực (WebSocket): translation.completed, audio.ready.
+   - Không kết nối được backend thì trang vẫn chạy như cũ (chỉ lưu trong trình duyệt). */
+const BE = {
+  on: false, remote: {}, pipe: {},
+  HEAD: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "1" },
+  base() { return DeviceService.apiBase(); },
+  async req(method, path, body) {
+    const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 8000);
+    try {
+      const r = await fetch(this.base() + path, { method, headers: this.HEAD, body: body ? JSON.stringify(body) : undefined, signal: ctl.signal });
+      const data = await r.json().catch(() => null);
+      if (!r.ok) throw new Error((data && (data.message || data.detail || data.error)) || ("HTTP " + r.status));
+      return data;
+    } finally { clearTimeout(t); }
+  },
+  info(html, cls) { const el = $("#beInfo"); if (el) { el.innerHTML = html; el.style.color = cls === "ok" ? "#167a3a" : cls === "bad" ? "#c0281c" : ""; } },
+  async init() {
+    if (!this.base()) { this.info('<i class="fas fa-info-circle"></i> Chưa cấu hình địa chỉ backend: chỉ lưu trong trình duyệt này.'); return; }
+    await this.load();
+    Bus.on("notify:state", on => { if (this.on) this.info(this.okText(on), "ok"); });
+    Bus.on("notify:message", m => this.onMessage(m));
+    NotificationService.start();
+  },
+  okText(ws) { return `<i class="fas fa-check-circle"></i> Đã kết nối backend (${Helper.esc(this.base())}) · thông báo thời gian thực: ${ws ? "<b>đang nhận</b>" : "đang kết nối..."}`; },
+  async load() {
+    try {
+      const list = await this.req("GET", "/api/pois");
+      this.remote = {}; list.forEach(p => { this.remote[p.id] = p; });
+      this.on = true; this.info(this.okText(NotificationService.connected), "ok");
+    } catch (e) {
+      this.on = false; this.info('<i class="fas fa-exclamation-triangle"></i> Chưa kết nối được backend (Docker / ngrok chưa chạy?): chỉ lưu trong trình duyệt này.', "bad");
+    }
+    PlacesPage.render();
+  },
+  cell(id) {
+    if (!this.on) return '<span class="badge">—</span>';
+    const r = this.remote[id], s = this.pipe[id];
+    if (s === "sending") return '<span class="badge warn"><i class="fas fa-spinner fa-spin"></i> Đang gửi</span>';
+    if (s === "published") return '<span class="badge warn"><i class="fas fa-spinner fa-spin"></i> Đang dịch...</span>';
+    if (s === "translated") return '<span class="badge warn"><i class="fas fa-spinner fa-spin"></i> Đã dịch · tạo giọng...</span>';
+    if (s === "audio") return `<span class="badge ok"><i class="fas fa-check"></i> Hoàn tất v${r ? r.version : ""}</span>`;
+    if (!r) return '<span class="badge bad" title="Chưa có trên backend: bấm Sửa rồi Lưu để gửi lên">Chưa đồng bộ</span>';
+    return r.status === "PUBLISHED" ? `<span class="badge ok">v${r.version} · Đã xuất bản</span>` : `<span class="badge warn">v${r.version} · Nháp</span>`;
+  },
+  body(p) { return { name: p.name.vi, category: p.cat, address: p.addr, lat: p.lat, lng: p.lng, radius: p.r, text: (p.text && p.text.vi) || "" }; },
+  /* sau khi lưu ở trình duyệt: gửi lên backend */
+  async saved(id) {
+    if (!this.on) return;
+    const l = A.pois(), p = l.find(x => x.id === id); if (!p) return;
+    try {
+      if (this.remote[id]) { const r = await this.req("PUT", `/api/pois/${id}`, this.body(p)); this.remote[id] = r; }
+      else {
+        const r = await this.req("POST", "/api/pois", this.body(p));
+        /* backend cấp mã mới: đổi mã POI trong trình duyệt cho khớp (nếu chưa bị dùng) */
+        if (r.id !== id && !l.some(x => x.id === r.id)) { p.id = r.id; A.savePois(l); }
+        this.remote[r.id] = r;
+      }
+      delete this.pipe[p.id];
+      toast({ title: "Đã lưu lên backend", message: `${p.name.vi}: bản nháp v${this.remote[p.id].version}. Bấm nút máy bay giấy để xuất bản.`, type: "info", duration: 4500 });
+    } catch (e) { toast({ title: "Không lưu được lên backend", message: e.message, type: "error", duration: 4500 }); }
+    PlacesPage.render();
+  },
+  async publish(id) {
+    const p = A.pois().find(x => x.id === id); if (!p) return;
+    if (!this.remote[id]) { await this.saved(id); if (!this.remote[id]) return; }
+    this.pipe[id] = "sending"; PlacesPage.render();
+    try {
+      const e = await this.req("POST", `/api/pois/${id}/publish`);
+      this.remote[id] = Object.assign({}, this.remote[id], { status: "PUBLISHED", version: e.version });
+      this.pipe[id] = "published";
+      toast({ title: "Đã xuất bản", message: `${p.name.vi} (v${e.version}): hệ thống đang soạn bài và dịch...`, type: "success", duration: 4000 });
+      /* không có thông báo sau 30 giây (WebSocket chưa nối được) thì thôi chờ */
+      setTimeout(() => { if (this.pipe[id] === "published" || this.pipe[id] === "translated") { delete this.pipe[id]; PlacesPage.render(); } }, 30000);
+    } catch (e) { delete this.pipe[id]; toast({ title: "Xuất bản thất bại", message: e.message, type: "error", duration: 4500 }); }
+    PlacesPage.render();
+  },
+  /* thông báo thời gian thực từ notification-service */
+  onMessage(m) {
+    const d = m.data || {}, id = Number(d.poiId); if (!id) return;
+    const p = A.pois().find(x => x.id === id), name = p ? p.name.vi : "POI " + id;
+    if (m.type === "translation.completed") {
+      this.pipe[id] = "translated";
+      /* lưu bản dịch máy vào trang "Nội dung & bản dịch" (chỉ en / zh; tiếng Việt giữ nguyên bản admin nhập) */
+      if (p && d.scripts) { const l = A.pois(), q = l.find(x => x.id === id); q.text = Object.assign({}, q.text, { en: d.scripts.en || q.text.en, zh: d.scripts.zh || q.text.zh }); A.savePois(l); }
+      toast({ title: "Đã dịch xong", message: `${name}: ${Object.keys(d.scripts || {}).join(", ") || "vi, en, zh"}`, type: "success", duration: 4000 });
+    } else if (m.type === "audio.ready") {
+      this.pipe[id] = "audio";
+      toast({ title: "Đã có giọng đọc", message: `${name}: ${(d.audios || []).map(a => a.voice).join(", ")}`, type: "success", duration: 4000 });
+      setTimeout(() => { if (this.pipe[id] === "audio") { delete this.pipe[id]; PlacesPage.render(); } }, 8000);
+    }
+    PlacesPage.render();
   }
 };
 document.addEventListener("DOMContentLoaded", () => PlacesPage.init());

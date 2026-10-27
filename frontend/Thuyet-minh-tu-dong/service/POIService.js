@@ -130,11 +130,15 @@ const POIService = {
   },
   _checkVer() { if (Store.get("poisVer", "") !== this.DATA_VER) { Store.del("pois"); Store.del("tours"); Store.del("tour"); Store.set("poisVer", this.DATA_VER); } },
   raw() { this._checkVer(); const s = Store.get("pois", null); return s && s.length ? s.map(p => this._migrate(p)) : this._seed.map(p => Object.assign({ status: "published" }, p)); },
+  invalidate() { this._c = { k: null, v: null }; },
   save(list) { Store.set("pois", list); this._c = { k: null, v: null }; },
   resetSeed() { Store.del("pois"); this._c = { k: null, v: null }; },
   /* điền ngôn ngữ còn thiếu bằng tiếng Việt để giao diện người dùng không bị trống */
   _norm(p) {
     const c = JSON.parse(JSON.stringify(p));
+    /* nội dung mới do quản trị viên xuất bản (đã dịch tự động ở backend), xem RemoteContentService */
+    const rc = Store.get("remoteContent", {})[p.id];
+    if (rc && rc.text) Object.keys(rc.text).forEach(l => { if (LANGS[l] && rc.text[l]) c.text[l] = rc.text[l]; });
     Object.keys(LANGS).forEach(l => { c.name[l] = c.name[l] || c.name.vi; c.text[l] = c.text[l] || c.text.vi; });
     return c;
   },

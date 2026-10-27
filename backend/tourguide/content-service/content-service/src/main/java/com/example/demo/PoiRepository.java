@@ -23,7 +23,7 @@ public class PoiRepository {
 
     public PoiRepository() {
         seed("Cổng chính và xe tăng", "Khuôn viên", "Cổng chính phía đường Lê Duẩn", 10.7779, 106.6964, 30,
-                "Bạn đang đứng ở cổng chính Dinh Độc Lập. Trưa ngày 30 tháng 4 năm 1975, xe tăng 390 húc đổ cánh cổng này, đánh dấu thời khắc kết thúc chiến tranh và thống nhất đất nước. Hai chiếc xe tăng trưng bày trong khuôn viên tái hiện xe tăng 843 và 390 đã tiến vào Dinh hôm đó.");
+                "Bạn đang đứng ở cổng chính Dinh Độc Lập. Trưa ngày 30 tháng 4 năm 1975, xe tăng 390 húc đổ cánh cổng này, đánh dấu thời khắc kết thúc chiến tranh và thống nhất đất nước. Hai chiếc xe tăng trưng bày trong khuôn viên gợi nhớ xe tăng 843 và 390 đã tiến vào Dinh hôm đó.");
         seed("Mặt tiền và kiến trúc", "Khuôn viên", "Bãi cỏ trước mặt tiền Dinh", 10.77745, 106.69585, 30,
                 "Dinh Độc Lập do kiến trúc sư Ngô Viết Thụ thiết kế, khởi công năm 1962 và khánh thành ngày 31 tháng 10 năm 1966, trên nền Dinh Norodom cũ thời Pháp. Mặt tiền nổi bật với những hàng rèm hoa đá mô phỏng đốt trúc, vừa che nắng vừa mang nét kiến trúc truyền thống Á Đông.");
         seed("Phòng Trình Quốc thư", "Bên trong Dinh", "Bên trong Dinh", 10.77712, 106.69548, 15,
@@ -31,9 +31,9 @@ public class PoiRepository {
         seed("Phòng họp Nội các", "Bên trong Dinh", "Bên trong Dinh", 10.77695, 106.69528, 15,
                 "Phòng họp Nội các là nơi Tổng thống họp với các bộ trưởng. Căn phòng vẫn giữ bàn họp dài và hàng ghế như thời kỳ trước năm 1975, giúp du khách hình dung cách bộ máy chính quyền làm việc tại đây.");
         seed("Sân thượng và trực thăng", "Sân thượng", "Sân thượng", 10.7768, 106.69512, 15,
-                "Trên sân thượng có bãi đáp trực thăng. Chiếc trực thăng UH-1 trưng bày ở đây là loại từng phục vụ Tổng thống. Ngày 8 tháng 4 năm 1975, phi công Nguyễn Thành Trung lái máy bay F-5E ném bom Dinh; các vị trí trúng bom được đánh dấu bằng vòng tròn đỏ trên sân thượng.");
+                "Trên sân thượng có bãi đáp trực thăng, nơi trưng bày một chiếc trực thăng UH-1. Sáng ngày 8 tháng 4 năm 1975, phi công Nguyễn Thành Trung lái máy bay F-5E ném bom Dinh Độc Lập rồi hạ cánh an toàn ở vùng giải phóng Phước Long.");
         seed("Tầng hầm chỉ huy", "Tầng hầm", "Tầng hầm", 10.77666, 106.69496, 15,
-                "Tầng hầm là hệ thống hầm chỉ huy kiên cố, được xây để chịu được bom. Bên trong có phòng thông tin liên lạc, phòng bản đồ tác chiến và phòng nghỉ của Tổng thống, cùng nhiều máy điện đàm vẫn còn được lưu giữ.");
+                "Tầng hầm là hệ thống hầm chỉ huy kiên cố, được xây để chịu được bom. Bên trong có trung tâm chỉ huy, các thiết bị thông tin liên lạc và phòng bản đồ tác chiến, nhiều bản đồ vẫn còn giữ nguyên dấu bút chì đánh dấu.");
     }
 
     private void seed(String name, String category, String address, double lat, double lng, int radius, String text) {

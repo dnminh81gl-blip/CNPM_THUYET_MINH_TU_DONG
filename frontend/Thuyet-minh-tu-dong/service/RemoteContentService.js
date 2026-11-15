@@ -25,8 +25,20 @@ const RemoteContentService = {
     Bus.on("notify:message", m => {
       const d = m.data || {};
       if (m.type === "translation.completed" && d.scripts) this.apply(d.poiId, d.version, d.scripts, false);
+      /* admin vừa xuất bản (có thể là điểm mới): tải lại danh sách POI */
+      if (m.type === "translation.completed") { clearTimeout(this._t); this._t = setTimeout(() => this.sync(), 1000); }
     });
     this.sync();
+  },
+  /* lưu danh sách POI của backend; có thay đổi (thêm / sửa / xoá) thì báo trang vẽ lại bản đồ và danh sách */
+  savePois(pois) {
+    if (!Array.isArray(pois)) return;
+    const slim = pois.map(p => ({ id: p.id, name: p.name, category: p.category, address: p.address, lat: p.lat, lng: p.lng,
+      radius: p.radius, text: p.text, status: p.status, version: p.version }));
+    if (JSON.stringify(slim) === JSON.stringify(Store.get("remotePois", null))) return;
+    Store.set("remotePois", slim);
+    POIService.invalidate();
+    Bus.emit("pois:change");
   },
   async sync() {
     const base = DeviceService.apiBase(); if (!base) return;
@@ -34,8 +46,11 @@ const RemoteContentService = {
       try { const r = await fetch(base + p, { headers: this.HEAD, signal: ctl.signal }); if (!r.ok) throw new Error(r.status); return await r.json(); } finally { clearTimeout(t); } };
     try {
       const pois = await get("/api/pois"), have = this.get();
+      this.savePois(pois);
       for (const p of pois) {
-        if (p.status !== "PUBLISHED" || p.version <= 1) continue;
+        /* điểm mẫu ở version 1 đã có sẵn bản dịch; điểm đã sửa hoặc điểm admin thêm mới thì lấy bản dịch từ backend */
+        const isSeed = POIService._seed.some(s => s.id === p.id);
+        if (p.status !== "PUBLISHED" || (isSeed && p.version <= 1)) continue;
         if (have[p.id] && have[p.id].version >= p.version) continue;
         const items = await get(`/api/translations?poiId=${p.id}&version=${p.version}`);
         const scripts = {}; (items || []).forEach(it => { if (it.lang && it.translatedText) scripts[it.lang] = it.translatedText; });

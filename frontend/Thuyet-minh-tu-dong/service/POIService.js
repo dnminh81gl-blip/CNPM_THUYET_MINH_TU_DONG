@@ -142,10 +142,36 @@ const POIService = {
     Object.keys(LANGS).forEach(l => { c.name[l] = c.name[l] || c.name.vi; c.text[l] = c.text[l] || c.text.vi; });
     return c;
   },
+  /* Danh sách POI của backend (content-service, GET /api/pois), do RemoteContentService lưu vào Store("remotePois").
+     Đã gọi được backend ít nhất 1 lần thì backend là NGUỒN CHÍNH: điểm admin thêm / đổi toạ độ / xoá đều tới máy du khách.
+     Chưa gọi được lần nào (chưa bật backend) thì dùng dữ liệu mẫu như cũ. */
+  DEFAULT_LOOK: { icon: "fa-map-marker-alt", code: "\uf3c5", grad: ["#2563eb", "#7c3aed"], pri: 2, img: "", credit: "" },
+  _withRemote(local) {
+    const remote = Store.get("remotePois", null);
+    if (!Array.isArray(remote)) return local;
+    const out = [];
+    remote.forEach(r => {
+      const base = local.find(p => p.id === r.id);
+      /* đang là bản nháp (admin sửa chưa xuất bản): du khách vẫn nghe bản cũ; điểm mới chưa xuất bản thì chưa hiện */
+      if (r.status !== "PUBLISHED") { if (base) out.push(base); return; }
+      const p = JSON.parse(JSON.stringify(base || Object.assign({ id: r.id, name: {}, text: {} }, this.DEFAULT_LOOK)));
+      if (r.name && p.name.vi !== r.name) p.name = { vi: r.name };   // đổi tên: tên en/zh cũ không còn đúng
+      if (r.text && p.text.vi !== r.text) p.text = { vi: r.text };   // bản dịch mới tới qua RemoteContentService
+      if (r.category) p.cat = r.category;
+      if (!p.cat) p.cat = "Địa điểm khác";
+      if (r.address) p.addr = r.address;
+      if (!p.addr) p.addr = "";
+      if (r.lat || r.lng) { p.lat = r.lat; p.lng = r.lng; }
+      if (r.radius) p.r = r.radius;
+      p.status = "published";
+      out.push(p);
+    });
+    return out;
+  },
   /* danh sách đã xuất bản (dùng cho trang người dùng) */
   all() {
-    let k = ""; try { k = localStorage.getItem("ttd:pois") || ""; } catch (e) {}
-    if (this._c.k !== k || !this._c.v) this._c = { k, v: this.raw().filter(p => p.status !== "draft").map(p => this._norm(p)) };
+    let k = ""; try { k = (localStorage.getItem("ttd:pois") || "") + "|" + (localStorage.getItem("ttd:remotePois") || ""); } catch (e) {}
+    if (this._c.k !== k || !this._c.v) this._c = { k, v: this._withRemote(this.raw()).filter(p => p.status !== "draft").map(p => this._norm(p)) };
     return this._c.v;
   },
   get(id) { return this.all().find(p => p.id === Number(id)); },

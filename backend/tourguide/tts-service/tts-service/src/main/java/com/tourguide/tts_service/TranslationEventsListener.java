@@ -47,4 +47,9 @@ public class TranslationEventsListener {
                 UUID.randomUUID().toString(), event.eventId(), event.poiId(), event.version(),
                 audios, Instant.now().toString()));
     }
+
+    /** So su kien da xu ly (dung cho GET .../status). */
+    public int processedCount() {
+        return processedEventIds.size();
+    }
 }

@@ -52,4 +52,9 @@ public class ContentEventsListener {
                 event.langs(), Instant.now().toString(),
                 script == null ? null : Map.of("vi", script)));
     }
+
+    /** So su kien da xu ly (dung cho GET .../status). */
+    public int processedCount() {
+        return processedEventIds.size();
+    }
 }

@@ -54,7 +54,7 @@ jobs:
   #   ghcr.io/<chu-repo>/tourguide-<service>:latest va :<ma-commit>
   # Pull request chi build de kiem tra, khong day image.
   docker-build:
-    name: Docker build & push (${{ matrix.service }})
+    name: Docker build (${{ matrix.service }})
     needs: build-test
     runs-on: ubuntu-latest
     permissions:

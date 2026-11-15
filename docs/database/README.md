@@ -135,14 +135,30 @@ erDiagram
         nvarchar text
         uniqueidentifier source_event_id
     }
-    PROCESSED_EVENT {
+    NARRATION_PROCESSED_EVENT {
         uniqueidentifier event_id PK
         varchar routing_key
-        datetime2 received_at
     }
+    TRANSLATION_PROCESSED_EVENT {
+        uniqueidentifier event_id PK
+        varchar routing_key
+    }
+    TTS_PROCESSED_EVENT {
+        uniqueidentifier event_id PK
+        varchar routing_key
+    }
+    NARRATION_PROCESSED_EVENT ||--o{ NARRATION : "sinh ra"
+    TRANSLATION_PROCESSED_EVENT ||--o{ TRANSLATION : "sinh ra"
+    TTS_PROCESSED_EVENT ||--o{ AUDIO : "sinh ra"
 ```
+(`*_PROCESSED_EVENT` là bảng `PROCESSED_EVENT` trong schema `narration`, `translation`, `tts`.)
 
-`NARRATION`, `TRANSLATION`, `AUDIO` nối với nhau và với `POI` **qua sự kiện**, không qua khoá ngoại:
+**Đường nối trong sơ đồ:** khoá ngoại chỉ có *bên trong* một service. Ở content-service, 7 bảng nối với nhau
+(10 khoá ngoại). Ở mỗi service còn lại, dữ liệu (`NARRATION`, `TRANSLATION`, `AUDIO`) nối với bảng
+`PROCESSED_EVENT` của chính nó qua `source_event_id`: mỗi dòng được sinh ra từ đúng một sự kiện đã nhận.
+Vì vậy diagram trong SSMS có 4 cụm bảng tách rời – đó là 4 service, cố ý không nối nhau.
+
+Giữa các service, `NARRATION`, `TRANSLATION`, `AUDIO` nối với nhau và với `POI` **qua sự kiện**, không qua khoá ngoại:
 
 ```
 content.POI --content.published--> narration.NARRATION --narration.created--> translation.TRANSLATION
@@ -182,4 +198,4 @@ Mỗi bảng phía sau giữ `source_event_id` = `eventId` của sự kiện đ�
   nội dung khớp đúng với những gì narration-service soạn (câu chào + nội dung + câu kết).
 - 4 thiết bị, 5 lượt mở, 9 lượt nghe mẫu để view thống kê có số liệu.
 - Cuối file có các câu kiểm tra: số bảng theo schema (13), **0 khoá ngoại liên schema**, mỗi điểm đủ 1 bài
-  thuyết minh / 3 bản dịch / 3 giọng đọc, và kết quả các view.
+  thuyết minh / 3 bản dịch / 3 giọng đọc, số khoá ngoại trong từng service, và kết quả các view.

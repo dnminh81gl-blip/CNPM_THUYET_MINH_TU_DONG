@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.tourguide.content_service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

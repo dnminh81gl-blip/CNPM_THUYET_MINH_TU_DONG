@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.tourguide.content_service;
 
 import org.springframework.amqp.core.ExchangeBuilder;
 import org.springframework.amqp.core.TopicExchange;

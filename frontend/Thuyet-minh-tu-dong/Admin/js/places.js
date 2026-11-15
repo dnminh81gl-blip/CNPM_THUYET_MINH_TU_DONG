@@ -102,9 +102,14 @@ const PlacesPage = {
     A.pager($("#pager"), r.page, r.pages, n => { this.page = n; this.render(); });
   },
   toggle(id) { const l = A.pois(), p = l.find(x => x.id === id); p.status = (p.status || "published") === "draft" ? "published" : "draft"; A.savePois(l); this.render(); toast({ title: "Đã cập nhật", message: `${p.name.vi}: ${p.status === "draft" ? "chuyển sang nháp" : "đã xuất bản"}`, type: "success" }); },
-  del(id) {
+  async del(id) {
     const p = A.pois().find(x => x.id === id);
     if (!confirm(`Xoá địa điểm "${p.name.vi}"? `)) return;
+    /* có trên backend thì xoá ở backend trước (DELETE /api/pois/{id}); máy du khách tải lại sẽ không còn điểm này */
+    if (BE.on && BE.remote[id]) {
+      try { await BE.req("DELETE", `/api/pois/${id}`); delete BE.remote[id]; delete BE.pipe[id]; }
+      catch (e) { toast({ title: "Không xoá được trên backend", message: e.message, type: "error", duration: 4500 }); return; }
+    }
     A.savePois(A.pois().filter(x => x.id !== id));
     toast({ title: "Đã xoá", message: p.name.vi, type: "success" }); this.render();
   },

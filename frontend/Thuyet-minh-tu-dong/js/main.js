@@ -197,6 +197,12 @@ document.addEventListener("DOMContentLoaded", () => {
   /* thông báo thời gian thực + nội dung mới do quản trị viên xuất bản (T11) */
   safe("RemoteContent", () => RemoteContentService.init());
   safe("Notification", () => NotificationService.start());
+  /* danh sách POI trên backend thay đổi (admin thêm / sửa toạ độ / xoá): vẽ lại bản đồ và các danh sách */
+  Bus.on("pois:change", () => {
+    try { MapUI.build(); } catch (e) {}
+    renderFeatured(); renderFacts();
+    try { PoiUI.renderCats(); PoiUI.render(); } catch (e) {}
+  });
   Bus.on("content:update", ({ poiId, quiet }) => {
     renderFeatured(); try { PoiUI.render(); if (PoiUI.openId === poiId) PoiUI.openDetail(poiId); } catch (e) {}
     const p = POIService.get(poiId);

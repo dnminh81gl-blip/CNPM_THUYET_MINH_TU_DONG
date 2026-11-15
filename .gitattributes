@@ -1,0 +1,10 @@
+# Chuan hoa xuong dong: trong repo luon la LF, may Windows tu doi sang CRLF khi checkout.
+* text=auto
+*.cmd text eol=crlf
+mvnw text eol=lf
+*.sh text eol=lf
+*.png binary
+*.jpg binary
+*.ttf binary
+*.woff binary
+*.woff2 binary

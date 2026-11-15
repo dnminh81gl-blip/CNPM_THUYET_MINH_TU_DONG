@@ -24,7 +24,7 @@ Gui boi: content-service. Nhan boi: narration-service.
 
 Vi du:
 ```json
-{"eventId":"c6a5d87b-6458-41b3-97ee-c47187849615","poiId":3,"version":1,"langs":["vi","en","zh"],"publishedAt":"2026-10-08T09:54:21.686Z","name":"Nhà thờ Đức Bà","text":"Nhà thờ Đức Bà Sài Gòn được xây dựng từ năm 1863 đến 1880..."}
+{"eventId":"c6a5d87b-6458-41b3-97ee-c47187849615","poiId":3,"version":2,"langs":["vi","en","zh"],"publishedAt":"2026-11-15T09:54:21.686Z","name":"Phòng Trình Quốc thư","text":"Đây là phòng Trình Quốc thư, nơi các đại sứ nước ngoài trình thư uỷ nhiệm..."}
 ```
 
 ## narration.created

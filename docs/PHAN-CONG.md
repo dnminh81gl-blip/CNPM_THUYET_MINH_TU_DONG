@@ -9,10 +9,12 @@
 
 > Co the doi vai theo the manh tung nguoi (vi du ai quen frontend thi nhan phan cua Trang). Doi xong cap nhat file nay.
 
-## Lich (hien tai: tuan 5; giua ky: tuan 7)
+## Lich
 - **Tuan 5:** chot phan cong, quy uoc va hop dong su kien (EVENTS.md). Moi nguoi clone repo, chay duoc `docker compose up --build`.
 - **Tuan 6:** Tram lam translation-service (khung da co san, them logic dich); Trang lam notification-service; Minh noi chuoi su kien, cap nhat docker-compose va CI.
-- **Tuan 7:** ghep ca luong, chay thu tu dau den cuoi, chuan bi demo va tai lieu.
+- **Tuan 7 (giua ky):** ghep ca luong, chay thu tu dau den cuoi, chuan bi demo.
+- **Tuan 8-10:** API Gateway, tts-service, noi dung that (Dinh Doc Lap), dich that, thong bao thoi gian thuc, quan ly thiet bi.
+- **Tuan 11-12 (cuoi ky):** hoan thien theo GitHub Issues (moi viec 1 issue, giao dung nguoi, PR ghi `Closes #so`), tai lieu, bao cao va demo.
 
 ## Quy tac lam viec
 1. Moi nguoi lam tren **nhanh rieng** (`feature/<ten-service>`), khong push thang vao `main`.

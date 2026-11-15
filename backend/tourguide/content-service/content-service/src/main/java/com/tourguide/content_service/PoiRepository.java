@@ -57,4 +57,9 @@ public class PoiRepository {
         store.put(poi.id(), poi);
         return poi;
     }
+
+    /** @return true nếu có địa điểm này và đã xoá. */
+    public boolean delete(long id) {
+        return store.remove(id) != null;
+    }
 }

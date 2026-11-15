@@ -63,6 +63,18 @@ class PoiServiceTest {
     }
 
     @Test
+    void deleteRemovesPlace() {
+        service.delete(6);
+        assertEquals(5, service.list().size());
+        assertThrows(ResponseStatusException.class, () -> service.get(6));
+    }
+
+    @Test
+    void deleteUnknownPlaceIsNotFound() {
+        assertThrows(ResponseStatusException.class, () -> service.delete(999));
+    }
+
+    @Test
     void unknownPlaceIsNotFound() {
         assertThrows(ResponseStatusException.class, () -> service.publish(999));
     }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +23,7 @@ import jakarta.validation.Valid;
  *   POST   /api/pois                 thêm (bản nháp)
  *   PUT    /api/pois/{id}            sửa (về bản nháp, tăng version)
  *   POST   /api/pois/{id}/publish    xuất bản -> phát content.published kèm nội dung
+ *   DELETE /api/pois/{id}            xoá địa điểm
  */
 @RestController
 @RequestMapping("/api/pois")
@@ -53,6 +55,12 @@ public class PoiController {
     @PutMapping("/{id}")
     public Poi update(@PathVariable long id, @Valid @RequestBody PoiRequest request) {
         return service.update(id, request);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable long id) {
+        service.delete(id);
     }
 
     @PostMapping("/{id}/publish")

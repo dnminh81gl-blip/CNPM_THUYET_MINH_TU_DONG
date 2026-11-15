@@ -65,6 +65,13 @@ public class PoiService {
         return event;
     }
 
+    /** Xoá địa điểm. Các service khác không cần biết: du khách tải lại danh sách sẽ không còn điểm này. */
+    public void delete(long id) {
+        if (!repo.delete(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy địa điểm " + id);
+        }
+    }
+
     private static String orEmpty(String s) {
         return s == null ? "" : s.trim();
     }

@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.tourguide.content_service;
 
 import java.time.Clock;
 import java.time.Duration;

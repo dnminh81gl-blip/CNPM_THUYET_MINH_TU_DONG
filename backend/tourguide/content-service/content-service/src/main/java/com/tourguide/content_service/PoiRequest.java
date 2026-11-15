@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.tourguide.content_service;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

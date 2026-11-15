@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.tourguide.content_service;
 
 import java.time.Instant;
 import java.util.Comparator;
@@ -56,5 +56,10 @@ public class PoiRepository {
     public Poi save(Poi poi) {
         store.put(poi.id(), poi);
         return poi;
+    }
+
+    /** @return true nếu có địa điểm này và đã xoá. */
+    public boolean delete(long id) {
+        return store.remove(id) != null;
     }
 }

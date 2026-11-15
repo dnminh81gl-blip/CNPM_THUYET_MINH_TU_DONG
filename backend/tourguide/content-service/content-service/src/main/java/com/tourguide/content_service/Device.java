@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.tourguide.content_service;
 
 /**
  * Một thiết bị đã truy cập khu tham quan (ẩn danh).

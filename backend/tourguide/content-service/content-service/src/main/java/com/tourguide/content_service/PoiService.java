@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.tourguide.content_service;
 
 import java.time.Instant;
 import java.util.List;
@@ -63,6 +63,13 @@ public class PoiService {
                 poi.name(), poi.text());
         publisher.publish(RabbitConfig.RK_CONTENT_PUBLISHED, event);
         return event;
+    }
+
+    /** Xoá địa điểm. Các service khác không cần biết: du khách tải lại danh sách sẽ không còn điểm này. */
+    public void delete(long id) {
+        if (!repo.delete(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy địa điểm " + id);
+        }
     }
 
     private static String orEmpty(String s) {

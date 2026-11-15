@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.tourguide.content_service;
 
 /**
  * Một địa điểm tham quan (POI) do admin quản lý.

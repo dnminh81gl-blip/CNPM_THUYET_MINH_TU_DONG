@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.tourguide.content_service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

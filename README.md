@@ -44,6 +44,7 @@ RabbitMQ UI: http://localhost:15672 (guest / guest).
 | POST | `/api/pois` | Them dia diem (ban nhap). Body: `{"name","category","address","lat","lng","radius","text"}` |
 | PUT | `/api/pois/{id}` | Sua dia diem (tang version, ve ban nhap) |
 | POST | `/api/pois/{id}/publish` | Xuat ban: phat `content.published` KEM ten + noi dung |
+| DELETE | `/api/pois/{id}` | Xoa dia diem (204; 404 neu khong co) |
 
 ## Khu tham quan va thiet bi (khong can tai khoan)
 Do an tap trung vao MOT khu tham quan: **Dinh Doc Lap**. Moi POI (diem thuyet minh) ben trong co ma QR rieng:

@@ -97,7 +97,7 @@ Moi service mot terminal, vao thu muc roi chay `.\mvnw.cmd spring-boot:run` (Win
 - Quy tac: lam tren nhanh rieng -> Pull Request -> CI xanh + co nguoi review -> merge (xem `docs/PHAN-CONG.md`).
 
 ## Gioi han cua ban PoC
-- Du lieu cac service luu trong bo nho: khoi dong lai la ve du lieu mau. Thiet ke CSDL (SQL Server) o `docs/database/`.
+- Du lieu cac service luu trong bo nho: khoi dong lai la ve du lieu mau. Thiet ke CSDL (SQL Server, moi service mot schema rieng, co so do ERD) o `docs/database/`.
 - API admin chua xac thuc o backend (dang nhap admin moi kiem tra o trinh duyet).
 - Giong doc tao o trinh duyet (Web Speech API); tts-service chua sinh file mp3 that.
 - Dich online dung MyMemory (mien phi, gioi han so ky tu/ngay); loi mang thi dung tu dien du phong.

@@ -50,10 +50,16 @@ jobs:
       - name: Build & test
         run: mvn -B verify
 
+  # CD: build Docker image; khi code vao main thi day image len GitHub Container Registry (GHCR)
+  #   ghcr.io/<chu-repo>/tourguide-<service>:latest va :<ma-commit>
+  # Pull request chi build de kiem tra, khong day image.
   docker-build:
-    name: Docker build (${{ matrix.service }})
+    name: Docker build & push (${{ matrix.service }})
     needs: build-test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     strategy:
       matrix:
         include:
@@ -72,4 +78,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build image
-        run: docker build -t tourguide/${{ matrix.service }}:ci ${{ matrix.path }}
+        run: |
+          IMAGE=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/tourguide-${{ matrix.service }}
+          echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
+          docker build -t "$IMAGE:latest" -t "$IMAGE:${GITHUB_SHA::7}" ${{ matrix.path }}
+      - name: Login GHCR
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+      - name: Push image
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          docker push "$IMAGE:latest"
+          docker push "$IMAGE:${GITHUB_SHA::7}"

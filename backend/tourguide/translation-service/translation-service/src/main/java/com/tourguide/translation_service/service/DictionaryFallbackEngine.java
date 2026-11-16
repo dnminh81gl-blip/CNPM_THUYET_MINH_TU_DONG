@@ -26,48 +26,57 @@ public class DictionaryFallbackEngine implements TranslationEngine {
         // Mẫu câu tiếng Việt -> Tiếng Anh
         Map<String, String> viToEn = new HashMap<>();
         viToEn.put("chào mừng", "welcome");
-        viToEn.put("chùa một cột", "One Pillar Pagoda");
-        viToEn.put("văn miếu", "Temple of Literature");
-        viToEn.put("dinh độc lập", "Independence Palace");
-        viToEn.put("nhà thờ đức bà", "Notre-Dame Cathedral");
-        viToEn.put("phố cổ hội an", "Hoi An Ancient Town");
-        viToEn.put("hồ hoàn kiếm", "Hoan Kiem Lake");
-        // 5 diem tham quan Quan 1 (TP.HCM) dang dung trong content-service
-        viToEn.put("bưu điện trung tâm sài gòn", "Saigon Central Post Office");
-        viToEn.put("nhà hát thành phố", "Saigon Opera House");
-        viToEn.put("bảo tàng thành phố hồ chí minh", "Ho Chi Minh City Museum");
-        viToEn.put("bảo tàng tp.hcm", "Ho Chi Minh City Museum");
-        viToEn.put("thành phố hồ chí minh", "Ho Chi Minh City");
-        viToEn.put("sài gòn", "Saigon");
-        viToEn.put("chúc bạn có chuyến tham quan thú vị", "have a pleasant visit");
         viToEn.put("chào mừng bạn đến với", "welcome to");
+        viToEn.put("chúc bạn có chuyến tham quan thú vị", "have a pleasant visit");
         viToEn.put("thuyết minh tự động", "automated audio narration");
         viToEn.put("di tích lịch sử", "historical relic");
         viToEn.put("kiến trúc", "architecture");
         viToEn.put("văn hóa", "culture");
+        viToEn.put("thành phố hồ chí minh", "Ho Chi Minh City");
+        viToEn.put("sài gòn", "Saigon");
+
+        // Từ vựng Dinh Độc Lập và các điểm tham quan
+        viToEn.put("dinh độc lập", "Independence Palace");
+        viToEn.put("phòng trình quốc thư", "Credentials Room");
+        viToEn.put("phòng họp nội các", "Cabinet Room");
+        viToEn.put("sân thượng", "rooftop");
+        viToEn.put("trực thăng", "helicopter");
+        viToEn.put("bãi đáp trực thăng", "helipad");
+        viToEn.put("tầng hầm", "basement");
+        viToEn.put("tầng hầm chỉ huy", "Command Bunker");
+        viToEn.put("hầm chỉ huy", "command bunker");
+        viToEn.put("xe tăng", "tank");
+        viToEn.put("cổng chính", "main gate");
+        viToEn.put("mặt tiền", "facade");
+        viToEn.put("khuôn viên", "grounds");
         phrasebook.put("vi->en", viToEn);
 
         // Mẫu câu tiếng Việt -> Tiếng Trung
         Map<String, String> viToZh = new HashMap<>();
         viToZh.put("chào mừng", "欢迎");
-        viToZh.put("chùa một cột", "一柱寺");
-        viToZh.put("văn miếu", "文庙");
-        viToZh.put("dinh độc lập", "统一宫");
-        viToZh.put("nhà thờ đức bà", "红教堂");
-        viToZh.put("phố cổ hội an", "会安古镇");
-        viToZh.put("hồ hoàn kiếm", "还剑湖");
-        viToZh.put("bưu điện trung tâm sài gòn", "西贡中心邮局");
-        viToZh.put("nhà hát thành phố", "西贡歌剧院");
-        viToZh.put("bảo tàng thành phố hồ chí minh", "胡志明市博物馆");
-        viToZh.put("bảo tàng tp.hcm", "胡志明市博物馆");
-        viToZh.put("thành phố hồ chí minh", "胡志明市");
-        viToZh.put("sài gòn", "西贡");
-        viToZh.put("chúc bạn có chuyến tham quan thú vị", "祝您参观愉快");
         viToZh.put("chào mừng bạn đến với", "欢迎来到");
+        viToZh.put("chúc bạn có chuyến tham quan thú vị", "祝您参观愉快");
         viToZh.put("thuyết minh tự động", "自动语音解说");
         viToZh.put("di tích lịch sử", "历史遗迹");
         viToZh.put("kiến trúc", "建筑");
         viToZh.put("văn hóa", "文化");
+        viToZh.put("thành phố hồ chí minh", "胡志明市");
+        viToZh.put("sài gòn", "西贡");
+
+        // Từ vựng Dinh Độc Lập và các điểm tham quan
+        viToZh.put("dinh độc lập", "统一宫");
+        viToZh.put("phòng trình quốc thư", "国书递交厅");
+        viToZh.put("phòng họp nội các", "内阁会议室");
+        viToZh.put("sân thượng", "屋顶");
+        viToZh.put("trực thăng", "直升机");
+        viToZh.put("bãi đáp trực thăng", "直升机停机坪");
+        viToZh.put("tầng hầm", "地下室");
+        viToZh.put("tầng hầm chỉ huy", "地下指挥所");
+        viToZh.put("hầm chỉ huy", "指挥地堡");
+        viToZh.put("xe tăng", "坦克");
+        viToZh.put("cổng chính", "正门");
+        viToZh.put("mặt tiền", "正立面");
+        viToZh.put("khuôn viên", "园区");
         phrasebook.put("vi->zh", viToZh);
     }
 

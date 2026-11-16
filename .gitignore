@@ -14,3 +14,5 @@ target/
 secrets/
 application-local.properties
 application-secret.properties
+# SSMS / Visual Studio
+.vs/

@@ -25,9 +25,9 @@ GO
 
 /* ---------- Xoá đối tượng cũ (thứ tự ngược với phụ thuộc) ---------- */
 DROP VIEW  IF EXISTS [content].[V_POI_STATS], [content].[V_DAILY_ACTIVITY], [content].[V_ACTIVE_DEVICE];
-DROP TABLE IF EXISTS [tts].[PROCESSED_EVENT], [tts].[AUDIO];
-DROP TABLE IF EXISTS [translation].[PROCESSED_EVENT], [translation].[TRANSLATION];
-DROP TABLE IF EXISTS [narration].[PROCESSED_EVENT], [narration].[NARRATION];
+DROP TABLE IF EXISTS [tts].[AUDIO], [tts].[PROCESSED_EVENT];
+DROP TABLE IF EXISTS [translation].[TRANSLATION], [translation].[PROCESSED_EVENT];
+DROP TABLE IF EXISTS [narration].[NARRATION], [narration].[PROCESSED_EVENT];
 DROP TABLE IF EXISTS [content].[OUTBOX_EVENT], [content].[LISTEN], [content].[VISIT], [content].[DEVICE],
                      [content].[POI], [content].[LANGUAGE], [content].[ADMIN];
 /* bảng của bản thiết kế cũ (1 schema chung) */
@@ -176,6 +176,11 @@ CREATE TABLE [narration].[PROCESSED_EVENT] (
     routing_key VARCHAR(60)      NOT NULL,
     received_at DATETIME2(3)     NOT NULL CONSTRAINT DF_NARRATION_PROCESSED DEFAULT SYSUTCDATETIME()
 );
+
+/* Mỗi dòng dữ liệu sinh ra từ đúng một sự kiện đã nhận của CHÍNH service này (cùng schema, không vượt service) */
+ALTER TABLE [narration].[NARRATION] ADD CONSTRAINT FK_NARRATION_PROCESSED_EVENT
+    FOREIGN KEY (source_event_id) REFERENCES [narration].[PROCESSED_EVENT](event_id);
+CREATE INDEX IX_NARRATION_source_event ON [narration].[NARRATION](source_event_id);
 GO
 
 /* ======================= [translation] – translation-service ======================= */
@@ -194,14 +199,17 @@ CREATE TABLE [translation].[TRANSLATION] (
     CONSTRAINT CK_TRANSLATION_engine  CHECK (engine IN ('identity', 'mymemory_online', 'offline_dictionary', 'mixed')),
     CONSTRAINT CK_TRANSLATION_version CHECK (version >= 1)
 );
-/* GET /api/translations?poiId=&version= dùng khoá chính; index này để truy vết theo sự kiện */
-CREATE INDEX IX_TRANSLATION_event ON [translation].[TRANSLATION](source_event_id);
 
 CREATE TABLE [translation].[PROCESSED_EVENT] (
     event_id    UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_TRANSLATION_PROCESSED PRIMARY KEY,
     routing_key VARCHAR(60)      NOT NULL,
     received_at DATETIME2(3)     NOT NULL CONSTRAINT DF_TRANSLATION_PROCESSED DEFAULT SYSUTCDATETIME()
 );
+
+/* Mỗi dòng dữ liệu sinh ra từ đúng một sự kiện đã nhận của CHÍNH service này (cùng schema, không vượt service) */
+ALTER TABLE [translation].[TRANSLATION] ADD CONSTRAINT FK_TRANSLATION_PROCESSED_EVENT
+    FOREIGN KEY (source_event_id) REFERENCES [translation].[PROCESSED_EVENT](event_id);
+CREATE INDEX IX_TRANSLATION_source_event ON [translation].[TRANSLATION](source_event_id);
 GO
 
 /* ================================ [tts] – tts-service =============================== */
@@ -229,6 +237,11 @@ CREATE TABLE [tts].[PROCESSED_EVENT] (
     routing_key VARCHAR(60)      NOT NULL,
     received_at DATETIME2(3)     NOT NULL CONSTRAINT DF_TTS_PROCESSED DEFAULT SYSUTCDATETIME()
 );
+
+/* Mỗi dòng dữ liệu sinh ra từ đúng một sự kiện đã nhận của CHÍNH service này (cùng schema, không vượt service) */
+ALTER TABLE [tts].[AUDIO] ADD CONSTRAINT FK_AUDIO_PROCESSED_EVENT
+    FOREIGN KEY (source_event_id) REFERENCES [tts].[PROCESSED_EVENT](event_id);
+CREATE INDEX IX_AUDIO_source_event ON [tts].[AUDIO](source_event_id);
 GO
 
 /* ============================ VIEW thống kê (trang Admin) ============================ */
@@ -294,13 +307,6 @@ INSERT INTO [content].[OUTBOX_EVENT] (event_id, routing_key, poi_id, payload, se
 GO
 
 /* narration-service: bài thuyết minh v1 (đúng như NarrationComposer soạn) */
-INSERT INTO [narration].[NARRATION] (poi_id, version, script_vi, source_event_id) VALUES
- (1, 1, N'Chào mừng bạn đến với Cổng chính và xe tăng. Bạn đang đứng ở cổng chính Dinh Độc Lập. Trưa ngày 30 tháng 4 năm 1975, xe tăng 390 húc đổ cánh cổng này, đánh dấu thời khắc kết thúc chiến tranh và thống nhất đất nước. Hai chiếc xe tăng trưng bày trong khuôn viên gợi nhớ xe tăng 843 và 390 đã tiến vào Dinh hôm đó. Chúc bạn có chuyến tham quan thú vị.', '10000000-0000-4000-8000-000000000001'),
- (2, 1, N'Chào mừng bạn đến với Mặt tiền và kiến trúc. Dinh Độc Lập do kiến trúc sư Ngô Viết Thụ thiết kế, khởi công năm 1962 và khánh thành ngày 31 tháng 10 năm 1966, trên nền Dinh Norodom cũ thời Pháp. Mặt tiền nổi bật với những hàng rèm hoa đá mô phỏng đốt trúc, vừa che nắng vừa mang nét kiến trúc truyền thống Á Đông. Chúc bạn có chuyến tham quan thú vị.', '10000000-0000-4000-8000-000000000002'),
- (3, 1, N'Chào mừng bạn đến với Phòng Trình Quốc thư. Đây là phòng Trình Quốc thư, nơi các đại sứ nước ngoài trình thư uỷ nhiệm. Điểm nhấn của căn phòng là bức tranh sơn mài lớn Bình Ngô Đại Cáo gồm 40 tấm ghép lại, của hoạ sĩ Nguyễn Văn Minh. Chúc bạn có chuyến tham quan thú vị.', '10000000-0000-4000-8000-000000000003'),
- (4, 1, N'Chào mừng bạn đến với Phòng họp Nội các. Phòng họp Nội các là nơi Tổng thống họp với các bộ trưởng. Căn phòng vẫn giữ bàn họp dài và hàng ghế như thời kỳ trước năm 1975, giúp du khách hình dung cách bộ máy chính quyền làm việc tại đây. Chúc bạn có chuyến tham quan thú vị.', '10000000-0000-4000-8000-000000000004'),
- (5, 1, N'Chào mừng bạn đến với Sân thượng và trực thăng. Trên sân thượng có bãi đáp trực thăng, nơi trưng bày một chiếc trực thăng UH-1. Sáng ngày 8 tháng 4 năm 1975, phi công Nguyễn Thành Trung lái máy bay F-5E ném bom Dinh Độc Lập rồi hạ cánh an toàn ở vùng giải phóng Phước Long. Chúc bạn có chuyến tham quan thú vị.', '10000000-0000-4000-8000-000000000005'),
- (6, 1, N'Chào mừng bạn đến với Tầng hầm chỉ huy. Tầng hầm là hệ thống hầm chỉ huy kiên cố, được xây để chịu được bom. Bên trong có trung tâm chỉ huy, các thiết bị thông tin liên lạc và phòng bản đồ tác chiến, nhiều bản đồ vẫn còn giữ nguyên dấu bút chì đánh dấu. Chúc bạn có chuyến tham quan thú vị.', '10000000-0000-4000-8000-000000000006');
 INSERT INTO [narration].[PROCESSED_EVENT] (event_id, routing_key) VALUES
  ('10000000-0000-4000-8000-000000000001', 'content.published'),
  ('10000000-0000-4000-8000-000000000002', 'content.published'),
@@ -308,9 +314,23 @@ INSERT INTO [narration].[PROCESSED_EVENT] (event_id, routing_key) VALUES
  ('10000000-0000-4000-8000-000000000004', 'content.published'),
  ('10000000-0000-4000-8000-000000000005', 'content.published'),
  ('10000000-0000-4000-8000-000000000006', 'content.published');
+INSERT INTO [narration].[NARRATION] (poi_id, version, script_vi, source_event_id) VALUES
+ (1, 1, N'Chào mừng bạn đến với Cổng chính và xe tăng. Bạn đang đứng ở cổng chính Dinh Độc Lập. Trưa ngày 30 tháng 4 năm 1975, xe tăng 390 húc đổ cánh cổng này, đánh dấu thời khắc kết thúc chiến tranh và thống nhất đất nước. Hai chiếc xe tăng trưng bày trong khuôn viên gợi nhớ xe tăng 843 và 390 đã tiến vào Dinh hôm đó. Chúc bạn có chuyến tham quan thú vị.', '10000000-0000-4000-8000-000000000001'),
+ (2, 1, N'Chào mừng bạn đến với Mặt tiền và kiến trúc. Dinh Độc Lập do kiến trúc sư Ngô Viết Thụ thiết kế, khởi công năm 1962 và khánh thành ngày 31 tháng 10 năm 1966, trên nền Dinh Norodom cũ thời Pháp. Mặt tiền nổi bật với những hàng rèm hoa đá mô phỏng đốt trúc, vừa che nắng vừa mang nét kiến trúc truyền thống Á Đông. Chúc bạn có chuyến tham quan thú vị.', '10000000-0000-4000-8000-000000000002'),
+ (3, 1, N'Chào mừng bạn đến với Phòng Trình Quốc thư. Đây là phòng Trình Quốc thư, nơi các đại sứ nước ngoài trình thư uỷ nhiệm. Điểm nhấn của căn phòng là bức tranh sơn mài lớn Bình Ngô Đại Cáo gồm 40 tấm ghép lại, của hoạ sĩ Nguyễn Văn Minh. Chúc bạn có chuyến tham quan thú vị.', '10000000-0000-4000-8000-000000000003'),
+ (4, 1, N'Chào mừng bạn đến với Phòng họp Nội các. Phòng họp Nội các là nơi Tổng thống họp với các bộ trưởng. Căn phòng vẫn giữ bàn họp dài và hàng ghế như thời kỳ trước năm 1975, giúp du khách hình dung cách bộ máy chính quyền làm việc tại đây. Chúc bạn có chuyến tham quan thú vị.', '10000000-0000-4000-8000-000000000004'),
+ (5, 1, N'Chào mừng bạn đến với Sân thượng và trực thăng. Trên sân thượng có bãi đáp trực thăng, nơi trưng bày một chiếc trực thăng UH-1. Sáng ngày 8 tháng 4 năm 1975, phi công Nguyễn Thành Trung lái máy bay F-5E ném bom Dinh Độc Lập rồi hạ cánh an toàn ở vùng giải phóng Phước Long. Chúc bạn có chuyến tham quan thú vị.', '10000000-0000-4000-8000-000000000005'),
+ (6, 1, N'Chào mừng bạn đến với Tầng hầm chỉ huy. Tầng hầm là hệ thống hầm chỉ huy kiên cố, được xây để chịu được bom. Bên trong có trung tâm chỉ huy, các thiết bị thông tin liên lạc và phòng bản đồ tác chiến, nhiều bản đồ vẫn còn giữ nguyên dấu bút chì đánh dấu. Chúc bạn có chuyến tham quan thú vị.', '10000000-0000-4000-8000-000000000006');
 GO
 
 /* translation-service: bản dịch của bài thuyết minh (vi giữ nguyên = identity) */
+INSERT INTO [translation].[PROCESSED_EVENT] (event_id, routing_key) VALUES
+ ('20000000-0000-4000-8000-000000000001', 'narration.created'),
+ ('20000000-0000-4000-8000-000000000002', 'narration.created'),
+ ('20000000-0000-4000-8000-000000000003', 'narration.created'),
+ ('20000000-0000-4000-8000-000000000004', 'narration.created'),
+ ('20000000-0000-4000-8000-000000000005', 'narration.created'),
+ ('20000000-0000-4000-8000-000000000006', 'narration.created');
 INSERT INTO [translation].[TRANSLATION] (poi_id, version, lang, translated_text, engine, source_event_id) VALUES
  (1, 1, 'vi', N'Chào mừng bạn đến với Cổng chính và xe tăng. Bạn đang đứng ở cổng chính Dinh Độc Lập. Trưa ngày 30 tháng 4 năm 1975, xe tăng 390 húc đổ cánh cổng này, đánh dấu thời khắc kết thúc chiến tranh và thống nhất đất nước. Hai chiếc xe tăng trưng bày trong khuôn viên gợi nhớ xe tăng 843 và 390 đã tiến vào Dinh hôm đó. Chúc bạn có chuyến tham quan thú vị.', 'identity', '20000000-0000-4000-8000-000000000001'),
  (1, 1, 'en', N'Welcome to Main Gate and Tanks. You are at the main gate of Independence Palace. Around noon on 30 April 1975, tank 390 crashed through this gate, marking the end of the war and the reunification of Vietnam. The two tanks displayed on the grounds recall tanks 843 and 390, which entered the palace that day. Have a pleasant visit.', 'mymemory_online', '20000000-0000-4000-8000-000000000001'),
@@ -330,16 +350,16 @@ INSERT INTO [translation].[TRANSLATION] (poi_id, version, lang, translated_text,
  (6, 1, 'vi', N'Chào mừng bạn đến với Tầng hầm chỉ huy. Tầng hầm là hệ thống hầm chỉ huy kiên cố, được xây để chịu được bom. Bên trong có trung tâm chỉ huy, các thiết bị thông tin liên lạc và phòng bản đồ tác chiến, nhiều bản đồ vẫn còn giữ nguyên dấu bút chì đánh dấu. Chúc bạn có chuyến tham quan thú vị.', 'identity', '20000000-0000-4000-8000-000000000006'),
  (6, 1, 'en', N'Welcome to Command Bunker. The basement is a reinforced command bunker built to withstand bombing. It contains a command centre, communications equipment and a war map room, where many maps still carry their original pencil markings. Have a pleasant visit.', 'mymemory_online', '20000000-0000-4000-8000-000000000006'),
  (6, 1, 'zh', N'欢迎来到地下指挥所。地下室是一座坚固的指挥地堡，可抵御轰炸。里面有指挥中心、通讯设备和作战地图室，许多地图上仍保留着当年的铅笔标记。祝您参观愉快。', 'mymemory_online', '20000000-0000-4000-8000-000000000006');
-INSERT INTO [translation].[PROCESSED_EVENT] (event_id, routing_key) VALUES
- ('20000000-0000-4000-8000-000000000001', 'narration.created'),
- ('20000000-0000-4000-8000-000000000002', 'narration.created'),
- ('20000000-0000-4000-8000-000000000003', 'narration.created'),
- ('20000000-0000-4000-8000-000000000004', 'narration.created'),
- ('20000000-0000-4000-8000-000000000005', 'narration.created'),
- ('20000000-0000-4000-8000-000000000006', 'narration.created');
 GO
 
 /* tts-service: giọng đọc (trình duyệt tự đọc bằng Web Speech API) */
+INSERT INTO [tts].[PROCESSED_EVENT] (event_id, routing_key) VALUES
+ ('30000000-0000-4000-8000-000000000001', 'translation.completed'),
+ ('30000000-0000-4000-8000-000000000002', 'translation.completed'),
+ ('30000000-0000-4000-8000-000000000003', 'translation.completed'),
+ ('30000000-0000-4000-8000-000000000004', 'translation.completed'),
+ ('30000000-0000-4000-8000-000000000005', 'translation.completed'),
+ ('30000000-0000-4000-8000-000000000006', 'translation.completed');
 INSERT INTO [tts].[AUDIO] (poi_id, version, lang, voice, engine, url, [text], source_event_id) VALUES
  (1, 1, 'vi', 'vi-VN', 'client-speech', N'/audio/poi-1/v1/vi.mp3', N'Chào mừng bạn đến với Cổng chính và xe tăng. Bạn đang đứng ở cổng chính Dinh Độc Lập. Trưa ngày 30 tháng 4 năm 1975, xe tăng 390 húc đổ cánh cổng này, đánh dấu thời khắc kết thúc chiến tranh và thống nhất đất nước. Hai chiếc xe tăng trưng bày trong khuôn viên gợi nhớ xe tăng 843 và 390 đã tiến vào Dinh hôm đó. Chúc bạn có chuyến tham quan thú vị.', '30000000-0000-4000-8000-000000000001'),
  (1, 1, 'en', 'en-US', 'client-speech', N'/audio/poi-1/v1/en.mp3', N'Welcome to Main Gate and Tanks. You are at the main gate of Independence Palace. Around noon on 30 April 1975, tank 390 crashed through this gate, marking the end of the war and the reunification of Vietnam. The two tanks displayed on the grounds recall tanks 843 and 390, which entered the palace that day. Have a pleasant visit.', '30000000-0000-4000-8000-000000000001'),
@@ -359,13 +379,6 @@ INSERT INTO [tts].[AUDIO] (poi_id, version, lang, voice, engine, url, [text], so
  (6, 1, 'vi', 'vi-VN', 'client-speech', N'/audio/poi-6/v1/vi.mp3', N'Chào mừng bạn đến với Tầng hầm chỉ huy. Tầng hầm là hệ thống hầm chỉ huy kiên cố, được xây để chịu được bom. Bên trong có trung tâm chỉ huy, các thiết bị thông tin liên lạc và phòng bản đồ tác chiến, nhiều bản đồ vẫn còn giữ nguyên dấu bút chì đánh dấu. Chúc bạn có chuyến tham quan thú vị.', '30000000-0000-4000-8000-000000000006'),
  (6, 1, 'en', 'en-US', 'client-speech', N'/audio/poi-6/v1/en.mp3', N'Welcome to Command Bunker. The basement is a reinforced command bunker built to withstand bombing. It contains a command centre, communications equipment and a war map room, where many maps still carry their original pencil markings. Have a pleasant visit.', '30000000-0000-4000-8000-000000000006'),
  (6, 1, 'zh', 'zh-CN', 'client-speech', N'/audio/poi-6/v1/zh.mp3', N'欢迎来到地下指挥所。地下室是一座坚固的指挥地堡，可抵御轰炸。里面有指挥中心、通讯设备和作战地图室，许多地图上仍保留着当年的铅笔标记。祝您参观愉快。', '30000000-0000-4000-8000-000000000006');
-INSERT INTO [tts].[PROCESSED_EVENT] (event_id, routing_key) VALUES
- ('30000000-0000-4000-8000-000000000001', 'translation.completed'),
- ('30000000-0000-4000-8000-000000000002', 'translation.completed'),
- ('30000000-0000-4000-8000-000000000003', 'translation.completed'),
- ('30000000-0000-4000-8000-000000000004', 'translation.completed'),
- ('30000000-0000-4000-8000-000000000005', 'translation.completed'),
- ('30000000-0000-4000-8000-000000000006', 'translation.completed');
 GO
 
 /* thiết bị, lượt mở, lượt nghe mẫu (thời gian UTC) */
@@ -406,6 +419,10 @@ SELECT fk.name AS khoa_ngoai, OBJECT_SCHEMA_NAME(fk.parent_object_id) AS tu_sche
        OBJECT_SCHEMA_NAME(fk.referenced_object_id) AS toi_schema
 FROM sys.foreign_keys fk
 WHERE OBJECT_SCHEMA_NAME(fk.parent_object_id) <> OBJECT_SCHEMA_NAME(fk.referenced_object_id);
+
+-- Khoá ngoại trong từng service (content 10, narration 1, translation 1, tts 1)
+SELECT OBJECT_SCHEMA_NAME(fk.parent_object_id) AS [schema], COUNT(*) AS so_khoa_ngoai
+FROM sys.foreign_keys fk GROUP BY OBJECT_SCHEMA_NAME(fk.parent_object_id) ORDER BY 1;
 
 -- Mỗi điểm đã xuất bản có đủ bài thuyết minh, 3 bản dịch, 3 giọng đọc (mong đợi: 6 dòng, đủ 1/3/3)
 SELECT p.id, p.name,

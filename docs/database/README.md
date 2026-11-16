@@ -29,6 +29,10 @@ Cách chạy: mở SSMS → File → Open → chọn file → Execute (F5). Ch�
 
 ## 2. Sơ đồ ERD
 
+![Sơ đồ quan hệ CSDL theo từng service](So-do-quan-he-CSDL.png)
+
+Nét liền = khoá ngoại (chỉ trong một service); nét đứt cam = liên kết qua sự kiện RabbitMQ. Bản dạng mermaid bên dưới:
+
 ```mermaid
 erDiagram
     %% ---------- schema content (content-service) ----------
@@ -135,14 +139,30 @@ erDiagram
         nvarchar text
         uniqueidentifier source_event_id
     }
-    PROCESSED_EVENT {
+    NARRATION_PROCESSED_EVENT {
         uniqueidentifier event_id PK
         varchar routing_key
-        datetime2 received_at
     }
+    TRANSLATION_PROCESSED_EVENT {
+        uniqueidentifier event_id PK
+        varchar routing_key
+    }
+    TTS_PROCESSED_EVENT {
+        uniqueidentifier event_id PK
+        varchar routing_key
+    }
+    NARRATION_PROCESSED_EVENT ||--o{ NARRATION : "sinh ra"
+    TRANSLATION_PROCESSED_EVENT ||--o{ TRANSLATION : "sinh ra"
+    TTS_PROCESSED_EVENT ||--o{ AUDIO : "sinh ra"
 ```
+(`*_PROCESSED_EVENT` là bảng `PROCESSED_EVENT` trong schema `narration`, `translation`, `tts`.)
 
-`NARRATION`, `TRANSLATION`, `AUDIO` nối với nhau và với `POI` **qua sự kiện**, không qua khoá ngoại:
+**Đường nối trong sơ đồ:** khoá ngoại chỉ có *bên trong* một service. Ở content-service, 7 bảng nối với nhau
+(10 khoá ngoại). Ở mỗi service còn lại, dữ liệu (`NARRATION`, `TRANSLATION`, `AUDIO`) nối với bảng
+`PROCESSED_EVENT` của chính nó qua `source_event_id`: mỗi dòng được sinh ra từ đúng một sự kiện đã nhận.
+Vì vậy diagram trong SSMS có 4 cụm bảng tách rời – đó là 4 service, cố ý không nối nhau.
+
+Giữa các service, `NARRATION`, `TRANSLATION`, `AUDIO` nối với nhau và với `POI` **qua sự kiện**, không qua khoá ngoại:
 
 ```
 content.POI --content.published--> narration.NARRATION --narration.created--> translation.TRANSLATION
@@ -182,4 +202,72 @@ Mỗi bảng phía sau giữ `source_event_id` = `eventId` của sự kiện đ�
   nội dung khớp đúng với những gì narration-service soạn (câu chào + nội dung + câu kết).
 - 4 thiết bị, 5 lượt mở, 9 lượt nghe mẫu để view thống kê có số liệu.
 - Cuối file có các câu kiểm tra: số bảng theo schema (13), **0 khoá ngoại liên schema**, mỗi điểm đủ 1 bài
-  thuyết minh / 3 bản dịch / 3 giọng đọc, và kết quả các view.
+  thuyết minh / 3 bản dịch / 3 giọng đọc, số khoá ngoại trong từng service, và kết quả các view.
+
+## 6. Lược đồ quan hệ
+
+Ký hiệu: <ins>gạch chân</ins> = khoá chính, `#` = khoá ngoại (trỏ tới bảng trong ngoặc), `UQ` = duy nhất.
+Mọi khoá ngoại đều nằm **trong cùng một schema** (cùng một service).
+
+### Schema `content` (content-service)
+1. **ADMIN**(<ins>id</ins>, name, email UQ, password_hash, role, locked, created_at)
+2. **LANGUAGE**(<ins>code</ins>, name, tts_voice, is_source, enabled)
+3. **POI**(<ins>id</ins>, name, category, address, lat, lng, radius, priority, image, text, version, status, sort_order, created_at, updated_at, #updated_by → ADMIN, deleted_at)
+4. **DEVICE**(<ins>device_id</ins>, os, browser, device_type, #lang → LANGUAGE, first_src, first_seen, last_seen, #last_poi_id → POI)
+5. **VISIT**(<ins>id</ins>, #device_id → DEVICE, src, #poi_id → POI, #lang → LANGUAGE, at)
+6. **LISTEN**(<ins>id</ins>, #device_id → DEVICE, kind, #poi_id → POI, #lang → LANGUAGE, trigger_src, at)
+7. **OUTBOX_EVENT**(<ins>event_id</ins>, routing_key, #poi_id → POI, payload, created_at, sent_at, attempts)
+
+### Schema `narration` (narration-service)
+8. **PROCESSED_EVENT**(<ins>event_id</ins>, routing_key, received_at)
+9. **NARRATION**(<ins>poi_id, version</ins>, script_vi, #source_event_id → PROCESSED_EVENT, created_at)
+
+### Schema `translation` (translation-service)
+10. **PROCESSED_EVENT**(<ins>event_id</ins>, routing_key, received_at)
+11. **TRANSLATION**(<ins>poi_id, version, lang</ins>, source_lang, translated_text, engine, #source_event_id → PROCESSED_EVENT, translated_at)
+
+### Schema `tts` (tts-service)
+12. **PROCESSED_EVENT**(<ins>event_id</ins>, routing_key, received_at)
+13. **AUDIO**(<ins>poi_id, version, lang</ins>, voice, engine, url, text, duration_sec, #source_event_id → PROCESSED_EVENT, created_at)
+
+> `poi_id`, `version`, `lang` ở NARRATION / TRANSLATION / AUDIO **không** là khoá ngoại: chúng là giá trị lấy từ sự kiện
+> của service trước (xem mục 1), vì các service không dùng chung dữ liệu.
+
+### Quan hệ giữa các bảng (bản số)
+
+| Quan hệ | Bản số | Ý nghĩa |
+|---|---|---|
+| ADMIN – POI | 1 – n | một admin cập nhật nhiều điểm |
+| DEVICE – VISIT | 1 – n | một thiết bị mở web nhiều lần |
+| DEVICE – LISTEN | 1 – n | một thiết bị nghe nhiều lần |
+| POI – LISTEN | 1 – n | một điểm được nghe nhiều lần (lượt nghe tổng quan không gắn điểm) |
+| POI – VISIT | 1 – n (tuỳ chọn) | QR riêng của điểm; QR chung thì `poi_id` rỗng |
+| POI – DEVICE | 1 – n (tuỳ chọn) | điểm nghe gần nhất của thiết bị |
+| POI – OUTBOX_EVENT | 1 – n | mỗi lần xuất bản sinh một sự kiện |
+| LANGUAGE – DEVICE / VISIT / LISTEN | 1 – n | ngôn ngữ đang chọn |
+| PROCESSED_EVENT – NARRATION | 1 – 1 | một `content.published` sinh một bài thuyết minh |
+| PROCESSED_EVENT – TRANSLATION | 1 – n | một `narration.created` sinh bản dịch cho từng ngôn ngữ |
+| PROCESSED_EVENT – AUDIO | 1 – n | một `translation.completed` sinh giọng đọc cho từng ngôn ngữ |
+
+### Phụ thuộc hàm và dạng chuẩn
+
+| Bảng | Phụ thuộc hàm chính | Dạng chuẩn |
+|---|---|---|
+| ADMIN | id → mọi thuộc tính; email → id | BCNF (id, email đều là khoá) |
+| LANGUAGE, POI, VISIT, LISTEN, OUTBOX_EVENT, PROCESSED_EVENT | khoá chính → mọi thuộc tính | BCNF |
+| DEVICE | device_id → mọi thuộc tính | BCNF (xem ghi chú `last_poi_id`) |
+| NARRATION | (poi_id, version) → script_vi, source_event_id; source_event_id → (poi_id, version) | BCNF (source_event_id cũng là khoá ứng viên) |
+| TRANSLATION | (poi_id, version, lang) → các thuộc tính còn lại; source_event_id → (poi_id, version) | **3NF** (vế phải là thuộc tính khoá) |
+| AUDIO | (poi_id, version, lang) → các thuộc tính còn lại; source_event_id → (poi_id, version) | **3NF** (như trên) |
+
+Ghi chú (các chỗ cố ý chấp nhận, có lý do):
+- **TRANSLATION, AUDIO dừng ở 3NF:** một sự kiện sinh nhiều dòng (mỗi ngôn ngữ một dòng) nên `source_event_id`
+  xác định `(poi_id, version)` mà không là khoá. Tách ra bảng riêng chỉ để đạt BCNF sẽ thêm một phép nối mà không
+  giảm dư thừa đáng kể (mỗi sự kiện chỉ có 3 dòng).
+- **AUDIO.voice** lưu theo từng bản ghi (không lấy theo `lang`) để giữ đúng giọng đã dùng lúc tạo: đổi cấu hình
+  giọng sau này không làm sai lịch sử. Vì vậy `lang → voice` không phải phụ thuộc hàm bền vững của bảng.
+- **DEVICE.last_poi_id** suy ra được từ LISTEN mới nhất; giữ lại (phi chuẩn hoá có chủ đích) để đếm "đang nghe
+  điểm nào" mỗi 5 giây ở trang Admin mà không phải quét bảng LISTEN.
+- **OUTBOX_EVENT.payload** chụp lại nội dung POI lúc xuất bản (snapshot), không phải dữ liệu trùng: POI sửa sau đó
+  không được làm thay đổi sự kiện đã gửi.
+- **LISTEN.kind** đi cùng `poi_id` (overview ⇔ rỗng); ràng buộc `CK_LISTEN_kind` bảo đảm hai cột luôn khớp.

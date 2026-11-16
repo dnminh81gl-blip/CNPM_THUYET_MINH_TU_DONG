@@ -29,6 +29,10 @@ Cách chạy: mở SSMS → File → Open → chọn file → Execute (F5). Ch�
 
 ## 2. Sơ đồ ERD
 
+![Sơ đồ quan hệ CSDL theo từng service](So-do-quan-he-CSDL.png)
+
+Nét liền = khoá ngoại (chỉ trong một service); nét đứt cam = liên kết qua sự kiện RabbitMQ. Bản dạng mermaid bên dưới:
+
 ```mermaid
 erDiagram
     %% ---------- schema content (content-service) ----------

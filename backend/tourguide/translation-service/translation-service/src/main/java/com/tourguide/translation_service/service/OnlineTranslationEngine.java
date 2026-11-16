@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -28,11 +29,21 @@ public class OnlineTranslationEngine implements TranslationEngine {
             Pattern.compile("\"translatedText\"\\s*:\\s*\"(.*?)(?<!\\\\)\"");
 
     private final HttpClient httpClient;
+    private final String email;
+
+    public OnlineTranslationEngine(@Value("${translation.mymemory.email:}") String email) {
+        this(email, HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(3))
+                .build());
+    }
 
     public OnlineTranslationEngine() {
-        this.httpClient = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(3))
-                .build();
+        this("");
+    }
+
+    public OnlineTranslationEngine(String email, HttpClient httpClient) {
+        this.email = email != null ? email.trim() : "";
+        this.httpClient = httpClient;
     }
 
     @Override
@@ -45,7 +56,7 @@ public class OnlineTranslationEngine implements TranslationEngine {
         }
 
         try {
-            String url = buildUrl(text, sourceLang, targetLang);
+            String url = buildUrl(text, sourceLang, targetLang, this.email);
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
@@ -77,12 +88,23 @@ public class OnlineTranslationEngine implements TranslationEngine {
     /**
      * Tao URL goi MyMemory. Ca q va langpair deu phai ma hoa: dau "|" trong "vi|en" de nguyen
      * se lam URI.create bao loi "Illegal character in query" -> truoc day luon roi xuong tu dien offline.
+     * Co them tham so de=<email> de tang han muc len 50.000 ky tu/ngay (de trong thi khong them).
      */
     static String buildUrl(String text, String sourceLang, String targetLang) {
+        return buildUrl(text, sourceLang, targetLang, null);
+    }
+
+    static String buildUrl(String text, String sourceLang, String targetLang, String email) {
         String encodedQuery = URLEncoder.encode(text, StandardCharsets.UTF_8);
         String langPair = URLEncoder.encode(sourceLang.toLowerCase() + "|" + targetLang.toLowerCase(),
                 StandardCharsets.UTF_8);
-        return API_ENDPOINT + "?q=" + encodedQuery + "&langpair=" + langPair;
+        StringBuilder sb = new StringBuilder(API_ENDPOINT)
+                .append("?q=").append(encodedQuery)
+                .append("&langpair=").append(langPair);
+        if (email != null && !email.isBlank()) {
+            sb.append("&de=").append(URLEncoder.encode(email.trim(), StandardCharsets.UTF_8));
+        }
+        return sb.toString();
     }
 
     /** MyMemory tra canh bao ngay trong translatedText (vd "MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS..."). */

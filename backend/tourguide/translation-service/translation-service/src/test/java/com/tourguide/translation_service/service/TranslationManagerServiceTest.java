@@ -25,8 +25,8 @@ import com.tourguide.translation_service.model.TranslationResponse;
 
 class TranslationManagerServiceTest {
 
-    private static final String OPERA =
-            "Chào mừng bạn đến với Nhà hát Thành phố. Nhà hát khánh thành năm 1900 theo phong cách Pháp.";
+    private static final String PALACE =
+            "Chào mừng bạn đến với Dinh Độc Lập. Dinh Độc Lập khánh thành năm 1966 theo phong cách hiện đại kết hợp truyền thống.";
 
     private OnlineTranslationEngine onlineEngine;
     private DictionaryFallbackEngine fallbackEngine;
@@ -85,25 +85,25 @@ class TranslationManagerServiceTest {
     void realScriptIsTranslatedAndRememberedAsOriginal() {
         offline();
 
-        List<TranslatedItem> results = managerService.processNarrationTranslation(4L, 2, List.of("vi", "en", "zh"), OPERA);
+        List<TranslatedItem> results = managerService.processNarrationTranslation(4L, 2, List.of("vi", "en", "zh"), PALACE);
 
         assertEquals(3, results.size());
-        assertEquals(OPERA, storage.find(4L, 2, "vi").translatedText());
-        // tu dien offline nhan ra ten dia diem THAT (khong con cau mau Nha tho Duc Ba)
-        assertTrue(storage.find(4L, 2, "en").translatedText().contains("Saigon Opera House"));
-        assertTrue(storage.find(4L, 2, "zh").translatedText().contains("西贡歌剧院"));
-        assertEquals(OPERA, storage.find(4L, 2, "en").originalText());
-        assertEquals(OPERA, storage.getOriginalNarration(4L));
+        assertEquals(PALACE, storage.find(4L, 2, "vi").translatedText());
+        // tu dien offline nhan ra ten dia diem THAT (Dinh Doc Lap)
+        assertTrue(storage.find(4L, 2, "en").translatedText().contains("Independence Palace"));
+        assertTrue(storage.find(4L, 2, "zh").translatedText().contains("统一宫"));
+        assertEquals(PALACE, storage.find(4L, 2, "en").originalText());
+        assertEquals(PALACE, storage.getOriginalNarration(4L));
     }
 
     @Test
     void withoutScriptUsesLastReceivedOriginal() {
         offline();
-        managerService.processNarrationTranslation(4L, 1, List.of("vi"), OPERA);
+        managerService.processNarrationTranslation(4L, 1, List.of("vi"), PALACE);
 
         List<TranslatedItem> results = managerService.processNarrationTranslation(4L, 1, List.of("en"));
         assertEquals(1, results.size());
-        assertEquals(OPERA, results.get(0).originalText());
+        assertEquals(PALACE, results.get(0).originalText());
     }
 
     @Test
@@ -115,7 +115,7 @@ class TranslationManagerServiceTest {
 
     @Test
     void duplicateAndBlankLanguagesAreSkipped() {
-        List<TranslatedItem> results = managerService.processNarrationTranslation(1L, 1, List.of("VI", " vi ", ""), OPERA);
+        List<TranslatedItem> results = managerService.processNarrationTranslation(1L, 1, List.of("VI", " vi ", ""), PALACE);
         assertEquals(1, results.size());
         assertEquals("vi", results.get(0).lang());
     }
@@ -160,5 +160,26 @@ class TranslationManagerServiceTest {
                 TranslatedItem.of(1L, 1, "zh", "a", "  ", "vi", "x")));
         assertEquals(Map.of("vi", "a", "en", "b"), scripts);
         assertNotNull(TranslationManagerService.toScripts(null));
+    }
+
+    @Test
+    void testFallbackEngine_DinhDocLapToIndependencePalace() {
+        offline();
+        TranslationResponse response = managerService.translateSingle("dinh độc lập", "vi", "en");
+        assertTrue(response.success());
+        assertEquals("Independence Palace", response.translatedText());
+        assertEquals("offline_dictionary", response.engine());
+    }
+
+    @Test
+    void testFallbackEngine_DinhDocLapKeywords() {
+        offline();
+        assertEquals("Credentials Room", managerService.translateSingle("Phòng Trình Quốc thư", "vi", "en").translatedText());
+        assertEquals("Cabinet Room", managerService.translateSingle("Phòng họp Nội các", "vi", "en").translatedText());
+        assertEquals("rooftop", managerService.translateSingle("sân thượng", "vi", "en").translatedText());
+        assertEquals("helicopter", managerService.translateSingle("trực thăng", "vi", "en").translatedText());
+        assertEquals("basement", managerService.translateSingle("tầng hầm", "vi", "en").translatedText());
+        assertEquals("tank", managerService.translateSingle("xe tăng", "vi", "en").translatedText());
+        assertEquals("main gate", managerService.translateSingle("cổng chính", "vi", "en").translatedText());
     }
 }

@@ -71,18 +71,20 @@ Vi du:
 ```json
 {"eventId":"...","sourceEventId":"...","poiId":3,"version":1,"audios":[{"lang":"vi","voice":"vi-VN","url":"/audio/poi-3/v1/vi.mp3","engine":"client-speech"}],"readyAt":"2026-10-19T07:00:00Z"}
 ```
-
 ## Thong bao WebSocket (notification-service -> Frontend)
 notification-service nhan `translation.completed` va `audio.ready` roi day ve Client.
 
-- Endpoint STOMP (co SockJS): `http://<host>:8085/ws-notification`
+- Endpoint qua API Gateway: `ws://<host>:8888/ws-notification/websocket` (hoac SockJS: `http://<host>:8888/ws-notification`)
+- Endpoint truc tiep (local/dev): `http://<host>:8085/ws-notification`
 - Kenh dang ky: `/topic/notifications`
-- Noi dung: `{"type":"<routing_key>","data":<JSON goc cua su kien>}`
+- Noi dung: `{"type":"<routing_key>","data":<JSON cua goc kien su>}`
 
-Vi du:
-```json
-{"type":"translation.completed","data":{"eventId":"...","sourceEventId":"...","poiId":3,"version":1,"langs":["vi","en","zh"],"completedAt":"2026-10-19T06:00:00Z"}}
-```
+### Cac buoc ket noi STOMP
+1. **CONNECT** — Khoi tao ket noi STOMP qua gateway:
+   ```text
+   CONNECT
+   accept-version:1.1,1.2
+   heart-beat:10000,10000
 
 
 ## Cong (port) cua cac service

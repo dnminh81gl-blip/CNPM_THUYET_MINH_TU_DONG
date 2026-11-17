@@ -63,15 +63,15 @@ const POIService = {
   EXHIBITS: [
     { img: "HCMC_Reunification_Palace-Banquet_Room.jpg", cap: { vi: "Phòng Khánh tiết", en: "Banquet Room", zh: "宴会厅" }, credit: "Wikimedia Commons" },
     { img: "Reunification_Palace_-_Presidents_international_reception_room.jpg", cap: { vi: "Phòng tiếp khách quốc tế của Tổng thống", en: "President's International Reception Room", zh: "总统国际接待室" }, credit: "Wikimedia Commons" },
-    { img: "Independence_Palace_Ho_Chi_Minh_city_(38647623045).jpg", cap: { vi: "Dinh Độc Lập", en: "Independence Palace", zh: "独立宫" }, credit: "Wikimedia Commons" },
-    { img: "Dinh_Độc_lập.JPG", cap: { vi: "Toàn cảnh Dinh Độc Lập", en: "Independence Palace", zh: "独立宫全景" }, credit: "Wikimedia Commons" },
-    { img: "Palacio_de_la_Reunificación,_Ciudad_Ho_Chi_Minh,_Vietnam,_2013-08-14,_DD_17.JPG", cap: { vi: "Dinh Độc Lập", en: "Independence Palace", zh: "独立宫" }, credit: "Diego Delso · Wikimedia Commons" }
+    { img: "Independence_Palace_Ho_Chi_Minh_city_(38647623045).jpg", cap: { vi: "Dinh Độc Lập", en: "Dinh Độc Lập", zh: "Dinh Độc Lập" }, credit: "Wikimedia Commons" },
+    { img: "Dinh_Độc_lập.JPG", cap: { vi: "Toàn cảnh Dinh Độc Lập", en: "Panorama of Dinh Độc Lập", zh: "Dinh Độc Lập全景" }, credit: "Wikimedia Commons" },
+    { img: "Palacio_de_la_Reunificación,_Ciudad_Ho_Chi_Minh,_Vietnam,_2013-08-14,_DD_17.JPG", cap: { vi: "Dinh Độc Lập", en: "Dinh Độc Lập", zh: "Dinh Độc Lập" }, credit: "Diego Delso · Wikimedia Commons" }
   ],
   /* Thuyết minh TỔNG QUAN về Dinh (không gắn với vị trí GPS, không hiện trên bản đồ).
      Nghe từng phần hoặc nghe liền cả 3 phần. Nguồn dữ kiện: dinhdoclap.gov.vn (Lịch sử, Kiến trúc Dinh Độc Lập). id 0 = "Tổng quan" trong thống kê. */
   OVERVIEW: {
     id: 0, pri: 9, icon: "fa-landmark", cat: "Tổng quan",
-    name: { vi: "Giới thiệu tổng quan Dinh Độc Lập", en: "Independence Palace overview", zh: "独立宫概况" },
+    name: { vi: "Giới thiệu tổng quan Dinh Độc Lập", en: "Dinh Độc Lập overview", zh: "Dinh Độc Lập概况" },
     facts: [
       { v: "1868", t: "Đặt đá xây Dinh Norodom" },
       { v: "1966", t: "Khánh thành Dinh mới" },
@@ -80,7 +80,7 @@ const POIService = {
     ],
     chapters: [
       { key: "lich-su", icon: "fa-history",
-        title: { vi: "Lịch sử: từ Dinh Norodom đến Dinh Độc Lập", en: "History: from Norodom Palace to Independence Palace", zh: "历史：从诺罗敦宫到独立宫" },
+        title: { vi: "Lịch sử: từ Dinh Norodom đến Dinh Độc Lập", en: "History: from Dinh Norodom to Dinh Độc Lập", zh: "历史：从Dinh Norodom到Dinh Độc Lập" },
         sub: "1868 · 1954 · 1962 · 30/4/1975 · 2009",
         text: {
           vi: "Chào mừng bạn đến với Dinh Độc Lập. Ngày 23 tháng 2 năm 1868, chính quyền thuộc địa Pháp đặt viên đá đầu tiên xây dinh Thống đốc Nam Kỳ trên khu đất này. Công trình hoàn thành năm 1871 và được gọi là Dinh Norodom. Tháng 9 năm 1954, người Pháp bàn giao dinh cho chính quyền Ngô Đình Diệm, và dinh được đổi tên thành Dinh Độc Lập. Ngày 27 tháng 2 năm 1962, hai phi công Nguyễn Văn Cử và Phạm Phú Quốc ném bom làm toà nhà hư hại nặng, nên dinh cũ bị phá bỏ để xây dinh mới ngay trên nền cũ. Ngày 30 tháng 4 năm 1975, xe tăng Quân Giải phóng húc đổ cổng Dinh. Đến 11 giờ 30 phút, lá cờ Mặt trận Dân tộc Giải phóng tung bay trên nóc Dinh, khép lại cuộc chiến và mở ra thời kỳ thống nhất đất nước. Năm 2009, Dinh Độc Lập được xếp hạng Di tích quốc gia đặc biệt.",

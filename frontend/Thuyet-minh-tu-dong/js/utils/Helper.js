@@ -37,8 +37,14 @@ const Modal = {
   open(id) { $("#" + id).classList.add("isOpen"); },
   close(id) { $("#" + id).classList.remove("isOpen"); },
   closeAll() { $$(".modal-wrap.isOpen").forEach(m => m.classList.remove("isOpen")); },
+  /* Bắt sự kiện ở document để cả popup chèn vào SAU khi init (VD: popup Thêm/Sửa POI ở Admin) cũng đóng được
+     bằng nút X, nút Huỷ, bấm ra ngoài hoặc phím Esc. */
   init() {
-    $$(".modal-wrap").forEach(m => m.addEventListener("click", e => { if (e.target === m || e.target.closest("[data-close]")) m.classList.remove("isOpen"); }));
+    if (this._ready) return; this._ready = true;
+    document.addEventListener("click", e => {
+      const m = e.target.closest(".modal-wrap");
+      if (m && (e.target === m || e.target.closest("[data-close]"))) m.classList.remove("isOpen");
+    });
     document.addEventListener("keydown", e => { if (e.key === "Escape") Modal.closeAll(); });
   }
 };

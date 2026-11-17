@@ -49,5 +49,8 @@ const A = {
   },
   stopSpeak() { if ("speechSynthesis" in window) speechSynthesis.cancel(); },
   dayKey(ts) { const d = new Date(ts); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); },
+  hourKey(ts) { const d = new Date(ts); return this.dayKey(d) + " " + String(d.getHours()).padStart(2, "0"); },
+  /* n giờ gần nhất (tính cả giờ hiện tại), cũ nhất trước; nhãn dạng "14h" */
+  lastHours(n) { return Array.from({ length: n }, (_, i) => { const d = new Date(Date.now() - (n - 1 - i) * 36e5); return { key: this.hourKey(d), label: String(d.getHours()).padStart(2, "0") + "h" }; }); },
   lastDays(n) { return Array.from({ length: n }, (_, i) => { const d = new Date(); d.setDate(d.getDate() - (n - 1 - i)); return { key: this.dayKey(d), label: String(d.getDate()).padStart(2, "0") + "/" + String(d.getMonth() + 1).padStart(2, "0") }; }); }
 };

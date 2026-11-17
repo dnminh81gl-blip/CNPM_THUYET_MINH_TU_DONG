@@ -71,18 +71,49 @@ Vi du:
 ```json
 {"eventId":"...","sourceEventId":"...","poiId":3,"version":1,"audios":[{"lang":"vi","voice":"vi-VN","url":"/audio/poi-3/v1/vi.mp3","engine":"client-speech"}],"readyAt":"2026-10-19T07:00:00Z"}
 ```
-
 ## Thong bao WebSocket (notification-service -> Frontend)
 notification-service nhan `translation.completed` va `audio.ready` roi day ve Client.
 
-- Endpoint STOMP (co SockJS): `http://<host>:8085/ws-notification`
+- Endpoint qua API Gateway (Frontend dung cach nay): `ws://<host>:8080/ws-notification/websocket`
+  (tren https / ngrok dung `wss://<ten-mien>/ws-notification/websocket`)
+- Endpoint SockJS qua gateway: `http://<host>:8080/ws-notification`
+- Endpoint truc tiep (chi khi chay local, khong qua gateway): `http://<host>:8085/ws-notification`
 - Kenh dang ky: `/topic/notifications`
 - Noi dung: `{"type":"<routing_key>","data":<JSON goc cua su kien>}`
 
-Vi du:
-```json
-{"type":"translation.completed","data":{"eventId":"...","sourceEventId":"...","poiId":3,"version":1,"langs":["vi","en","zh"],"completedAt":"2026-10-19T06:00:00Z"}}
-```
+### Cac buoc ket noi STOMP
+Moi khung STOMP ket thuc bang ky tu NULL (`\u0000`).
+
+1. **CONNECT** – mo WebSocket roi gui:
+   ```text
+   CONNECT
+   accept-version:1.2,1.1
+   heart-beat:0,0
+   host:/
+
+   ```
+   Server tra ve khung `CONNECTED`.
+2. **SUBSCRIBE** – dang ky kenh thong bao:
+   ```text
+   SUBSCRIBE
+   id:sub-0
+   destination:/topic/notifications
+   ack:auto
+
+   ```
+3. **MESSAGE** – moi su kien den la mot khung `MESSAGE`, phan noi dung la JSON. Vi du `audio.ready`:
+   ```json
+   {"type":"audio.ready","data":{"eventId":"...","sourceEventId":"...","poiId":3,"version":2,
+     "audios":[{"lang":"vi","voice":"vi-VN","url":"/audio/poi-3/v2/vi.mp3","engine":"client-speech","text":"Chao mung ban den voi ..."}],
+     "readyAt":"2026-11-17T03:00:00Z"}}
+   ```
+4. Mat ket noi (khoa man hinh, mang chap chon): Frontend tu ket noi lai sau 2, 4, 8... toi da 30 giay
+   (xem `frontend/Thuyet-minh-tu-dong/service/NotificationService.js`).
+
+### Thu nhanh
+1. Chay `docker compose up --build`, mo web (Live Server) va trang Admin > POI.
+2. Bam nut may bay giay (xuat ban) o mot POI.
+3. Trang Admin hien thong bao "Da dich xong" roi "Da co giong doc"; web du khach dang mo tu cap nhat noi dung moi.
 
 
 ## Cong (port) cua cac service

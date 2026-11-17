@@ -1,6 +1,6 @@
 /* Lịch sử & thống kê: lượt nghe theo điểm, ngôn ngữ, ngày; xuất CSV; dữ liệu mẫu để demo */
 const HistoryPage = {
-  days: 7, page: 1,
+  days: 7, page: 1, remote: null, REFRESH_MS: 10000,
   init() {
     if (!A.init("history")) return;
     $("#app").innerHTML = `
@@ -9,7 +9,7 @@ const HistoryPage = {
           <button class="btn btn--ghost" id="seed"><i class="fas fa-flask"></i> Tạo dữ liệu mẫu</button>
           <button class="btn btn--ghost" id="unseed"><i class="fas fa-eraser"></i> Xoá dữ liệu mẫu</button>
           <button class="btn btn--primary" id="csv"><i class="fas fa-download"></i> Xuất CSV</button></div></div>
-      <div class="adm-note"><i class="fas fa-info-circle"></i> Số liệu được gom từ lịch sử nghe lưu trong trình duyệt này (mọi tài khoản và khách). Khi có backend, History Service sẽ thu thập từ mọi thiết bị. Dòng có nhãn "mẫu" là dữ liệu tạo thử để minh hoạ.</div>
+      <div class="adm-note" id="srcNote"><i class="fas fa-info-circle"></i> Đang tải lượt nghe từ backend…</div>
       <div class="stats" id="stats"></div>
       <div class="adm-card"><h3>Lượt nghe theo ngày</h3><div class="cols" id="byDay"></div></div>
       <div class="grid2"><div class="adm-card"><h3>Theo địa điểm</h3><div class="bars" id="byPoi"></div></div><div class="adm-card"><h3>Theo ngôn ngữ</h3><div class="bars" id="byLang"></div></div></div>
@@ -17,9 +17,28 @@ const HistoryPage = {
     $("#rng").onchange = e => { this.days = Number(e.target.value); this.page = 1; this.render(); };
     $("#seed").onclick = () => this.seed(); $("#unseed").onclick = () => this.unseed(); $("#csv").onclick = () => this.csv();
     this.render();
+    this.loadRemote(); setInterval(() => this.loadRemote(), this.REFRESH_MS);
   },
-  data() { const from = Date.now() - this.days * 864e5; return HistoryService.all().filter(h => h.at >= from); },
+  /* Lượt nghe của MỌI thiết bị (điện thoại quét QR...) lấy từ backend: GET /api/devices/listens.
+     Không gọi được backend thì dùng lịch sử lưu trong trình duyệt này như trước. */
+  async loadRemote() {
+    try {
+      const list = await DeviceService._get("/api/devices/listens");
+      this.remote = (Array.isArray(list) ? list : []).map(x => ({ uid: x.deviceId, user: "Thiết bị " + String(x.deviceId || "").slice(0, 8),
+        poiId: Number(x.poiId), lang: x.lang, at: Date.parse(x.at) })).filter(h => !isNaN(h.at));
+    } catch (e) { this.remote = null; }
+    this.render();
+  },
+  data() {
+    const from = Date.now() - this.days * 864e5, local = HistoryService.all();
+    const all = this.remote ? [...this.remote, ...local.filter(h => h.demo)].sort((a, b) => b.at - a.at) : local;
+    return all.filter(h => h.at >= from);
+  },
   render() {
+    const note = $("#srcNote");
+    if (note) note.innerHTML = this.remote
+      ? '<i class="fas fa-info-circle"></i> Số liệu lấy từ backend (GET /api/devices/listens): lượt nghe của mọi thiết bị, tự làm mới mỗi 10 giây. Dòng có nhãn "mẫu" là dữ liệu tạo thử để minh hoạ.'
+      : '<i class="fas fa-info-circle"></i> Chưa kết nối được backend nên đang hiện lịch sử nghe lưu trong trình duyệt này. Bật backend (cổng 8080) để xem lượt nghe của mọi thiết bị. Dòng có nhãn "mẫu" là dữ liệu tạo thử để minh hoạ.';
     const d = this.data(), pois = A.pois(), nameOf = id => (pois.find(p => p.id === id) || { name: { vi: "(đã xoá)" } }).name.vi;
     const users = new Set(d.map(h => h.uid)).size, top = {};
     d.forEach(h => top[h.poiId] = (top[h.poiId] || 0) + 1);

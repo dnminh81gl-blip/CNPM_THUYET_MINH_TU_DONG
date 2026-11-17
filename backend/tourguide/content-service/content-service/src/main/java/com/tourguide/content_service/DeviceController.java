@@ -20,6 +20,7 @@ import jakarta.validation.Valid;
  *   POST /api/devices/listens   web báo một lần nghe thuyết minh
  *   POST /api/devices/ping      web báo "vẫn đang mở" (mỗi 30 giây) -> đếm số người đang tham gia
  *   GET  /api/devices           danh sách thiết bị (trang Admin)
+ *   GET  /api/devices/listens   nhật ký lượt nghe, mới nhất trước (trang Lịch sử & thống kê)
  *   GET  /api/devices/stats     số liệu tổng hợp (trang Admin)
  */
 @RestController
@@ -54,6 +55,11 @@ public class DeviceController {
     @GetMapping
     public List<Device> list() {
         return service.list();
+    }
+
+    @GetMapping("/listens")
+    public List<ListenRecord> listens() {
+        return service.listens();
     }
 
     @GetMapping("/stats")

@@ -5,12 +5,15 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -35,6 +38,9 @@ public class DeviceService {
     private final Map<Long, Integer> listensByPoi = new ConcurrentHashMap<>();
     /** poiId -> số lượt quét QR riêng của POI đó */
     private final Map<Long, Integer> scansByPoi = new ConcurrentHashMap<>();
+    /** Nhật ký từng lượt nghe, mới nhất ở đầu; giữ tối đa MAX_LISTEN_LOG dòng. */
+    private final Deque<ListenRecord> listenLog = new ConcurrentLinkedDeque<>();
+    static final int MAX_LISTEN_LOG = 5000;
     private final Clock clock;
 
     public DeviceService() {
@@ -59,6 +65,10 @@ public class DeviceService {
     public Device recordListen(DeviceListenRequest r) {
         String now = Instant.now(clock).toString();
         listensByPoi.merge(r.poiId(), 1, Integer::sum);
+        listenLog.addFirst(new ListenRecord(r.deviceId(), r.poiId(), or(r.lang()), now));
+        while (listenLog.size() > MAX_LISTEN_LOG) {
+            listenLog.pollLast();
+        }
         return devices.compute(r.deviceId(), (id, old) -> old == null
                 ? new Device(id, "Khác", "Khác", "Khác", or(r.lang()), "web", now, now, 1, 1, r.poiId())
                 : new Device(id, old.os(), old.browser(), old.type(), pick(r.lang(), old.lang()), old.firstSrc(),
@@ -82,6 +92,11 @@ public class DeviceService {
     /** Danh sách thiết bị, mới hoạt động gần nhất lên đầu. */
     public List<Device> list() {
         return devices.values().stream().sorted(Comparator.comparing(Device::lastSeen).reversed()).toList();
+    }
+
+    /** Các lượt nghe, mới nhất lên đầu (trang Admin "Lịch sử & thống kê"). */
+    public List<ListenRecord> listens() {
+        return new ArrayList<>(listenLog);
     }
 
     public Map<String, Object> stats() {

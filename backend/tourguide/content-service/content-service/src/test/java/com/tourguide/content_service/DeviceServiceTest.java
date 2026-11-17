@@ -104,4 +104,29 @@ class DeviceServiceTest {
         assertEquals(Map.of(4L, 1L), st.get("onlineByPoi"));           // người đang tham gia đang nghe điểm 4
         assertEquals(120L, st.get("activeWindowSeconds"));
     }
+
+    @Test
+    void listensAreLoggedNewestFirstWithLangAndTime() {
+        DeviceService s = new DeviceService();
+        s.recordListen(new DeviceListenRequest("d1", 3L, "en"));
+        s.recordListen(new DeviceListenRequest("d2", 5L, null));
+
+        List<ListenRecord> log = s.listens();
+        assertEquals(2, log.size());
+        assertEquals("d2", log.get(0).deviceId());   // mới nhất lên đầu
+        assertEquals(5L, log.get(0).poiId());
+        assertEquals("Khác", log.get(0).lang());      // thiếu ngôn ngữ thì ghi "Khác"
+        assertEquals("en", log.get(1).lang());
+        assertEquals(true, log.get(1).at() != null && !log.get(1).at().isBlank());
+    }
+
+    @Test
+    void listenLogIsCapped() {
+        DeviceService s = new DeviceService();
+        for (int i = 0; i < DeviceService.MAX_LISTEN_LOG + 10; i++) {
+            s.recordListen(new DeviceListenRequest("d" + i, 1L, "vi"));
+        }
+        assertEquals(DeviceService.MAX_LISTEN_LOG, s.listens().size());
+        assertEquals("d" + (DeviceService.MAX_LISTEN_LOG + 9), s.listens().get(0).deviceId());
+    }
 }

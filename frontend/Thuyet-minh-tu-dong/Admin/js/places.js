@@ -41,7 +41,7 @@ const PlacesPage = {
     BE.init();
   },
   modalHtml() {
-    return `<div class="modal-wrap" id="pModal"><div class="modal-main adm-modal"><button class="modal-close" data-close><i class="fas fa-times"></i></button>
+    return `<div class="modal-wrap" id="pModal"><div class="modal-main adm-modal"><button type="button" class="modal-close" data-close><i class="fas fa-times"></i></button>
     <h2 id="mTitle"></h2><form id="pForm" class="fgrid" autocomplete="off">
       <div class="full"><label>Tên - Tiếng Việt *</label><input class="input-field" id="nVi" required maxlength="80" /></div>
       <div><label>Tên - English</label><input class="input-field" id="nEn" maxlength="80" /></div>

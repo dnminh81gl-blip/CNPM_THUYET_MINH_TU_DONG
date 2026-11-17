@@ -16,3 +16,5 @@ application-local.properties
 application-secret.properties
 # SSMS / Visual Studio
 .vs/
+# Dữ liệu content-service ghi ra khi chạy bằng mvn (thiết bị, lượt nghe)
+backend/tourguide/content-service/content-service/data/

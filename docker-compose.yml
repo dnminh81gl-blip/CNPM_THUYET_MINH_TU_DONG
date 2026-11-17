@@ -19,6 +19,10 @@ services:
       - "8081:8081"
     environment:
       SPRING_RABBITMQ_HOST: rabbitmq
+      TOURGUIDE_DATA_DIR: /app/data
+    # thiết bị và lượt nghe được ghi vào volume này, khởi động lại / build lại service không bị mất
+    volumes:
+      - content-data:/app/data
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -80,3 +84,6 @@ services:
       - translation-service
       - tts-service
       - notification-service
+
+volumes:
+  content-data:

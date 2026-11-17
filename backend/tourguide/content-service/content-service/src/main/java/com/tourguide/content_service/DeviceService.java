@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.LinkedHashMap;
@@ -14,6 +15,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -21,7 +23,8 @@ import org.springframework.stereotype.Service;
 
 /**
  * Thống kê thiết bị quét QR / mở web để nghe thuyết minh. Du khách KHÔNG cần tài khoản:
- * mỗi trình duyệt tự tạo một mã ngẫu nhiên (deviceId). Dữ liệu tạm lưu trong bộ nhớ (T14 chuyển sang PostgreSQL).
+ * mỗi trình duyệt tự tạo một mã ngẫu nhiên (deviceId). Dữ liệu giữ trong bộ nhớ và được DevicePersistence ghi xuống
+ * đĩa định kỳ, nên khởi động lại service không mất thiết bị và lượt nghe.
  */
 @Service
 public class DeviceService {
@@ -41,6 +44,8 @@ public class DeviceService {
     /** Nhật ký từng lượt nghe, mới nhất ở đầu; giữ tối đa MAX_LISTEN_LOG dòng. */
     private final Deque<ListenRecord> listenLog = new ConcurrentLinkedDeque<>();
     static final int MAX_LISTEN_LOG = 5000;
+    /** Tăng mỗi khi số liệu thay đổi; DevicePersistence dùng để biết lúc nào cần ghi file. */
+    private final AtomicLong changes = new AtomicLong();
     private final Clock clock;
 
     public DeviceService() {
@@ -52,6 +57,7 @@ public class DeviceService {
     }
 
     public Device recordVisit(DeviceVisitRequest r) {
+        changes.incrementAndGet();
         String now = Instant.now(clock).toString();
         if ("qr".equals(r.src()) && r.poiId() != null) {
             scansByPoi.merge(r.poiId(), 1, Integer::sum);
@@ -63,6 +69,7 @@ public class DeviceService {
     }
 
     public Device recordListen(DeviceListenRequest r) {
+        changes.incrementAndGet();
         String now = Instant.now(clock).toString();
         listensByPoi.merge(r.poiId(), 1, Integer::sum);
         listenLog.addFirst(new ListenRecord(r.deviceId(), r.poiId(), or(r.lang()), now));
@@ -77,6 +84,7 @@ public class DeviceService {
 
     /** Tín hiệu "vẫn đang mở web" (mỗi 30 giây): chỉ cập nhật lastSeen, không tăng lượt mở. */
     public Device ping(String deviceId) {
+        changes.incrementAndGet();
         String now = Instant.now(clock).toString();
         return devices.compute(deviceId, (id, old) -> old == null
                 ? new Device(id, "Khác", "Khác", "Khác", "vi", "web", now, now, 1, 0, null)
@@ -92,6 +100,37 @@ public class DeviceService {
     /** Danh sách thiết bị, mới hoạt động gần nhất lên đầu. */
     public List<Device> list() {
         return devices.values().stream().sorted(Comparator.comparing(Device::lastSeen).reversed()).toList();
+    }
+
+    long changeCount() {
+        return changes.get();
+    }
+
+    /** Toàn bộ số liệu hiện tại, để ghi xuống đĩa. */
+    DeviceSnapshot snapshot() {
+        return new DeviceSnapshot(new ArrayList<>(devices.values()), new HashMap<>(listensByPoi),
+                new HashMap<>(scansByPoi), new ArrayList<>(listenLog));
+    }
+
+    /** Nạp lại số liệu đã lưu (lúc khởi động), thay cho số liệu đang có. */
+    void restore(DeviceSnapshot s) {
+        devices.clear();
+        listensByPoi.clear();
+        scansByPoi.clear();
+        listenLog.clear();
+        if (s.devices() != null) {
+            s.devices().forEach(d -> devices.put(d.deviceId(), d));
+        }
+        if (s.listensByPoi() != null) {
+            listensByPoi.putAll(s.listensByPoi());
+        }
+        if (s.scansByPoi() != null) {
+            scansByPoi.putAll(s.scansByPoi());
+        }
+        if (s.listens() != null) {
+            s.listens().stream().limit(MAX_LISTEN_LOG).forEach(listenLog::addLast);
+        }
+        changes.incrementAndGet();
     }
 
     /** Các lượt nghe, mới nhất lên đầu (trang Admin "Lịch sử & thống kê"). */

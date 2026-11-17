@@ -1,5 +1,7 @@
 package com.tourguide.content_service;
 
+import java.io.Serializable;
+
 /**
  * Một thiết bị đã truy cập khu tham quan (ẩn danh).
  * firstSeen / lastSeen là thời điểm ISO-8601; visits = số lần mở trang; listens = số lần nghe thuyết minh;
@@ -17,5 +19,5 @@ public record Device(
         int visits,
         int listens,
         Long lastPoiId
-) {
+) implements Serializable {
 }
